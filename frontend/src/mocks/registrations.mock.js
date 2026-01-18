@@ -42,6 +42,15 @@ export const getRegistrations = () => {
  * Create a new registration
  */
 export const createRegistration = (data) => {
+  // Check if already registered
+  const existingReg = mockRegistrations.find(
+    r => r.activity_id === data.activity_id && r.status === 'confirmed'
+  )
+  
+  if (existingReg) {
+    throw new Error('You are already registered for this activity')
+  }
+
   const newReg = {
     id: `reg-${Date.now()}`,
     user_id: 'user-1',

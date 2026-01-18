@@ -133,12 +133,20 @@ export const validateRegistration = (activity, user, registeredActivities) => {
   const errors = []
   const warnings = []
 
+  // Check if already registered for this activity
+  const alreadyRegistered = registeredActivities.some(
+    reg => reg.activity_id === activity.id && reg.status === 'confirmed'
+  )
+  if (alreadyRegistered) {
+    errors.push('You are already registered for this activity')
+  }
+
   // Check if activity is full
   if (activity.current_participants >= activity.max_capacity) {
     errors.push('This activity is full')
   }
 
-  // Check for time conflicts
+  // Check for time conflicts (but not with itself)
   const conflicts = findActivityConflicts(activity, registeredActivities)
   if (conflicts.length > 0) {
     errors.push(
