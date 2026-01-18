@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, MapPin, AlertCircle } from 'lucide-react'
+import { Calendar, Clock, MapPin, AlertCircle, CalendarDays, List } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import Button from '../shared/Button'
@@ -7,6 +7,7 @@ import Badge from '../shared/Badge'
 import EmptyState from '../shared/EmptyState'
 import Spinner from '../shared/Spinner'
 import ActivityDetailModal from '../activities/ActivityDetailModal'
+import ActivityMonthCalendar from '../activities/ActivityMonthCalendar'
 import { registrationsApi } from '../../services/registrations.api'
 import { activitiesApi } from '../../services/activities.api'
 import { formatDate, formatTime, isUpcoming } from '../../utils/dateUtils'
@@ -21,6 +22,7 @@ export default function ParticipantDashboard() {
   const [selectedActivity, setSelectedActivity] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [cancellingId, setCancellingId] = useState(null)
+  const [viewMode, setViewMode] = useState('list') // 'list' or 'calendar'
 
   useEffect(() => {
     fetchRegistrations()
@@ -138,13 +140,35 @@ export default function ParticipantDashboard() {
       {/* Upcoming Registrations */}
       <Card id="registrations">
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              Upcoming Activities
-            </h2>
-            <Badge variant="info">
-              {upcomingRegistrations.length} registered
-            </Badge>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-semibold text-gray-900">
+                My Activities
+              </h2>
+              <Badge variant="info">
+                {upcomingRegistrations.length} upcoming
+              </Badge>
+            </div>
+            
+            {/* View Toggle */}
+            <div className="flex gap-2">
+              <Button
+                variant={viewMode === 'list' ? 'primary' : 'secondary'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="w-4 h-4 mr-1" />
+                List
+              </Button>
+              <Button
+                variant={viewMode === 'calendar' ? 'primary' : 'secondary'}
+                size="sm"
+                onClick={() => setViewMode('calendar')}
+              >
+                <CalendarDays className="w-4 h-4 mr-1" />
+                Calendar
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardBody>
@@ -164,6 +188,21 @@ export default function ParticipantDashboard() {
               }
             />
           ) : (
+            <>
+              {/* Calendar View */}
+              {viewMode === 'calendar' && (
+                <ActivityMonthCalendar
+                  activities={upcomingRegistrations}
+                  onActivityClick={(activity) => {
+                    setSelectedActivity(activity)
+                    setIsModalOpen(true)
+                  }}
+                  userRole="participant"
+                />
+              )}
+
+              {/* List View */}
+              {viewMode === 'list' && (
             <div className="space-y-4">
               {upcomingRegistrations.map((reg) => (
                 <Card key={reg.id} className="hover:shadow-md transition-shadow">
@@ -234,6 +273,8 @@ export default function ParticipantDashboard() {
                 </Card>
               ))}
             </div>
+              )}
+            </>
           )}
         </CardBody>
       </Card>
