@@ -2,6 +2,22 @@
 
 This directory contains mock data for testing the Activities flow without a backend.
 
+## 🎭 Switching Between User Types
+
+**To test with different user roles:**
+
+1. Open `userSwitcher.mock.js`
+2. Change the `ACTIVE_USER_TYPE` constant:
+   ```javascript
+   export const ACTIVE_USER_TYPE = 'participant'  // 'participant' | 'volunteer' | 'staff'
+   ```
+3. Refresh the page
+
+**Available user types:**
+- `'participant'` - Alex Chen (Once Weekly membership)
+- `'volunteer'` - David Tan (Volunteer)
+- `'staff'` - Sarah Wong (Staff)
+
 When backend is ready, simply change these flags to false:
 - activities.api.js → USE_MOCK_DATA = false
 - registrations.api.js → USE_MOCK_DATA = false
@@ -25,9 +41,20 @@ When backend is ready, simply change these flags to false:
    - Already registered for: Morning Yoga (Jan 22)
 
 ## 📁 Mock Data Files
+**Participant:** Alex Chen (once_weekly membership)
+- **Volunteer:** David Tan (2 volunteer matches)
+- **Staff:** Sarah Wong (staff permissions)
+- Additional test users with different membership types
 
-### `activities.mock.js`
-- 13 activities (12 upcoming, 1 past)
+### `userSwitcher.mock.js`
+- Central place to switch between user types
+- Change `ACTIVE_USER_TYPE` and refresh
+
+### `volunteerMatches.mock.js`
+- Volunteer pre-matched for 2 activities:
+  - Basketball Practice
+  - Dance Party
+- In-memory store for volunteer commitments
 - Various program types: sports, arts, music, wellness, social, educational
 - Different dates from Jan 22-29, 2026
 - One full activity (Swimming Lessons)
