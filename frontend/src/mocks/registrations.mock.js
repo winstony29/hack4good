@@ -28,23 +28,27 @@ let mockRegistrations = [
 /**
  * Get all registrations for current user with activity details
  */
-export const getRegistrations = () => {
-  return mockRegistrations.map(reg => {
-    const activity = mockActivities.find(a => a.id === reg.activity_id)
-    return {
-      ...reg,
-      activity
-    }
-  })
+export const getRegistrations = (userId = 'user-1') => {
+  return mockRegistrations
+    .filter(reg => reg.user_id === userId)
+    .map(reg => {
+      const activity = mockActivities.find(a => a.id === reg.activity_id)
+      return {
+        ...reg,
+        activity
+      }
+    })
 }
 
 /**
  * Create a new registration
  */
 export const createRegistration = (data) => {
+  const userId = data.user_id || 'user-1'
+  
   // Check if already registered
   const existingReg = mockRegistrations.find(
-    r => r.activity_id === data.activity_id && r.status === 'confirmed'
+    r => r.user_id === userId && r.activity_id === data.activity_id && r.status === 'confirmed'
   )
   
   if (existingReg) {
@@ -53,7 +57,7 @@ export const createRegistration = (data) => {
 
   const newReg = {
     id: `reg-${Date.now()}`,
-    user_id: 'user-1',
+    user_id: userId,
     activity_id: data.activity_id,
     status: data.status || 'confirmed',
     created_at: new Date().toISOString(),
