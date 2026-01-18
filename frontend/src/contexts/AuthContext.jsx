@@ -1,5 +1,9 @@
 import { createContext, useState, useEffect, useContext } from 'react'
 import { supabase } from '../services/supabase'
+import { getCurrentMockUser } from '../mocks/userSwitcher.mock'
+
+// Toggle to use mock data (set to false when Supabase is configured)
+const USE_MOCK_DATA = true
 
 export const AuthContext = createContext()
 
@@ -16,24 +20,39 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    if (USE_MOCK_DATA) {
+      // Use mock user for testing
+      const mockUser = getCurrentMockUser()
+      setUser(mockUser)
       setLoading(false)
-    })
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      console.log(`🎭 Mock user loaded: ${mockUser.user_metadata.full_name} (${mockUser.user_metadata.role})`)
+    } else {
+      // Check active session
+      supabase.auth.getSession().then(({ data: { session } }) => {
         setUser(session?.user ?? null)
         setLoading(false)
-      }
-    )
+      })
 
-    return () => subscription.unsubscribe()
+      // Listen for auth changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        (event, session) => {
+          setUser(session?.user ?? null)
+          setLoading(false)
+        }
+      )
+
+      return () => subscription.unsubscribe()
+    }
   }, [])
 
   const signup = async (email, password, userData) => {
+    if (USE_MOCK_DATA) {
+      // Mock signup
+      const mockUser = getCurrentMockUser()
+      console.log('Mock signup:', email, userData)
+      return { user: mockUser }
+    }
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -47,6 +66,14 @@ export function AuthProvider({ children }) {
   }
 
   const login = async (email, password) => {
+    if (USE_MOCK_DATA) {
+      // Mock login
+      const mockUser = getCurrentMockUser()
+      console.log('Mock login:', email)
+      setUser(mockUser)
+      return { user: mockUser }
+    }
+    
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -57,6 +84,13 @@ export function AuthProvider({ children }) {
   }
 
   const logout = async () => {
+    if (USE_MOCK_DATA) {
+      // Mock logout
+      console.log('Mock logout')
+      setUser(null)
+      return
+    }
+    
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     setUser(null)
