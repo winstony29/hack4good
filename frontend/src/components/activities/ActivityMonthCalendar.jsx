@@ -30,13 +30,17 @@ const ACTIVITY_LABELS = {
  * Shows activities in a traditional calendar grid with color coding
  * 
  * @param {Array} activities - Array of activity objects with date field
- * @param {Function} onActivityClick - Callback when activity is clicked
+ * @param {Function} onActivityClick - Callback when activity is clicked (single activity)
+ * @param {Function} onDayClick - Callback when day is clicked (date, all activities for that day)
  * @param {String} userRole - 'participant' or 'volunteer' (for labeling)
+ * @param {String} mode - 'view' (default, show my activities) or 'register' (show all activities, enable day selection)
  */
 export default function ActivityMonthCalendar({ 
   activities = [], 
   onActivityClick,
-  userRole = 'participant'
+  onDayClick,
+  userRole = 'participant',
+  mode = 'view'
 }) {
   const [currentDate, setCurrentDate] = useState(new Date())
 
@@ -50,13 +54,16 @@ export default function ActivityMonthCalendar({
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const daysInPrevMonth = new Date(year, month, 0).getDate()
 
-  // Group activities by date
+  // Group activities by date string (YYYY-MM-DD format)
   const activitiesByDate = activities.reduce((acc, activity) => {
-    const date = new Date(activity.date || activity.activity?.date)
-    if (date.getMonth() === month && date.getFullYear() === year) {
-      const day = date.getDate()
-      if (!acc[day]) acc[day] = []
-      acc[day].push(activity)
+    const activityDate = activity.date || activity.activity?.date
+    if (activityDate) {
+      const date = new Date(activityDate + 'T00:00:00') // Parse as local date
+      if (date.getMonth() === month && date.getFullYear() === year) {
+        const dateString = activityDate // Use the original string as key
+        if (!acc[dateString]) acc[dateString] = []
+        acc[dateString].push(activity)
+      }
     }
     return acc
   }, {})
@@ -66,30 +73,39 @@ export default function ActivityMonthCalendar({
   
   // Previous month days (grayed out)
   for (let i = firstDay - 1; i >= 0; i--) {
+    const day = daysInPrevMonth - i
+    const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     calendarDays.push({
-      day: daysInPrevMonth - i,
+      day,
       isCurrentMonth: false,
-      date: new Date(year, month - 1, daysInPrevMonth - i)
+      date: new Date(year, month - 1, day),
+      dateString,
+      activities: []
     })
   }
   
   // Current month days
   for (let day = 1; day <= daysInMonth; day++) {
+    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     calendarDays.push({
       day,
       isCurrentMonth: true,
       date: new Date(year, month, day),
-      activities: activitiesByDate[day] || []
+      dateString,
+      activities: activitiesByDate[dateString] || []
     })
   }
   
   // Next month days (grayed out)
   const remainingDays = 42 - calendarDays.length // 6 weeks x 7 days
   for (let day = 1; day <= remainingDays; day++) {
+    const dateString = `${year}-${String(month + 2).padStart(2, '0')}-${String(day).padStart(2, '0')}`
     calendarDays.push({
       day,
       isCurrentMonth: false,
-      date: new Date(year, month + 1, day)
+      date: new Date(year, month + 1, day),
+      dateString,
+      activities: []
     })
   }
 
@@ -166,18 +182,24 @@ export default function ActivityMonthCalendar({
         {/* Calendar Days */}
         <div className="grid grid-cols-7">
           {calendarDays.map((dayData, index) => {
-            const { day, isCurrentMonth, date, activities = [] } = dayData
+            const { day, isCurrentMonth, date, dateString, activities = [] } = dayData
             const isTodayDate = isToday(date)
 
             return (
               <div
                 key={index}
+                onClick={() => {
+                  if (mode === 'register') {
+                    onDayClick?.(dateString, activities)
+                  }
+                }}
                 className={`
                   min-h-[100px] sm:min-h-[120px] p-2 border-b border-r border-gray-200
                   ${!isCurrentMonth ? 'bg-gray-50' : 'bg-white'}
                   ${isTodayDate ? 'ring-2 ring-inset ring-blue-500' : ''}
                   ${index % 7 === 6 ? 'border-r-0' : ''}
                   ${index >= 35 ? 'border-b-0' : ''}
+                  ${mode === 'register' ? 'cursor-pointer hover:bg-blue-50 transition-colors' : ''}
                 `}
               >
                 {/* Day Number */}
@@ -205,11 +227,17 @@ export default function ActivityMonthCalendar({
                     return (
                       <button
                         key={idx}
-                        onClick={() => onActivityClick?.(activityData)}
+                        onClick={(e) => {
+                          if (mode === 'view') {
+                            e.stopPropagation()
+                            onActivityClick?.(activityData)
+                          }
+                          // In register mode, don't stop propagation - let it bubble to day click
+                        }}
                         className={`
                           w-full text-left px-2 py-1.5 rounded border-l-4 
                           ${colorClass}
-                          hover:shadow-md transition-shadow text-xs sm:text-sm
+                          ${mode === 'view' ? 'hover:shadow-md' : ''} transition-shadow text-xs sm:text-sm
                           focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500
                         `}
                       >

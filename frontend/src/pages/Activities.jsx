@@ -1,26 +1,35 @@
 import { useState, useEffect } from 'react'
-import { Search, Filter } from 'lucide-react'
+import { Search, Filter, CalendarDays, List } from 'lucide-react'
 import Layout from '../components/layout/Layout'
 import Card, { CardHeader, CardBody } from '../components/shared/Card'
 import ActivityCalendar from '../components/activities/ActivityCalendar'
+import ActivityMonthCalendar from '../components/activities/ActivityMonthCalendar'
 import ActivityDetailModal from '../components/activities/ActivityDetailModal'
+import DayActivitiesModal from '../components/activities/DayActivitiesModal'
 import Input from '../components/shared/Input'
 import Button from '../components/shared/Button'
 import { useAuth } from '../contexts/AuthContext'
 import { registrationsApi } from '../services/registrations.api'
+import { activitiesApi } from '../services/activities.api'
 
 export default function Activities() {
   const { user } = useAuth()
   const [selectedActivity, setSelectedActivity] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isDayModalOpen, setIsDayModalOpen] = useState(false)
+  const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedDayActivities, setSelectedDayActivities] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [programFilter, setProgramFilter] = useState('all')
   const [userRegistrations, setUserRegistrations] = useState([])
+  const [allActivities, setAllActivities] = useState([])
   const [showFilters, setShowFilters] = useState(false)
+  const [viewMode, setViewMode] = useState('list') // 'list' or 'calendar'
 
   useEffect(() => {
     if (user) {
       fetchUserRegistrations()
+      fetchAllActivities()
     }
   }, [user])
 
@@ -33,6 +42,15 @@ export default function Activities() {
     }
   }
 
+  const fetchAllActivities = async () => {
+    try {
+      const response = await activitiesApi.getAll()
+      setAllActivities(response.data || [])
+    } catch (error) {
+      console.error('Failed to fetch activities:', error)
+    }
+  }
+
   const handleActivityClick = (activity) => {
     setSelectedActivity(activity)
     setIsModalOpen(true)
@@ -42,6 +60,22 @@ export default function Activities() {
     // Registration is handled in the modal
     // Refresh registrations after successful registration
     await fetchUserRegistrations()
+    await fetchAllActivities()
+  }
+
+  const handleDayClick = (date, activities) => {
+    setSelectedDate(date)
+    setSelectedDayActivities(activities)
+    setIsDayModalOpen(true)
+  }
+
+  const handleRegisterFromDay = async (activityId) => {
+    const activity = allActivities.find(a => a.id === activityId)
+    if (activity) {
+      setSelectedActivity(activity)
+      setIsDayModalOpen(false)
+      setIsModalOpen(true)
+    }
   }
 
   const getFilterOptions = () => {
@@ -75,15 +109,35 @@ export default function Activities() {
                 </p>
               </div>
               
-              {/* Filter Toggle Button (Mobile) */}
-              <Button
-                variant="secondary"
-                onClick={() => setShowFilters(!showFilters)}
-                className="md:hidden"
-              >
-                <Filter className="w-4 h-4 mr-2" />
-                {showFilters ? 'Hide Filters' : 'Show Filters'}
-              </Button>
+              {/* View Mode Toggle & Filter Button */}
+              <div className="flex gap-2">
+                <div className="hidden md:flex gap-2">
+                  <Button 
+                    variant={viewMode === 'list' ? 'primary' : 'secondary'} 
+                    size="sm"
+                    onClick={() => setViewMode('list')}
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant={viewMode === 'calendar' ? 'primary' : 'secondary'} 
+                    size="sm"
+                    onClick={() => setViewMode('calendar')}
+                  >
+                    <CalendarDays className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                {/* Filter Toggle Button (Mobile) */}
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="md:hidden"
+                >
+                  <Filter className="w-4 h-4 mr-2" />
+                  {showFilters ? 'Hide Filters' : 'Show Filters'}
+                </Button>
+              </div>
             </div>
           </CardHeader>
 
@@ -162,12 +216,25 @@ export default function Activities() {
               )}
             </div>
 
-            {/* Activity Calendar */}
-            <ActivityCalendar
-              mode="view"
-              onActivityClick={handleActivityClick}
-              filterOptions={getFilterOptions()}
-            />
+            {/* Activity Views */}
+            {viewMode === 'list' ? (
+              <ActivityCalendar
+                mode="view"
+                onActivityClick={handleActivityClick}
+                filterOptions={getFilterOptions()}
+              />
+            ) : (
+              <div>
+                <p className="text-sm text-gray-600 mb-4">
+                  Click on any day to see available activities and register. Days with your existing bookings are highlighted.
+                </p>
+                <ActivityMonthCalendar
+                  activities={allActivities}
+                  onDayClick={handleDayClick}
+                  mode="register"
+                />
+              </div>
+            )}
           </CardBody>
         </Card>
       </div>
@@ -186,6 +253,21 @@ export default function Activities() {
           userRegistrations={userRegistrations}
         />
       )}
+
+      {/* Day Activities Modal */}
+      <DayActivitiesModal
+        date={selectedDate}
+        dayActivities={selectedDayActivities}
+        userRegistrations={userRegistrations}
+        user={user}
+        isOpen={isDayModalOpen}
+        onClose={() => {
+          setIsDayModalOpen(false)
+          setSelectedDate(null)
+          setSelectedDayActivities([])
+        }}
+        onRegister={handleRegisterFromDay}
+      />
     </Layout>
   )
 }
