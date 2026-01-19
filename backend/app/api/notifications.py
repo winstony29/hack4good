@@ -8,8 +8,10 @@ from app.core.deps import get_db
 from app.models.notification import (
     NotificationCreate,
     NotificationResponse,
-    BulkNotificationCreate
+    BulkNotificationCreate,
+    BulkNotificationResponse
 )
+from app.services.notification_service import NotificationService
 
 router = APIRouter()
 
@@ -22,15 +24,21 @@ async def send_notification(
 ):
     """
     Send notification to a user (Staff only)
-    
+
     - **channel**: 'sms' or 'whatsapp'
     - **message**: Notification text
     """
-    # TODO: Fetch user details
-    # Send via Twilio (SMS or WhatsApp)
-    # Log notification
-    # Return status
-    raise HTTPException(status_code=501, detail="Not implemented")
+    service = NotificationService(db)
+
+    try:
+        result = await service.send_notification(
+            user_id=notification.user_id,
+            message=notification.message,
+            channel=notification.channel
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.post("/send-bulk", status_code=status.HTTP_202_ACCEPTED)
