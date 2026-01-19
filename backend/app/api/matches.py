@@ -147,8 +147,27 @@ async def cancel_volunteer_match(
     db: Session = Depends(get_db)
 ):
     """Cancel a volunteer match"""
-    # TODO: Fetch match
+    from app.db.models import VolunteerMatch
+    from app.core.enums import RegistrationStatus
+
+    # Fetch the match
+    match = db.query(VolunteerMatch).filter(VolunteerMatch.id == match_id).first()
+
+    if not match:
+        raise HTTPException(status_code=404, detail="Match not found")
+
     # Verify ownership
+    if match.volunteer_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to cancel this match")
+
+    # Check if already cancelled
+    if match.status == RegistrationStatus.CANCELLED:
+        raise HTTPException(status_code=400, detail="Match already cancelled")
+
     # Update status to cancelled
-    # Notify volunteer
-    pass
+    match.status = RegistrationStatus.CANCELLED
+    db.commit()
+
+    # TODO: Send cancellation notification (will be wired in 04-02)
+
+    return None
