@@ -7,7 +7,8 @@ from datetime import date
 from app.core.auth import get_current_staff
 from app.core.deps import get_db
 from app.services.analytics_service import AnalyticsService
-from app.db.models import Activity
+from app.db.models import Activity, Registration, VolunteerMatch, User
+from app.core.enums import RegistrationStatus
 
 router = APIRouter()
 
@@ -94,17 +95,60 @@ async def export_attendance_csv(
 ):
     """
     Export attendance as CSV file
-    
+
     CSV includes:
     - Participant name, email, phone
     - Registration time
     - Volunteer name, email, phone
     """
-    # TODO: Fetch attendance data
-    # Format as CSV
-    # Return file response
+    # Fetch activity, 404 if not found
+    activity = db.query(Activity).filter(Activity.id == activity_id).first()
+    if not activity:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Activity not found"
+        )
+
+    # Build CSV content with headers
     csv_content = "Name,Email,Phone,Role,Registration Time\n"
-    
+
+    # Get participants with registration timestamps
+    participant_registrations = (
+        db.query(User, Registration)
+        .join(Registration, User.id == Registration.user_id)
+        .filter(
+            Registration.activity_id == activity_id,
+            Registration.status == RegistrationStatus.CONFIRMED
+        )
+        .all()
+    )
+
+    for user, registration in participant_registrations:
+        name = user.full_name or ""
+        email = user.email or ""
+        phone = user.phone or ""
+        reg_time = registration.created_at.isoformat() if registration.created_at else ""
+        # Escape any commas in fields
+        csv_content += f'"{name}","{email}","{phone}","Participant","{reg_time}"\n'
+
+    # Get volunteers with match timestamps
+    volunteer_matches = (
+        db.query(User, VolunteerMatch)
+        .join(VolunteerMatch, User.id == VolunteerMatch.volunteer_id)
+        .filter(
+            VolunteerMatch.activity_id == activity_id,
+            VolunteerMatch.status == RegistrationStatus.CONFIRMED
+        )
+        .all()
+    )
+
+    for user, match in volunteer_matches:
+        name = user.full_name or ""
+        email = user.email or ""
+        phone = user.phone or ""
+        match_time = match.matched_at.isoformat() if match.matched_at else ""
+        csv_content += f'"{name}","{email}","{phone}","Volunteer","{match_time}"\n'
+
     return Response(
         content=csv_content,
         media_type="text/csv",
