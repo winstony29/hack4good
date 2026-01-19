@@ -24,10 +24,11 @@
 **Goal**: Smooth swipe gestures on activity cards, page transitions between routes, micro-interactions on buttons/inputs, celebratory effects refinement
 **Depends on**: v1.0 complete
 **Research**: Unlikely (Framer Motion already in project)
-**Plans**: TBD
+**Plans**: 2
 
 Plans:
-- [ ] 06-01: TBD (run /gsd:plan-phase 6 to break down)
+- [ ] 06-01: Button & Input micro-interactions
+- [ ] 06-02: Modal animations & page transitions
 
 #### Phase 7: Error Handling & Feedback
 
@@ -70,7 +71,7 @@ Plans:
 | 3. Integration | v1.0 | 1/1 | Complete | 2026-01-18 |
 | 4. Person 3 Backend | v1.0 | 3/3 | Complete | 2026-01-19 |
 | 5. Person 4 Staff API | v1.0 | 2/2 | Complete | 2026-01-19 |
-| 6. Animations & Transitions | v1.1 | 0/? | Not started | - |
+| 6. Animations & Transitions | v1.1 | 0/2 | Planned | - |
 | 7. Error Handling & Feedback | v1.1 | 0/? | Not started | - |
 | 8. Mobile Responsiveness | v1.1 | 0/? | Not started | - |
 | 9. Visual Consistency | v1.1 | 0/? | Not started | - |

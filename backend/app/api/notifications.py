@@ -41,7 +41,7 @@ async def send_notification(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
-@router.post("/send-bulk", status_code=status.HTTP_202_ACCEPTED)
+@router.post("/send-bulk", response_model=BulkNotificationResponse, status_code=status.HTTP_202_ACCEPTED)
 async def send_bulk_notifications(
     notification: BulkNotificationCreate,
     current_user = Depends(get_current_staff),
@@ -49,16 +49,35 @@ async def send_bulk_notifications(
 ):
     """
     Send notifications to multiple users (Staff only)
-    
+
     Useful for:
     - Activity reminders
     - Announcements
     - Emergency notifications
     """
-    # TODO: Queue notifications for each user
-    # Send asynchronously
-    # Return acceptance status
-    return {"message": f"Queued {len(notification.user_ids)} notifications"}
+    service = NotificationService(db)
+
+    successful = 0
+    failed = 0
+
+    for user_id in notification.user_ids:
+        try:
+            await service.send_notification(
+                user_id=user_id,
+                message=notification.message,
+                channel=notification.channel
+            )
+            successful += 1
+        except ValueError:
+            failed += 1
+
+    total = len(notification.user_ids)
+    return BulkNotificationResponse(
+        total=total,
+        successful=successful,
+        failed=failed,
+        message=f"Sent {successful}/{total} notifications ({failed} failed)"
+    )
 
 
 @router.get("/user/{user_id}", response_model=List[NotificationResponse])
