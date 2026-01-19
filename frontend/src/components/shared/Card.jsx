@@ -7,6 +7,10 @@ export default function Card({ children, className = '', ...props }) {
         overflow-hidden
         ${className}
       `}
+      style={{
+        backgroundColor: 'var(--a11y-bg)',
+        borderColor: 'var(--a11y-border)'
+      }}
       {...props}
     >
       {children}
@@ -16,7 +20,10 @@ export default function Card({ children, className = '', ...props }) {
 
 export function CardHeader({ children, className = '' }) {
   return (
-    <div className={`px-6 py-4 border-b border-gray-200 ${className}`}>
+    <div
+      className={`px-6 py-4 border-b border-gray-200 ${className}`}
+      style={{ borderColor: 'var(--a11y-border)' }}
+    >
       {children}
     </div>
   )
@@ -28,7 +35,13 @@ export function CardBody({ children, className = '' }) {
 
 export function CardFooter({ children, className = '' }) {
   return (
-    <div className={`px-6 py-4 border-t border-gray-200 bg-gray-50 ${className}`}>
+    <div
+      className={`px-6 py-4 border-t border-gray-200 bg-gray-50 ${className}`}
+      style={{
+        borderColor: 'var(--a11y-border)',
+        backgroundColor: 'var(--a11y-bg-secondary)'
+      }}
+    >
       {children}
     </div>
   )
