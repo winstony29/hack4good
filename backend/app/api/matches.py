@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 from uuid import UUID
 
@@ -120,12 +120,24 @@ async def get_volunteer_matches(
 ):
     """
     Get all volunteer matches for a user
-    
+
     Returns activities the volunteer is matched to
     """
-    # TODO: Check authorization
-    # Fetch matches with activity details
-    return []
+    from app.db.models import VolunteerMatch
+    from app.core.enums import Role
+
+    # Authorization: can view own matches, or staff can view any
+    if current_user.id != user_id and current_user.role != Role.STAFF:
+        raise HTTPException(status_code=403, detail="Not authorized to view these matches")
+
+    # Fetch matches with activity details (eager load)
+    matches = db.query(VolunteerMatch).filter(
+        VolunteerMatch.volunteer_id == user_id
+    ).options(
+        joinedload(VolunteerMatch.activity)
+    ).order_by(VolunteerMatch.matched_at.desc()).all()
+
+    return matches
 
 
 @router.delete("/{match_id}", status_code=status.HTTP_204_NO_CONTENT)
