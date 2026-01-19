@@ -2,12 +2,12 @@
 
 ## Phase 1: Volunteer Swiper
 
-**Status:** In progress (1/5 plans complete)
+**Status:** In progress (2/5 plans complete)
 
 ### Plans
 
 - [x] **01-01: Dependencies & Environment Setup** - Install animation libs, create env toggle
-- [ ] **01-02: Mock Data Integration** - Update API with mock toggle, add mock functions
+- [x] **01-02: Mock Data Integration** - Update API with mock toggle, add mock functions
 - [ ] **01-03: SwipeableCard Component** - Framer Motion drag gestures and animations
 - [ ] **01-04: SwipeButtons & ActivitySwiper** - Accessible buttons, orchestrator refactor
 - [ ] **01-05: MatchAnimation & Integration** - Celebration overlay, complete flow
