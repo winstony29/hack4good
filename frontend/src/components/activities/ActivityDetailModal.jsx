@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react'
+import { AlertCircle, CheckCircle, AlertTriangle, DollarSign, Accessibility } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Modal from '../shared/Modal'
 import Button from '../shared/Button'
+import Badge from '../shared/Badge'
 import ActivityCard from './ActivityCard'
 import TTSButton from '../accessibility/TTSButton'
 import { useAuth } from '../../contexts/AuthContext'
@@ -125,6 +126,42 @@ export default function ActivityDetailModal({
       }
     >
       <div className="space-y-6">
+        {/* Activity Flags - Payment & Accessibility */}
+        {(activity.payment_required || activity.wheelchair_accessible !== undefined) && (
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Important Information</h3>
+            <div className="flex flex-wrap gap-3">
+              {activity.payment_required && (
+                <div className="flex items-start gap-2 bg-white p-3 rounded-lg border border-yellow-200 flex-1 min-w-[200px]">
+                  <DollarSign className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Payment Required</p>
+                    <p className="text-xs text-gray-600 mt-1">This activity requires a fee to participate</p>
+                  </div>
+                </div>
+              )}
+              {activity.wheelchair_accessible === true && (
+                <div className="flex items-start gap-2 bg-white p-3 rounded-lg border border-green-200 flex-1 min-w-[200px]">
+                  <Accessibility className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Wheelchair Accessible</p>
+                    <p className="text-xs text-gray-600 mt-1">This activity is fully accessible</p>
+                  </div>
+                </div>
+              )}
+              {activity.wheelchair_accessible === false && (
+                <div className="flex items-start gap-2 bg-white p-3 rounded-lg border border-gray-300 flex-1 min-w-[200px]">
+                  <Accessibility className="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">Limited Accessibility</p>
+                    <p className="text-xs text-gray-600 mt-1">This activity may have accessibility limitations</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">

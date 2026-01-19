@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, MapPin, AlertCircle, CalendarDays, List, Sparkles } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Calendar, Clock, MapPin, AlertCircle, CalendarDays, List, Sparkles, ArrowUpRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../contexts/AuthContext'
 import { useAccessibility } from '../../contexts/AccessibilityContext'
@@ -78,98 +79,211 @@ export default function ParticipantDashboard() {
 
   const membershipType = user?.user_metadata?.membership_type
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  }
+
   return (
-    <div className="space-y-8">
-      {/* Welcome Section */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          {t('dashboard.welcomeBack')}, {user?.user_metadata?.full_name || 'Participant'}!
-        </h1>
-        <p className="text-gray-600 mt-2">{t('dashboard.activityOverview')}</p>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-8"
+    >
+      {/* Welcome Section with gradient header */}
+      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-8"
+        style={{
+          background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
+        }}
+      >
+        {/* Mesh overlay */}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: 'radial-gradient(ellipse at 0% 0%, rgba(255, 255, 255, 0.3) 0%, transparent 50%), radial-gradient(ellipse at 100% 100%, rgba(139, 92, 246, 0.3) 0%, transparent 50%)'
+          }}
+        />
         
-        {membershipType && (
-          <div className="mt-4 inline-block">
-            <Badge variant="info" className="text-sm">
-              {getMembershipDisplayName(membershipType)}
-            </Badge>
+        <div className="relative flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: 'rgba(255, 255, 255, 0.2)' }}
+              >
+                <Calendar className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-blue-100 text-sm font-semibold tracking-wide uppercase">Dashboard</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+              {t('dashboard.welcomeBack')}, {user?.user_metadata?.full_name || 'Participant'}!
+            </h1>
+            <p className="text-blue-100 mt-2 max-w-xl">{t('dashboard.activityOverview')}</p>
+            
+            {membershipType && (
+              <div className="mt-4">
+                <Badge 
+                  variant="info" 
+                  className="text-sm bg-white/20 backdrop-blur-sm border border-white/30"
+                  style={{ color: 'white' }}
+                >
+                  {getMembershipDisplayName(membershipType)}
+                </Badge>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      </motion.div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <CardBody>
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-5 h-5 text-blue-600" />
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div
+          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+          className="relative overflow-hidden rounded-2xl p-6"
+          style={{
+            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+            boxShadow: '0 2px 15px -5px rgba(59, 130, 246, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.08)'
+          }}
+        >
+          <div
+            className="absolute top-0 right-0 w-32 h-32 opacity-20"
+            style={{
+              background: 'radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.4) 0%, transparent 70%)'
+            }}
+          />
+          <div className="relative">
+            <div className="flex items-center gap-3 mb-3">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ background: 'rgba(59, 130, 246, 0.15)' }}
+              >
+                <Sparkles className="w-6 h-6 text-blue-600" />
+              </div>
               <h3 className="text-lg font-semibold text-gray-900">
                 {t('dashboard.discoverActivities')}
               </h3>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-gray-700 text-sm mb-4">
               {t('dashboard.swipeToFind')}
             </p>
             <div className="flex gap-2">
-              <Button onClick={() => navigate('/swiper')} variant="primary">
+              <Button onClick={() => navigate('/swiper')} variant="primary" size="sm">
                 {t('dashboard.startSwiping')}
               </Button>
-              <Button onClick={() => navigate('/activities')} variant="secondary">
+              <Button onClick={() => navigate('/activities')} variant="secondary" size="sm">
                 {t('dashboard.viewAllActivities')}
               </Button>
             </div>
-          </CardBody>
-        </Card>
+          </div>
+        </motion.div>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <CardBody>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {t('dashboard.myRegistrations')}
-            </h3>
-            <p className="text-gray-600 text-sm mb-4">
-              {upcomingRegistrations.length} {t('dashboard.upcomingCount')}
-            </p>
-            <Button onClick={() => document.getElementById('registrations')?.scrollIntoView({ behavior: 'smooth' })} variant="success">
+        <motion.div
+          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+          className="relative overflow-hidden rounded-2xl p-6"
+          style={{
+            background: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)',
+            boxShadow: '0 2px 15px -5px rgba(34, 197, 94, 0.15), 0 0 0 1px rgba(34, 197, 94, 0.08)'
+          }}
+        >
+          <div
+            className="absolute top-0 right-0 w-32 h-32 opacity-20"
+            style={{
+              background: 'radial-gradient(circle at 100% 0%, rgba(34, 197, 94, 0.4) 0%, transparent 70%)'
+            }}
+          />
+          <div className="relative">
+            <div className="flex items-center gap-3 mb-3">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ background: 'rgba(34, 197, 94, 0.15)' }}
+              >
+                <CalendarDays className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {t('dashboard.myRegistrations')}
+              </h3>
+            </div>
+            <div className="mb-4">
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold text-green-700">{upcomingRegistrations.length}</span>
+                <span className="text-sm text-gray-600">{t('dashboard.upcomingCount')}</span>
+              </div>
+            </div>
+            <Button 
+              onClick={() => document.getElementById('registrations')?.scrollIntoView({ behavior: 'smooth' })} 
+              variant="success"
+              size="sm"
+              className="w-full"
+            >
               {t('dashboard.viewMyActivities')}
             </Button>
-          </CardBody>
-        </Card>
-      </div>
+          </div>
+        </motion.div>
+      </motion.div>
 
       {/* Upcoming Registrations */}
-      <Card id="registrations">
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                {t('dashboard.myActivities')}
-              </h2>
-              <Badge variant="info">
-                {upcomingRegistrations.length} {t('dashboard.upcoming')}
-              </Badge>
-            </div>
-            
-            {/* View Toggle */}
-            <div className="flex gap-2">
-              <Button
-                variant={viewMode === 'list' ? 'primary' : 'secondary'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-              >
-                <List className="w-4 h-4 mr-1" />
-                {t('dashboard.list')}
-              </Button>
-              <Button
-                variant={viewMode === 'calendar' ? 'primary' : 'secondary'}
-                size="sm"
-                onClick={() => setViewMode('calendar')}
-              >
-                <CalendarDays className="w-4 h-4 mr-1" />
-                {t('dashboard.calendar')}
-              </Button>
+      <motion.div variants={itemVariants} id="registrations">
+        <div
+          className="rounded-3xl overflow-hidden"
+          style={{
+            background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+            boxShadow: '0 4px 30px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03)'
+          }}
+        >
+          <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: 'rgba(59, 130, 246, 0.1)' }}
+                >
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+                    {t('dashboard.myActivities')}
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {upcomingRegistrations.length} {t('dashboard.upcoming')}
+                  </p>
+                </div>
+              </div>
+              
+              {/* View Toggle */}
+              <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-lg transition-all duration-200 flex items-center justify-center ${
+                    viewMode === 'list'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('calendar')}
+                  className={`p-2 rounded-lg transition-all duration-200 flex items-center justify-center ${
+                    viewMode === 'calendar'
+                      ? 'bg-white text-blue-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <CalendarDays className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
-        </CardHeader>
-        <CardBody>
+          <div className="p-6 sm:p-8">
           {loading ? (
             <div className="flex justify-center py-12">
               <Spinner size="lg" />
@@ -279,8 +393,9 @@ export default function ParticipantDashboard() {
               )}
             </>
           )}
-        </CardBody>
-      </Card>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Past Activities */}
       {pastRegistrations.length > 0 && (
@@ -323,6 +438,6 @@ export default function ParticipantDashboard() {
           action="view"
         />
       )}
-    </div>
+    </motion.div>
   )
 }

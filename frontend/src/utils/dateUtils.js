@@ -59,3 +59,24 @@ export const formatRelativeTime = (date) => {
   
   return formatDate(date)
 }
+
+export const isSameDay = (date1, date2) => {
+  const d1 = new Date(date1)
+  const d2 = new Date(date2)
+  return d1.getFullYear() === d2.getFullYear() &&
+         d1.getMonth() === d2.getMonth() &&
+         d1.getDate() === d2.getDate()
+}
+
+export const getWeekDates = (startDate) => {
+  const dates = []
+  const current = new Date(startDate)
+  
+  for (let i = 0; i < 7; i++) {
+    dates.push(new Date(current))
+    current.setDate(current.getDate() + 1)
+  }
+  
+  return dates
+}
+
