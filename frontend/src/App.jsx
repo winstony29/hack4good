@@ -42,7 +42,34 @@ function App() {
             />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <Toaster position="top-right" />
+          <Toaster
+            position="top-center"
+            gutter={8}
+            toastOptions={{
+              // Default options for all toasts
+              duration: 3000,
+              style: {
+                background: 'var(--a11y-card-bg, #fff)',
+                color: 'var(--a11y-text, #1f2937)',
+                fontSize: 'var(--a11y-font-size, 16px)',
+              },
+              // Success toast styling
+              success: {
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#fff',
+                },
+              },
+              // Error toast styling
+              error: {
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+                duration: 4000,
+              },
+            }}
+          />
         </AccessibilityProvider>
       </AuthProvider>
     </BrowserRouter>
