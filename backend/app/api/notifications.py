@@ -88,9 +88,22 @@ async def get_user_notifications(
 ):
     """
     Get notification history for a user
-    
-    Users can only see their own notifications
+
+    Users can only see their own notifications.
+    Staff can view any user's notifications.
     """
-    # TODO: Check authorization
-    # Fetch notification log
-    return []
+    from app.core.enums import Role
+
+    # Authorization check: user can only view own notifications unless staff
+    is_staff = current_user.role == Role.STAFF
+    is_owner = str(current_user.id) == str(user_id)
+
+    if not is_staff and not is_owner:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only view your own notifications"
+        )
+
+    service = NotificationService(db)
+    notifications = service.get_user_notifications(user_id)
+    return notifications
