@@ -50,6 +50,7 @@ Plans:
 
 Plans:
 - [x] 08-01: Touch target sizes
+- [x] 08-02: Swiper mobile optimization
 
 #### Phase 9: Visual Consistency
 
@@ -74,5 +75,5 @@ Plans:
 | 5. Person 4 Staff API | v1.0 | 2/2 | Complete | 2026-01-19 |
 | 6. Animations & Transitions | v1.1 | 2/2 | Complete | 2026-01-19 |
 | 7. Error Handling & Feedback | v1.1 | 2/2 | Complete | 2026-01-19 |
-| 8. Mobile Responsiveness | v1.1 | 1/? | In progress | - |
+| 8. Mobile Responsiveness | v1.1 | 2/3 | In progress | - |
 | 9. Visual Consistency | v1.1 | 0/? | Not started | - |
