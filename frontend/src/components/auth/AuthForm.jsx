@@ -6,6 +6,25 @@ import { ROLES, MEMBERSHIP_TYPES, MEMBERSHIP_LABELS } from '../../utils/constant
 import Button from '../shared/Button'
 import Input from '../shared/Input'
 
+// Validation functions
+const validateEmail = (email) => {
+  if (!email) return 'Email is required'
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Invalid email format'
+  return ''
+}
+
+const validatePassword = (password) => {
+  if (!password) return 'Password is required'
+  if (password.length < 6) return 'Password must be at least 6 characters'
+  return ''
+}
+
+const validateFullName = (name) => {
+  if (!name) return 'Full name is required'
+  if (name.trim().length < 2) return 'Name must be at least 2 characters'
+  return ''
+}
+
 export default function AuthForm({ mode = 'login' }) {
   const navigate = useNavigate()
   const { login, signup } = useAuth()
@@ -18,12 +37,54 @@ export default function AuthForm({ mode = 'login' }) {
     full_name: '',
     phone: ''
   })
+  const [errors, setErrors] = useState({})
+  const [touched, setTouched] = useState({})
 
   const handleChange = (e) => {
+    const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }))
+    // Clear error when user starts typing
+    if (touched[name]) {
+      validateField(name, value)
+    }
+  }
+
+  const validateField = (name, value) => {
+    let error = ''
+    switch (name) {
+      case 'email':
+        error = validateEmail(value)
+        break
+      case 'password':
+        error = validatePassword(value)
+        break
+      case 'full_name':
+        error = validateFullName(value)
+        break
+      default:
+        break
+    }
+    setErrors(prev => ({ ...prev, [name]: error }))
+    return error
+  }
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+    setTouched(prev => ({ ...prev, [name]: true }))
+    validateField(name, value)
+  }
+
+  const isFormValid = () => {
+    const emailError = validateEmail(formData.email)
+    const passwordError = validatePassword(formData.password)
+    if (mode === 'signup') {
+      const nameError = validateFullName(formData.full_name)
+      return !emailError && !passwordError && !nameError
+    }
+    return !emailError && !passwordError
   }
 
   const handleSubmit = async (e) => {
@@ -63,6 +124,9 @@ export default function AuthForm({ mode = 'login' }) {
             name="full_name"
             value={formData.full_name}
             onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.full_name}
+            touched={touched.full_name}
             required
           />
 
@@ -121,6 +185,9 @@ export default function AuthForm({ mode = 'login' }) {
         type="email"
         value={formData.email}
         onChange={handleChange}
+        onBlur={handleBlur}
+        error={errors.email}
+        touched={touched.email}
         required
       />
 
@@ -130,6 +197,9 @@ export default function AuthForm({ mode = 'login' }) {
         type="password"
         value={formData.password}
         onChange={handleChange}
+        onBlur={handleBlur}
+        error={errors.password}
+        touched={touched.password}
         required
         minLength={6}
       />
@@ -139,6 +209,7 @@ export default function AuthForm({ mode = 'login' }) {
         variant="primary"
         fullWidth
         loading={loading}
+        disabled={!isFormValid()}
       >
         {mode === 'login' ? 'Sign In' : 'Create Account'}
       </Button>
