@@ -22,16 +22,31 @@ async def get_available_activities(
 ):
     """
     Get activities available for volunteer matching
-    
+
     - Excludes activities volunteer is already matched to
     - Excludes past activities
     - Only shows activities with available spots
     """
-    # TODO: Query activities
-    # Filter out already matched
-    # Filter out past activities
-    # Return list for swiper
-    return []
+    from datetime import date
+    from app.db.models import Activity, VolunteerMatch
+    from app.core.enums import RegistrationStatus
+
+    # Get IDs of activities volunteer is already matched to
+    matched_activity_ids = db.query(VolunteerMatch.activity_id).filter(
+        VolunteerMatch.volunteer_id == current_user.id,
+        VolunteerMatch.status != RegistrationStatus.CANCELLED
+    ).all()
+    matched_ids = [m[0] for m in matched_activity_ids]
+
+    # Query future activities not already matched
+    query = db.query(Activity).filter(Activity.date >= date.today())
+
+    if matched_ids:
+        query = query.filter(~Activity.id.in_(matched_ids))
+
+    activities = query.order_by(Activity.date, Activity.start_time).all()
+
+    return activities
 
 
 @router.post("", response_model=VolunteerMatchResponse, status_code=status.HTTP_201_CREATED)
