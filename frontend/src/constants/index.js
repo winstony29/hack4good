@@ -18,6 +18,8 @@ export {
   CONFETTI_COLORS,
   TOAST_COLORS,
   NEUTRALS,
+  SWIPER_COLORS,
+  ANALYTICS_COLORS,
   getActivityTypeColors,
   getActivityTypeClasses,
 } from './colors';

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, MapPin, CalendarDays, List, Heart } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Calendar, Clock, MapPin, CalendarDays, List, Heart, Sparkles, ArrowRight } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import Button from '../shared/Button'
@@ -63,134 +64,300 @@ export default function VolunteerDashboard() {
 
   const pastMatches = matches.filter(m => m.activity && !isUpcoming(m.activity.date))
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  }
+
   return (
-    <div className="space-y-8">
-      {/* Welcome */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-8"
+    >
+      {/* Welcome Header */}
+      <motion.div variants={itemVariants}>
+        <h1 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 tracking-tight">
           Welcome, {user?.user_metadata?.full_name || 'Volunteer'}!
         </h1>
-        <p className="text-gray-600 mt-2">Thank you for making a difference</p>
-      </div>
+        <p className="text-gray-500 mt-2">Thank you for making a difference</p>
+      </motion.div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-          <CardBody>
-            <div className="flex items-center gap-3">
-              <Heart className="w-8 h-8 text-purple-600" />
-              <div>
-                <p className="text-2xl font-bold">{upcomingMatches.length}</p>
-                <p className="text-sm text-gray-600">Upcoming</p>
-              </div>
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Upcoming Card */}
+        <div
+          className="relative overflow-hidden rounded-2xl p-5"
+          style={{
+            background: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)',
+            boxShadow: '0 2px 15px -5px rgba(139, 92, 246, 0.15)'
+          }}
+        >
+          <div
+            className="absolute top-0 right-0 w-32 h-32 opacity-20"
+            style={{
+              background: 'radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.4) 0%, transparent 70%)'
+            }}
+          />
+          <div className="relative flex items-center gap-4">
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center"
+              style={{ background: 'rgba(139, 92, 246, 0.15)' }}
+            >
+              <Heart className="w-6 h-6 text-purple-600" />
             </div>
-          </CardBody>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
-          <CardBody>
-            <div className="flex items-center gap-3">
-              <Calendar className="w-8 h-8 text-green-600" />
-              <div>
-                <p className="text-2xl font-bold">{pastMatches.length}</p>
-                <p className="text-sm text-gray-600">Completed</p>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-          <CardBody>
-            <h3 className="font-semibold mb-2">Find Activities</h3>
-            <Button onClick={() => navigate('/activities')} variant="primary" size="sm">
-              Browse & Match
-            </Button>
-          </CardBody>
-        </Card>
-      </div>
-
-      {/* Schedule */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-semibold">My Schedule</h2>
-              <Badge variant="info">{upcomingMatches.length} upcoming</Badge>
-            </div>
-            <div className="flex gap-2">
-              <Button variant={viewMode === 'list' ? 'primary' : 'secondary'} size="sm" onClick={() => setViewMode('list')}>
-                <List className="w-4 h-4" />
-              </Button>
-              <Button variant={viewMode === 'calendar' ? 'primary' : 'secondary'} size="sm" onClick={() => setViewMode('calendar')}>
-                <CalendarDays className="w-4 h-4" />
-              </Button>
+            <div>
+              <p className="text-3xl font-bold text-purple-900">{upcomingMatches.length}</p>
+              <p className="text-sm text-purple-600 font-medium">Upcoming</p>
             </div>
           </div>
-        </CardHeader>
-        <CardBody>
-          {loading ? (
-            <div className="flex justify-center py-12"><Spinner size="lg" /></div>
-          ) : upcomingMatches.length === 0 ? (
-            <EmptyState
-              icon={Heart}
-              title="No volunteer commitments"
-              description="Browse activities and match with opportunities"
-              action={<Button onClick={() => navigate('/activities')} variant="primary">Find Activities</Button>}
-            />
-          ) : (
-            <>
-              {viewMode === 'calendar' && (
-                <ActivityMonthCalendar
-                  activities={upcomingMatches}
-                  onActivityClick={(a) => { setSelectedActivity(a); setIsModalOpen(true) }}
-                  userRole="volunteer"
-                />
-              )}
-              {viewMode === 'list' && (
-                <div className="space-y-4">
-                  {upcomingMatches.map((m) => (
-                    <Card key={m.id} className="hover:shadow-md transition-shadow">
-                      <CardBody>
-                        <div className="flex flex-col md:flex-row justify-between gap-4">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-semibold mb-2">{m.activity.title}</h3>
-                            <p className="text-gray-600 mb-4 line-clamp-2">{m.activity.description}</p>
-                            <div className="space-y-2 text-sm text-gray-600">
-                              <div className="flex items-center gap-2">
-                                <Calendar className="w-4 h-4" />
-                                <span>{formatDate(m.activity.date)}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Clock className="w-4 h-4" />
-                                <span>{formatTime(m.activity.start_time)} - {formatTime(m.activity.end_time)}</span>
-                              </div>
-                              {m.activity.location && (
+        </div>
+
+        {/* Completed Card */}
+        <div
+          className="relative overflow-hidden rounded-2xl p-5"
+          style={{
+            background: 'linear-gradient(135deg, #f4f9f4 0%, #e6f2e6 100%)',
+            boxShadow: '0 2px 15px -5px rgba(86, 150, 90, 0.15)'
+          }}
+        >
+          <div
+            className="absolute top-0 right-0 w-32 h-32 opacity-20"
+            style={{
+              background: 'radial-gradient(circle at 100% 0%, rgba(86, 150, 90, 0.4) 0%, transparent 70%)'
+            }}
+          />
+          <div className="relative flex items-center gap-4">
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center"
+              style={{ background: 'rgba(86, 150, 90, 0.15)' }}
+            >
+              <Calendar className="w-6 h-6 text-sage-600" />
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-sage-900">{pastMatches.length}</p>
+              <p className="text-sm text-sage-600 font-medium">Completed</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Discover Activities CTA */}
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          className="relative overflow-hidden rounded-2xl p-5 cursor-pointer"
+          onClick={() => navigate('/swiper')}
+          style={{
+            background: 'linear-gradient(135deg, #ff6b4a 0%, #f04d2e 100%)',
+            boxShadow: '0 4px 20px -5px rgba(255, 107, 74, 0.4)'
+          }}
+        >
+          {/* Decorative elements */}
+          <div
+            className="absolute top-0 right-0 w-40 h-40 opacity-20"
+            style={{
+              background: 'radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.4) 0%, transparent 60%)'
+            }}
+          />
+          <div
+            className="absolute bottom-0 left-0 w-24 h-24 opacity-10"
+            style={{
+              background: 'radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.5) 0%, transparent 70%)'
+            }}
+          />
+
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-5 h-5 text-white/90" />
+              <h3 className="font-display font-bold text-white">Discover Activities</h3>
+            </div>
+            <p className="text-white/80 text-sm mb-4">Swipe through opportunities and find your perfect match</p>
+            <div className="flex items-center gap-2 text-white font-semibold">
+              <span>Start Swiping</span>
+              <ArrowRight className="w-4 h-4" />
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Schedule Section */}
+      <motion.div variants={itemVariants}>
+        <div
+          className="rounded-3xl overflow-hidden"
+          style={{
+            background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+            boxShadow: '0 4px 30px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03)'
+          }}
+        >
+          <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">My Schedule</h2>
+                <span
+                  className="px-3 py-1 rounded-full text-sm font-semibold"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%)',
+                    color: '#7c3aed'
+                  }}
+                >
+                  {upcomingMatches.length} upcoming
+                </span>
+              </div>
+              <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`p-2 rounded-lg transition-all duration-200 ${
+                    viewMode === 'list'
+                      ? 'bg-white text-coral-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('calendar')}
+                  className={`p-2 rounded-lg transition-all duration-200 ${
+                    viewMode === 'calendar'
+                      ? 'bg-white text-coral-600 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  <CalendarDays className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 sm:p-8">
+            {loading ? (
+              <div className="flex justify-center py-16">
+                <div className="flex items-center gap-3 text-gray-500">
+                  <div className="w-5 h-5 border-2 border-coral-200 border-t-coral-500 rounded-full animate-spin" />
+                  <span>Loading schedule...</span>
+                </div>
+              </div>
+            ) : upcomingMatches.length === 0 ? (
+              <EmptyState
+                icon={Heart}
+                title="No volunteer commitments"
+                description="Swipe through activities to find your next opportunity"
+                action={
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => navigate('/swiper')}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-display font-semibold text-white"
+                    style={{
+                      background: 'linear-gradient(135deg, #ff6b4a 0%, #f04d2e 100%)'
+                    }}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Start Swiping
+                  </motion.button>
+                }
+              />
+            ) : (
+              <>
+                {viewMode === 'calendar' && (
+                  <ActivityMonthCalendar
+                    activities={upcomingMatches}
+                    onActivityClick={(a) => { setSelectedActivity(a); setIsModalOpen(true) }}
+                    userRole="volunteer"
+                  />
+                )}
+                {viewMode === 'list' && (
+                  <div className="space-y-4">
+                    {upcomingMatches.map((m) => (
+                      <motion.div
+                        key={m.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        whileHover={{ y: -2 }}
+                        className="rounded-2xl overflow-hidden"
+                        style={{
+                          background: '#ffffff',
+                          boxShadow: '0 2px 10px -3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.03)'
+                        }}
+                      >
+                        <div className="p-5 sm:p-6">
+                          <div className="flex flex-col md:flex-row justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="font-display font-bold text-xl text-gray-900 mb-2">
+                                {m.activity.title}
+                              </h3>
+                              <p className="text-gray-600 mb-4 line-clamp-2">{m.activity.description}</p>
+                              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                                 <div className="flex items-center gap-2">
-                                  <MapPin className="w-4 h-4" />
-                                  <span>{m.activity.location}</span>
+                                  <div className="w-8 h-8 rounded-lg bg-coral-50 flex items-center justify-center">
+                                    <Calendar className="w-4 h-4 text-coral-500" />
+                                  </div>
+                                  <span>{formatDate(m.activity.date)}</span>
                                 </div>
-                              )}
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-lg bg-sage-50 flex items-center justify-center">
+                                    <Clock className="w-4 h-4 text-sage-600" />
+                                  </div>
+                                  <span>{formatTime(m.activity.start_time)} - {formatTime(m.activity.end_time)}</span>
+                                </div>
+                                {m.activity.location && (
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-navy-50 flex items-center justify-center">
+                                      <MapPin className="w-4 h-4 text-navy-500" />
+                                    </div>
+                                    <span>{m.activity.location}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex flex-row md:flex-col gap-2 md:items-end">
+                              <span
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold"
+                                style={{
+                                  background: 'linear-gradient(135deg, rgba(86, 150, 90, 0.1) 0%, rgba(86, 150, 90, 0.05) 100%)',
+                                  color: '#38623b'
+                                }}
+                              >
+                                <Heart className="w-3.5 h-3.5" fill="currentColor" />
+                                Volunteering
+                              </span>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => { setSelectedActivity(m.activity); setIsModalOpen(true) }}
+                                  className="px-4 py-2 rounded-xl text-sm font-medium text-gray-700
+                                             bg-gray-100 hover:bg-gray-200 transition-colors"
+                                >
+                                  Details
+                                </button>
+                                <button
+                                  onClick={() => handleCancelMatch(m.id)}
+                                  disabled={cancellingId === m.id}
+                                  className="px-4 py-2 rounded-xl text-sm font-medium text-coral-700
+                                             bg-coral-50 hover:bg-coral-100 transition-colors
+                                             disabled:opacity-50"
+                                >
+                                  {cancellingId === m.id ? 'Cancelling...' : 'Cancel'}
+                                </button>
+                              </div>
                             </div>
                           </div>
-                          <div className="flex flex-col gap-2">
-                            <Badge variant="success"><Heart className="w-3 h-3 mr-1" />Volunteering</Badge>
-                            <Button variant="secondary" size="sm" onClick={() => { setSelectedActivity(m.activity); setIsModalOpen(true) }}>
-                              Details
-                            </Button>
-                            <Button variant="danger" size="sm" onClick={() => handleCancelMatch(m.id)} loading={cancellingId === m.id}>
-                              Cancel
-                            </Button>
-                          </div>
                         </div>
-                      </CardBody>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </CardBody>
-      </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      </motion.div>
 
       {selectedActivity && (
         <ActivityDetailModal
@@ -200,6 +367,6 @@ export default function VolunteerDashboard() {
           action="view"
         />
       )}
-    </div>
+    </motion.div>
   )
 }

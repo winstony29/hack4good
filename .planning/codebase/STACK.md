@@ -5,93 +5,105 @@
 ## Languages
 
 **Primary:**
-- Python 3.x - Backend API (`backend/app/`)
-- JavaScript (ES6+) - Frontend React application (`frontend/src/`)
+- JavaScript (ES6+) - All frontend application code
+- Python 3.x - All backend application code
 
 **Secondary:**
-- SQL - Database migrations and schema (`backend/sql/`)
+- CSS - Styling via Tailwind CSS
+- HTML - JSX templates
 
 ## Runtime
 
-**Environment:**
-- Python 3.x with FastAPI for backend
-- Node.js for frontend development and build tooling
-- Vite dev server on port 5173
+**Frontend Environment:**
+- Node.js (no version constraint in `package.json`)
+- Vite 5.0.8 dev server (port 5173)
 
-**Package Manager:**
-- pip with `requirements.txt` (`backend/requirements.txt`)
-- npm with `package-lock.json` (`frontend/package.json`)
+**Backend Environment:**
+- Python 3.x with FastAPI/Uvicorn (port 8000)
+- ASGI server for async request handling
+
+**Package Managers:**
+- npm (frontend) - Lockfile: `frontend/package-lock.json`
+- pip (backend) - Requirements: `backend/requirements.txt`
 
 ## Frameworks
 
-**Core:**
-- FastAPI 0.104.1 - Python web framework for REST API (`backend/app/main.py`)
-- React 18.2.0 - Frontend UI framework (`frontend/src/`)
-- SQLAlchemy 2.0.23 - Python ORM (`backend/app/db/`)
+**Frontend Core:**
+- React 18.2.0 - UI framework (`frontend/package.json`)
+- React Router DOM 6.20.1 - Client-side routing (`frontend/src/App.jsx`)
+- Vite 5.0.8 - Build tool and dev server (`frontend/vite.config.js`)
+
+**Backend Core:**
+- FastAPI 0.104.1 - Web framework (`backend/requirements.txt`)
+- Uvicorn 0.24.0 - ASGI server (`backend/requirements.txt`)
+- SQLAlchemy 2.0.23 - ORM (`backend/app/db/models.py`)
+- Alembic 1.12.1 - Database migrations (`backend/requirements.txt`)
 
 **Testing:**
-- Vitest 4.0.17 - Frontend unit tests (`frontend/src/**/*.test.jsx`)
-- Playwright 1.57.0 - E2E testing (`frontend/`)
-- Pytest 7.4.3 - Backend unit/integration tests (`backend/tests/`)
-- React Testing Library 16.3.1 - React component testing
+- Vitest 4.0.17 - Unit tests (`frontend/vitest.config.js`)
+- React Testing Library 16.3.1 - Component testing (`frontend/package.json`)
+- Playwright 1.57.0 - E2E tests (`frontend/playwright.config.js`)
+- Pytest 7.4.3 - Backend tests (`backend/requirements.txt`)
 
 **Build/Dev:**
-- Vite 5.0.8 - Frontend bundler (`frontend/vite.config.js`)
-- Uvicorn 0.24.0 - ASGI server for FastAPI
-- Tailwind CSS 3.4.0 - Utility-first CSS (`frontend/tailwind.config.js`)
+- Vite with @vitejs/plugin-react 4.2.1 (`frontend/vite.config.js`)
+- ESLint 8.55.0 - Linting (`frontend/package.json`)
+- Tailwind CSS 3.4.0 - Styling (`frontend/tailwind.config.js`)
+- PostCSS with Autoprefixer (`frontend/postcss.config.js`)
 
 ## Key Dependencies
 
-**Critical:**
-- @supabase/supabase-js 2.38.5 - Frontend Supabase client (`frontend/src/services/supabase.js`)
-- supabase 2.0.0 - Backend Supabase SDK
-- axios 1.6.2 - HTTP client for API calls (`frontend/src/services/api.js`)
-- react-router-dom 6.20.1 - Client-side routing
-- pydantic-settings 2.1.0 - Backend configuration management (`backend/app/core/config.py`)
+**Frontend Critical:**
+- @supabase/supabase-js 2.38.5 - Auth and database client (`frontend/src/services/supabase.js`)
+- axios 1.6.2 - HTTP client (`frontend/src/services/api.js`)
+- framer-motion 10.16.16 - Animations (`frontend/src/components/layout/PageTransition.jsx`)
+- @fullcalendar/react 6.1.10 - Event calendar (`frontend/src/components/activities/ActivityCalendar.jsx`)
+- recharts 2.10.3 - Charts (`frontend/src/components/staff/AnalyticsCharts.jsx`)
+- lucide-react 0.294.0 - Icons
+- react-hot-toast 2.4.1 - Toast notifications
+- canvas-confetti 1.9.4 - Celebration effects
+
+**Backend Critical:**
+- pydantic-settings 2.1.0 - Settings management (`backend/app/core/config.py`)
+- python-jose 3.3.0 - JWT handling (`backend/app/core/auth.py`)
+- passlib 1.7.4 - Password hashing (`backend/requirements.txt`)
+- supabase 2.0.0 - Auth integration (`backend/requirements.txt`)
+- httpx 0.25.2 - Async HTTP client (`backend/requirements.txt`)
 
 **Infrastructure:**
-- python-jose 3.3.0 - JWT token handling
-- passlib 1.7.4 - Password hashing
-- alembic 1.12.1 - Database migrations
-
-**UI:**
-- @fullcalendar/react 6.1.10 - Activity calendar component
-- framer-motion 10.16.16 - Animations
-- lucide-react 0.294.0 - Icon library
-- react-hot-toast 2.4.1 - Toast notifications
-- recharts 2.10.3 - Charts for analytics
-
-**Accessibility/Integrations:**
-- twilio 8.10.0 - SMS/WhatsApp notifications
-- elevenlabs 0.2.26 - Text-to-speech
-- google-cloud-translate 3.12.1 - Translation services
+- PostgreSQL - Primary database (via SQLAlchemy)
+- Supabase - Authentication provider
 
 ## Configuration
 
-**Environment:**
-- `.env` files for both frontend and backend (gitignored)
-- `backend/.env.example` - Backend env template
-- Key vars: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `JWT_SECRET_KEY`
-- Frontend vars via `VITE_*` prefix (`VITE_SUPABASE_URL`, `VITE_API_BASE_URL`)
+**Frontend Environment:**
+- `.env` files with `VITE_` prefix (`frontend/.env.example`)
+- Key vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_API_BASE_URL`, `VITE_USE_MOCK_DATA`
 
-**Build:**
-- `frontend/vite.config.js` - Vite configuration with proxy to backend
-- `frontend/tailwind.config.js` - Tailwind CSS configuration
-- `frontend/postcss.config.js` - PostCSS configuration
-- `backend/pytest.ini` - Pytest configuration
+**Backend Environment:**
+- `.env` files loaded via python-dotenv (`backend/.env.example`)
+- Key vars: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `JWT_SECRET_KEY`
+- Optional: `ELEVENLABS_API_KEY`, `TWILIO_*`, `GOOGLE_*` credentials
+
+**Build Configuration:**
+- `frontend/vite.config.js` - Vite with API proxy to backend
+- `frontend/tailwind.config.js` - Custom primary color palette, Inter font
+- `frontend/vitest.config.js` - Test configuration with jsdom
+- `frontend/playwright.config.js` - E2E test configuration
 
 ## Platform Requirements
 
 **Development:**
-- Any platform (Windows, macOS, Linux)
-- Python 3.x with pip
-- Node.js with npm
-- PostgreSQL database (local or Supabase)
+- Node.js (any recent LTS version)
+- Python 3.x
+- PostgreSQL (or use Supabase hosted)
+- Any platform (Windows/macOS/Linux)
 
 **Production:**
-- Backend: Any platform supporting Python/FastAPI
 - Frontend: Static hosting (Vercel, Netlify, etc.)
-- Database: Supabase (PostgreSQL)
+- Backend: Python ASGI hosting (Railway, Render, AWS Lambda)
+- Database: PostgreSQL (Supabase recommended)
+- External services: Supabase Auth, optional Twilio/ElevenLabs/Google Cloud
 
 ---
 

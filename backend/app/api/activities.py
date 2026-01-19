@@ -62,7 +62,7 @@ async def get_activities(
 ):
     """
     Get list of activities with optional filters
-    
+
     - **date_filter**: Filter activities by specific date
     - **program_type**: Filter by program type
     - **skip**: Number of records to skip (pagination)
@@ -108,7 +108,7 @@ async def create_activity(
 ):
     """
     Create a new activity (Staff only)
-    
+
     Validates:
     - Start time is before end time
     - Date is in the future

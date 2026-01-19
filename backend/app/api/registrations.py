@@ -2,21 +2,24 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from typing import List
 from uuid import UUID
+import logging
 
 from app.core.auth import get_current_user
 from app.core.deps import get_db
 from app.core.enums import Role, RegistrationStatus
 from app.db.models import Registration, Activity, User
 from app.models.registration import (
-    RegistrationCreate, 
-    RegistrationResponse, 
+    RegistrationCreate,
+    RegistrationResponse,
     RegistrationWithActivity
 )
 from app.models.activity import ActivityResponse, StaffContactInfo
 from app.services.registration_service import RegistrationService, ConflictError
+from app.services.activity_service import ActivityService
 from app.services.notification_service import NotificationService
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 def _build_activity_response(activity: Activity, db: Session) -> ActivityResponse:
@@ -64,13 +67,13 @@ async def register_for_activity(
 ):
     """
     Register current user for an activity
-    
+
     Validates:
     - Activity exists and is not full
     - User hasn't already registered
     - No time conflicts with other registrations
     - Membership limits not exceeded (for participants)
-    
+
     Returns 409 Conflict if validation fails
     """
     # Check activity exists
@@ -93,8 +96,9 @@ async def register_for_activity(
     )
     db.add(db_registration)
     
-    # Increment activity participant count
-    activity.current_participants += 1
+    # Increment participant count using service
+    activity_service = ActivityService(db)
+    activity_service.increment_participants(registration.activity_id)
     
     db.commit()
     db.refresh(db_registration)
@@ -107,7 +111,7 @@ async def register_for_activity(
             activity_id=registration.activity_id
         )
     except Exception as e:
-        print(f"Failed to send notification: {e}")
+        logger.warning(f"Failed to send registration notification: {e}")
     
     return db_registration
 
@@ -150,7 +154,7 @@ async def get_user_registrations(
 ):
     """
     Get all registrations for a specific user
-    
+
     Users can only view their own registrations unless they are staff
     """
     # Authorization check
@@ -187,21 +191,19 @@ async def get_activity_registrations(
 ):
     """
     Get all registrations for a specific activity
-    
+
     Returns list of users registered for the activity
     """
     # Verify activity exists
     activity = db.query(Activity).filter(Activity.id == activity_id).first()
     if not activity:
         raise HTTPException(status_code=404, detail="Activity not found")
-    
-    registrations = (
-        db.query(Registration)
-        .filter(Registration.activity_id == activity_id)
-        .order_by(Registration.created_at.desc())
-        .all()
-    )
-    
+
+    registrations = db.query(Registration).filter(
+        Registration.activity_id == activity_id,
+        Registration.status == RegistrationStatus.CONFIRMED
+    ).all()
+
     return registrations
 
 
@@ -213,7 +215,7 @@ async def cancel_registration(
 ):
     """
     Cancel a registration
-    
+
     - Updates status to 'cancelled'
     - Decrements activity participant count
     - Sends cancellation notification
@@ -231,14 +233,15 @@ async def cancel_registration(
     if registration.status == RegistrationStatus.CANCELLED:
         raise HTTPException(status_code=400, detail="Registration already cancelled")
     
-    # Update status
+    # Store for notification before committing
     activity_id = registration.activity_id
+    
+    # Update status
     registration.status = RegistrationStatus.CANCELLED
     
-    # Decrement activity participant count
-    activity = db.query(Activity).filter(Activity.id == activity_id).first()
-    if activity and activity.current_participants > 0:
-        activity.current_participants -= 1
+    # Decrement participant count using service
+    activity_service = ActivityService(db)
+    activity_service.decrement_participants(activity_id)
     
     db.commit()
     
@@ -250,6 +253,6 @@ async def cancel_registration(
             activity_id=activity_id
         )
     except Exception as e:
-        print(f"Failed to send cancellation notification: {e}")
+        logger.warning(f"Failed to send cancellation notification: {e}")
     
     return None
