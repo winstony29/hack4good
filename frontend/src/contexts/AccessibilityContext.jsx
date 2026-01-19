@@ -29,11 +29,8 @@ export function AccessibilityProvider({ children }) {
   useEffect(() => {
     document.documentElement.className = `font-${fontSize} contrast-${contrast}`
     localStorage.setItem('fontSize', fontSize)
-  }, [fontSize])
-
-  useEffect(() => {
     localStorage.setItem('contrast', contrast)
-  }, [contrast])
+  }, [fontSize, contrast])
 
   useEffect(() => {
     localStorage.setItem('language', language)

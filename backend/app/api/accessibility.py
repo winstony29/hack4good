@@ -5,6 +5,11 @@ from pydantic import BaseModel
 from app.core.auth import get_current_user
 from app.core.deps import get_db
 from app.integrations.elevenlabs_client import get_elevenlabs_client
+from app.integrations.google_translate import (
+    get_google_translate_client,
+    GoogleTranslateClient,
+    SUPPORTED_LANGUAGES
+)
 
 router = APIRouter()
 
@@ -75,17 +80,59 @@ async def translate_text(
 ):
     """
     Translate text using Google Translate
-    
+
     - **text**: Text to translate
     - **source_language**: Source language code
     - **target_language**: Target language code
-    
+
     Supported: en (English), zh (Mandarin), ms (Malay), ta (Tamil)
     """
-    # TODO: Call Google Translate API
-    # Translate text
-    # Return translated text
-    raise HTTPException(status_code=501, detail="Translation not implemented yet")
+    # Validate input
+    if not request.text or not request.text.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Text cannot be empty"
+        )
+
+    # Validate language codes
+    if request.source_language not in SUPPORTED_LANGUAGES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported source language. Supported: {', '.join(SUPPORTED_LANGUAGES)}"
+        )
+
+    if request.target_language not in SUPPORTED_LANGUAGES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported target language. Supported: {', '.join(SUPPORTED_LANGUAGES)}"
+        )
+
+    # Truncate very long text
+    text = request.text.strip()
+    if len(text) > 10000:
+        text = text[:10000]
+
+    # Return original if same language
+    if request.source_language == request.target_language:
+        return TranslationResponse(
+            translated_text=text,
+            source_language=request.source_language,
+            target_language=request.target_language
+        )
+
+    # Translate using Google Translate client
+    client = get_google_translate_client()
+    translated_text = client.translate(
+        text=text,
+        source_language=request.source_language,
+        target_language=request.target_language
+    )
+
+    return TranslationResponse(
+        translated_text=translated_text,
+        source_language=request.source_language,
+        target_language=request.target_language
+    )
 
 
 @router.get("/languages")

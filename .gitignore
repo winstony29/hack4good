@@ -40,6 +40,9 @@ yarn-error.log*
 .coverage
 htmlcov/
 .tox/
+test-results/
+playwright-report/
+playwright/.cache/
 
 # Database
 *.db
@@ -50,6 +53,8 @@ htmlcov/
 .cache/
 tmp/
 temp/
+nul
 
 # Claude
-.claude/.planning/
+.claude/
+.planning/

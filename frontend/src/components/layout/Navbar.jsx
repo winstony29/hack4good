@@ -1,16 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Menu, X, User, LogOut, Settings } from 'lucide-react'
+import { Menu, X, User, LogOut, Settings, Accessibility } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useAccessibility } from '../../contexts/AccessibilityContext'
 import toast from 'react-hot-toast'
 import Button from '../shared/Button'
+import AccessibilityMenu from '../accessibility/AccessibilityMenu'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
   const { language } = useAccessibility()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [accessibilityMenuOpen, setAccessibilityMenuOpen] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -38,6 +40,15 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
+            {/* Accessibility Button - always visible */}
+            <button
+              onClick={() => setAccessibilityMenuOpen(true)}
+              className="p-2 text-gray-700 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="Accessibility settings"
+            >
+              <Accessibility size={20} />
+            </button>
+
             {user ? (
               <>
                 <Link
@@ -86,13 +97,22 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            className="md:hidden text-gray-700"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile: Accessibility + Menu buttons */}
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              onClick={() => setAccessibilityMenuOpen(true)}
+              className="p-2 text-gray-700 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors"
+              aria-label="Accessibility settings"
+            >
+              <Accessibility size={20} />
+            </button>
+            <button
+              className="text-gray-700"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
@@ -158,6 +178,12 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {/* Accessibility Menu Modal */}
+      <AccessibilityMenu
+        isOpen={accessibilityMenuOpen}
+        onClose={() => setAccessibilityMenuOpen(false)}
+      />
     </nav>
   )
 }

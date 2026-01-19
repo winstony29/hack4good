@@ -1,9 +1,12 @@
 import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import { TrendingUp, Users, Calendar, Award } from 'lucide-react'
+import AnalyticsCharts from '../staff/AnalyticsCharts'
+import { getDashboardMetrics } from '../../mocks/analytics.mock'
 
 export default function StaffDashboard() {
   const { user } = useAuth()
+  const metrics = getDashboardMetrics()
 
   return (
     <div className="space-y-8">
@@ -19,25 +22,25 @@ export default function StaffDashboard() {
         <StatsCard
           icon={<Calendar className="w-6 h-6" />}
           title="Total Activities"
-          value="0"
+          value={metrics.totalActivities.toString()}
           color="bg-blue-500"
         />
         <StatsCard
           icon={<Users className="w-6 h-6" />}
           title="Total Registrations"
-          value="0"
+          value={metrics.totalRegistrations.toString()}
           color="bg-green-500"
         />
         <StatsCard
           icon={<Award className="w-6 h-6" />}
           title="Active Volunteers"
-          value="0"
+          value={metrics.activeVolunteers.toString()}
           color="bg-purple-500"
         />
         <StatsCard
           icon={<TrendingUp className="w-6 h-6" />}
           title="Volunteer Coverage"
-          value="0%"
+          value={`${metrics.volunteerCoverage}%`}
           color="bg-amber-500"
         />
       </div>
@@ -50,10 +53,7 @@ export default function StaffDashboard() {
           </h2>
         </CardHeader>
         <CardBody>
-          {/* TODO: Implement AnalyticsCharts */}
-          <div className="py-12 text-center text-gray-500">
-            Charts and analytics will be displayed here
-          </div>
+          <AnalyticsCharts />
         </CardBody>
       </Card>
 
