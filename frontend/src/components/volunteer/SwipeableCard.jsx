@@ -2,7 +2,7 @@ import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motio
 import ActivityCard from '../activities/ActivityCard'
 import { useAccessibility } from '../../contexts/AccessibilityContext'
 
-const swipeConfidenceThreshold = 100
+const swipeConfidenceThreshold = 80
 
 export default function SwipeableCard({
   activity,
@@ -93,13 +93,13 @@ export default function SwipeableCard({
       {isTop && (
         <>
           <motion.div
-            className="absolute top-8 left-8 bg-red-500 text-white px-6 py-2 rounded-lg font-bold text-xl z-20 rotate-[-15deg]"
+            className="absolute top-4 left-4 sm:top-8 sm:left-8 bg-red-500 text-white px-4 py-1.5 text-lg sm:px-6 sm:py-2 sm:text-xl rounded-lg font-bold z-20 rotate-[-15deg]"
             style={{ opacity: passOpacity }}
           >
             PASS
           </motion.div>
           <motion.div
-            className="absolute top-8 right-8 bg-green-500 text-white px-6 py-2 rounded-lg font-bold text-xl z-20 rotate-[15deg]"
+            className="absolute top-4 right-4 sm:top-8 sm:right-8 bg-green-500 text-white px-4 py-1.5 text-lg sm:px-6 sm:py-2 sm:text-xl rounded-lg font-bold z-20 rotate-[15deg]"
             style={{ opacity: matchOpacity }}
           >
             MATCH!
