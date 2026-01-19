@@ -10,6 +10,7 @@ import Landing from './pages/Landing'
 import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard'
 import Activities from './pages/Activities'
+import Swiper from './pages/Swiper'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/activities" element={<Activities />} />
+            <Route path="/swiper" element={<Swiper />} />
             <Route
               path="/dashboard"
               element={
