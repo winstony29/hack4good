@@ -90,10 +90,31 @@ export function AuthProvider({ children }) {
       setUser(null)
       return
     }
-    
+
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     setUser(null)
+  }
+
+  const updateUser = async (userData) => {
+    if (USE_MOCK_DATA) {
+      // Mock update - update local state
+      const updatedUser = {
+        ...user,
+        user_metadata: { ...user.user_metadata, ...userData }
+      }
+      setUser(updatedUser)
+      console.log('Mock profile update:', userData)
+      return { user: updatedUser }
+    }
+
+    const { data, error } = await supabase.auth.updateUser({
+      data: userData
+    })
+
+    if (error) throw error
+    setUser(data.user)
+    return data
   }
 
   const value = {
@@ -101,7 +122,8 @@ export function AuthProvider({ children }) {
     loading,
     signup,
     login,
-    logout
+    logout,
+    updateUser
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
