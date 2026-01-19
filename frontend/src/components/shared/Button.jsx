@@ -1,4 +1,6 @@
+import { motion } from 'framer-motion'
 import Spinner from './Spinner'
+import { useAccessibility } from '../../contexts/AccessibilityContext'
 
 export default function Button({
   children,
@@ -11,6 +13,8 @@ export default function Button({
   onClick,
   ...props
 }) {
+  const { reduceMotion } = useAccessibility()
+
   const variants = {
     primary: 'bg-primary-600 hover:bg-primary-700 text-white',
     secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
@@ -26,11 +30,21 @@ export default function Button({
     large: 'px-6 py-3 text-lg'
   }
 
+  // Motion config - instant transitions when reduceMotion is enabled
+  const transition = reduceMotion
+    ? { type: 'tween', duration: 0.01 }
+    : { type: 'spring', stiffness: 400, damping: 25 }
+
+  const isDisabled = disabled || loading
+
   return (
-    <button
+    <motion.button
       type={type}
       onClick={onClick}
-      disabled={disabled || loading}
+      disabled={isDisabled}
+      whileHover={!isDisabled && !reduceMotion ? { scale: 1.02 } : undefined}
+      whileTap={!isDisabled ? { scale: 0.97 } : undefined}
+      transition={transition}
       className={`
         ${variants[variant]}
         ${sizes[size]}
@@ -46,6 +60,6 @@ export default function Button({
     >
       {loading && <Spinner size="small" />}
       {children}
-    </button>
+    </motion.button>
   )
 }
