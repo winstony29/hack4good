@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion'
 import ActivityCard from '../activities/ActivityCard'
+import { useAccessibility } from '../../contexts/AccessibilityContext'
 
 const swipeConfidenceThreshold = 100
 
@@ -9,8 +10,12 @@ export default function SwipeableCard({
   isTop = false,
   stackIndex = 0
 }) {
+  const { reduceMotion } = useAccessibility()
   const controls = useAnimation()
   const x = useMotionValue(0)
+
+  // Animation duration based on accessibility preference
+  const animDuration = reduceMotion ? 0.01 : 0.3
 
   // Rotate card based on drag position
   const rotate = useTransform(x, [-200, 0, 200], [-15, 0, 15])
@@ -33,7 +38,7 @@ export default function SwipeableCard({
         x: -400,
         opacity: 0,
         rotate: -20,
-        transition: { duration: 0.3 }
+        transition: { duration: animDuration }
       })
       onSwipe('left')
     } else if (swipePower > swipeConfidenceThreshold * 100 || offset.x > swipeConfidenceThreshold) {
@@ -42,12 +47,15 @@ export default function SwipeableCard({
         x: 400,
         opacity: 0,
         rotate: 20,
-        transition: { duration: 0.3 }
+        transition: { duration: animDuration }
       })
       onSwipe('right')
     } else {
-      // Snap back to center
-      controls.start({ x: 0, rotate: 0, transition: { type: 'spring', stiffness: 500, damping: 30 } })
+      // Snap back to center - use instant transition if reduceMotion
+      const snapBackTransition = reduceMotion
+        ? { type: 'tween', duration: 0.01 }
+        : { type: 'spring', stiffness: 500, damping: 30 }
+      controls.start({ x: 0, rotate: 0, transition: snapBackTransition })
     }
   }
 
@@ -60,7 +68,7 @@ export default function SwipeableCard({
       x: xTarget,
       opacity: 0,
       rotate: rotateTarget,
-      transition: { duration: 0.3 }
+      transition: { duration: animDuration }
     })
     onSwipe(direction)
   }
