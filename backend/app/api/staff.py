@@ -6,6 +6,7 @@ from datetime import date
 
 from app.core.auth import get_current_staff
 from app.core.deps import get_db
+from app.services.analytics_service import AnalyticsService
 
 router = APIRouter()
 
@@ -17,7 +18,7 @@ async def get_analytics(
 ):
     """
     Get dashboard analytics
-    
+
     Returns:
     - Total activities count
     - Total registrations count
@@ -26,18 +27,21 @@ async def get_analytics(
     - Popular programs
     - Registration trends
     """
-    # TODO: Calculate metrics
-    # - Count activities (total, upcoming, past)
-    # - Count registrations (active, cancelled)
-    # - Calculate volunteer coverage
-    # - Identify trends
+    analytics_service = AnalyticsService(db)
+
+    # Get base metrics from service
+    metrics = analytics_service.get_dashboard_metrics()
+
+    # Get weekly trends for chart data
+    weekly_trends = analytics_service.get_weekly_trends()
+
     return {
-        "total_activities": 0,
-        "total_registrations": 0,
-        "total_volunteers": 0,
-        "volunteer_coverage": 0.0,
-        "upcoming_activities": 0,
-        "weekly_registrations": []
+        "total_activities": metrics["total_activities"],
+        "total_registrations": metrics["total_registrations"],
+        "total_volunteers": metrics["total_volunteers"],
+        "volunteer_coverage": metrics["volunteer_coverage"],
+        "upcoming_activities": metrics["upcoming_activities"],
+        "weekly_registrations": weekly_trends
     }
 
 
