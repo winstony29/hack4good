@@ -5,23 +5,112 @@
 
 import { mockActivities, ACTIVITY_UUIDS } from './activities.mock'
 
+// Mock users for testing with registrations
+const mockUsers = [
+  {
+    id: 'user-1',
+    full_name: 'John Doe',
+    email: 'john.doe@example.com',
+    phone: '+65 9123 4567',
+    caregiver_phone: '+65 8123 4567',
+    wheelchair_required: true,
+    role: 'participant'
+  },
+  {
+    id: 'user-2',
+    full_name: 'Jane Smith',
+    email: 'jane.smith@example.com',
+    phone: '+65 9234 5678',
+    caregiver_phone: null,
+    wheelchair_required: false,
+    role: 'participant'
+  },
+  {
+    id: 'user-3',
+    full_name: 'Michael Chen',
+    email: 'michael.chen@example.com',
+    phone: '+65 9345 6789',
+    caregiver_phone: '+65 8234 5678',
+    wheelchair_required: true,
+    role: 'participant'
+  },
+  {
+    id: 'user-4',
+    full_name: 'Sarah Lee',
+    email: 'sarah.lee@example.com',
+    phone: '+65 9456 7890',
+    caregiver_phone: null,
+    wheelchair_required: false,
+    role: 'participant'
+  },
+  {
+    id: 'user-5',
+    full_name: 'David Tan',
+    email: 'david.tan@example.com',
+    phone: '+65 9567 8901',
+    caregiver_phone: '+65 8345 6789',
+    wheelchair_required: false,
+    role: 'participant'
+  }
+]
+
 // In-memory registrations store
 let mockRegistrations = [
   {
     id: 'reg-1',
     user_id: 'user-1',
-    activity_id: ACTIVITY_UUIDS[1], // Morning Yoga
+    activity_id: ACTIVITY_UUIDS[0], // Morning Yoga
     status: 'confirmed',
     created_at: '2026-01-18T10:00:00Z',
     updated_at: '2026-01-18T10:00:00Z'
   },
   {
     id: 'reg-2',
-    user_id: 'user-1',
-    activity_id: ACTIVITY_UUIDS[13], // Past board games
+    user_id: 'user-2',
+    activity_id: ACTIVITY_UUIDS[0], // Morning Yoga
     status: 'confirmed',
-    created_at: '2026-01-14T10:00:00Z',
-    updated_at: '2026-01-14T10:00:00Z'
+    created_at: '2026-01-18T10:00:00Z',
+    updated_at: '2026-01-18T10:00:00Z'
+  },
+  {
+    id: 'reg-3',
+    user_id: 'user-3',
+    activity_id: ACTIVITY_UUIDS[1], // Arts & Crafts
+    status: 'confirmed',
+    created_at: '2026-01-18T11:00:00Z',
+    updated_at: '2026-01-18T11:00:00Z'
+  },
+  {
+    id: 'reg-4',
+    user_id: 'user-4',
+    activity_id: ACTIVITY_UUIDS[1], // Arts & Crafts
+    status: 'confirmed',
+    created_at: '2026-01-18T11:00:00Z',
+    updated_at: '2026-01-18T11:00:00Z'
+  },
+  {
+    id: 'reg-5',
+    user_id: 'user-5',
+    activity_id: ACTIVITY_UUIDS[1], // Arts & Crafts
+    status: 'confirmed',
+    created_at: '2026-01-18T11:00:00Z',
+    updated_at: '2026-01-18T11:00:00Z'
+  },
+  {
+    id: 'reg-6',
+    user_id: 'user-1',
+    activity_id: ACTIVITY_UUIDS[4], // Swimming
+    status: 'confirmed',
+    created_at: '2026-01-19T10:00:00Z',
+    updated_at: '2026-01-19T10:00:00Z'
+  },
+  {
+    id: 'reg-7',
+    user_id: 'user-2',
+    activity_id: ACTIVITY_UUIDS[4], // Swimming
+    status: 'confirmed',
+    created_at: '2026-01-19T10:00:00Z',
+    updated_at: '2026-01-19T10:00:00Z'
   }
 ]
 
@@ -38,6 +127,21 @@ export const getRegistrations = (userId = 'user-1') => {
         activity
       }
     })
+}
+
+/**
+ * Get ALL registrations (for staff) with activity and user details
+ */
+export const getAllRegistrations = () => {
+  return mockRegistrations.map(reg => {
+    const activity = mockActivities.find(a => a.id === reg.activity_id)
+    const user = mockUsers.find(u => u.id === reg.user_id)
+    return {
+      ...reg,
+      activity,
+      user
+    }
+  })
 }
 
 /**
@@ -111,18 +215,20 @@ export const resetRegistrations = () => {
     {
       id: 'reg-1',
       user_id: 'user-1',
-      activity_id: ACTIVITY_UUIDS[1],
+      activity_id: ACTIVITY_UUIDS[0],
       status: 'confirmed',
       created_at: '2026-01-18T10:00:00Z',
       updated_at: '2026-01-18T10:00:00Z'
     },
     {
       id: 'reg-2',
-      user_id: 'user-1',
-      activity_id: ACTIVITY_UUIDS[13],
+      user_id: 'user-2',
+      activity_id: ACTIVITY_UUIDS[0],
       status: 'confirmed',
-      created_at: '2026-01-14T10:00:00Z',
-      updated_at: '2026-01-14T10:00:00Z'
+      created_at: '2026-01-18T10:00:00Z',
+      updated_at: '2026-01-18T10:00:00Z'
     }
   ]
 }
+
+export { mockUsers }

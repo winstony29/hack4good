@@ -1,15 +1,44 @@
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import { TrendingUp, Users, Calendar, Award, ArrowUpRight, BarChart3 } from 'lucide-react'
 import AnalyticsCharts from '../staff/AnalyticsCharts'
 import ActivityManager from '../staff/ActivityManager'
+import WeeklyTimetable from '../staff/WeeklyTimetable'
+import Spinner from '../shared/Spinner'
 import { getDashboardMetrics } from '../../mocks/analytics.mock'
+import { activitiesApi } from '../../services/activities.api'
+import { registrationsApi } from '../../services/registrations.api'
 import { ANALYTICS_COLORS } from '../../constants'
 
 export default function StaffDashboard() {
   const { user } = useAuth()
   const metrics = getDashboardMetrics()
+  const [activities, setActivities] = useState([])
+  const [registrations, setRegistrations] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      const [activitiesResponse, registrationsResponse] = await Promise.all([
+        activitiesApi.getAll(),
+        registrationsApi.getAll()
+      ])
+      
+      setActivities(activitiesResponse.data || [])
+      setRegistrations(registrationsResponse.data || [])
+    } catch (error) {
+      console.error('Failed to fetch data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -155,6 +184,45 @@ export default function StaffDashboard() {
       {/* Activity Management Section */}
       <motion.div variants={itemVariants}>
         <ActivityManager />
+      </motion.div>
+
+      {/* Weekly Timetable Section */}
+      <motion.div variants={itemVariants}>
+        <div
+          className="rounded-3xl overflow-hidden"
+          style={{
+            background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
+            boxShadow: '0 4px 30px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03)'
+          }}
+        >
+          <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: 'rgba(98, 113, 241, 0.1)' }}
+              >
+                <Calendar className="w-5 h-5 text-primary-600" />
+              </div>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Weekly Schedule
+                </h2>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  View all activities and attendees by day
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 sm:p-8">
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Spinner size="lg" />
+              </div>
+            ) : (
+              <WeeklyTimetable activities={activities} registrations={registrations} />
+            )}
+          </div>
+        </div>
       </motion.div>
     </motion.div>
   )
