@@ -9,10 +9,10 @@ See: .planning/MILESTONES.md (v1.0 shipped 2026-01-19)
 
 ## Current Position
 
-Phase: Ready for next milestone
-Plan: Not started
-Status: v1.0 shipped
-Last activity: 2026-01-19 — v1.0 milestone archived
+Phase: 06-notifications-api
+Plan: 06-01-PLAN.md
+Status: Ready to execute
+Last activity: 2026-01-19 — Person 3 notification TODOs planned
 
 ## v1.0 Summary
 
