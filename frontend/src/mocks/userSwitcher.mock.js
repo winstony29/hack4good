@@ -7,7 +7,7 @@ import { mockUser, mockStaffUser, mockVolunteerUser } from './users.mock'
 
 // Change this to switch users
 // Options: 'participant' | 'volunteer' | 'staff'
-export const ACTIVE_USER_TYPE = 'staff'
+export const ACTIVE_USER_TYPE = 'participant'
 
 export const getCurrentMockUser = () => {
   switch (ACTIVE_USER_TYPE) {

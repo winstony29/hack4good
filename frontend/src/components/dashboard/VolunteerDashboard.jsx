@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Calendar, Clock, MapPin, CalendarDays, List, Heart, Sparkles, ArrowRight } from 'lucide-react'
+import { Calendar, Clock, MapPin, CalendarDays, List, Heart, Sparkles, ArrowRight, ArrowUpRight } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import Button from '../shared/Button'
@@ -84,22 +84,50 @@ export default function VolunteerDashboard() {
       animate="visible"
       className="space-y-8"
     >
-      {/* Welcome Header */}
-      <motion.div variants={itemVariants}>
-        <h1 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 tracking-tight">
-          Welcome, {user?.user_metadata?.full_name || 'Volunteer'}!
-        </h1>
-        <p className="text-gray-500 mt-2">Thank you for making a difference</p>
+      {/* Welcome Header with gradient */}
+      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-8"
+        style={{
+          background: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)'
+        }}
+      >
+        {/* Mesh overlay */}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: 'radial-gradient(ellipse at 0% 0%, rgba(255, 255, 255, 0.3) 0%, transparent 50%), radial-gradient(ellipse at 100% 100%, rgba(139, 92, 246, 0.3) 0%, transparent 50%)'
+          }}
+        />
+        
+        <div className="relative flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: 'rgba(255, 255, 255, 0.2)' }}
+              >
+                <Heart className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-pink-100 text-sm font-semibold tracking-wide uppercase">Volunteer</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+              Welcome, {user?.user_metadata?.full_name || 'Volunteer'}!
+            </h1>
+            <p className="text-pink-100 mt-2 max-w-xl">
+              Thank you for making a difference in our community
+            </p>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Quick Stats */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Quick Stats with improved styling */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Upcoming Card */}
-        <div
-          className="relative overflow-hidden rounded-2xl p-5"
+        <motion.div
+          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+          className="relative overflow-hidden rounded-2xl p-6"
           style={{
             background: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)',
-            boxShadow: '0 2px 15px -5px rgba(139, 92, 246, 0.15)'
+            boxShadow: '0 2px 15px -5px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.08)'
           }}
         >
           <div
@@ -108,52 +136,59 @@ export default function VolunteerDashboard() {
               background: 'radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.4) 0%, transparent 70%)'
             }}
           />
-          <div className="relative flex items-center gap-4">
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(139, 92, 246, 0.15)' }}
-            >
-              <Heart className="w-6 h-6 text-purple-600" />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-3">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ background: 'rgba(139, 92, 246, 0.15)' }}
+              >
+                <Heart className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="flex items-center gap-1 text-xs font-semibold text-purple-600">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div>
-              <p className="text-3xl font-bold text-purple-900">{upcomingMatches.length}</p>
-              <p className="text-sm text-purple-600 font-medium">Upcoming</p>
-            </div>
+            <p className="text-3xl sm:text-4xl font-bold text-purple-900 mb-1">{upcomingMatches.length}</p>
+            <p className="text-sm text-gray-500 font-medium">Upcoming Activities</p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Completed Card */}
-        <div
-          className="relative overflow-hidden rounded-2xl p-5"
+        <motion.div
+          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+          className="relative overflow-hidden rounded-2xl p-6"
           style={{
             background: 'linear-gradient(135deg, #f4f9f4 0%, #e6f2e6 100%)',
-            boxShadow: '0 2px 15px -5px rgba(86, 150, 90, 0.15)'
+            boxShadow: '0 2px 15px -5px rgba(34, 197, 94, 0.15), 0 0 0 1px rgba(34, 197, 94, 0.08)'
           }}
         >
           <div
             className="absolute top-0 right-0 w-32 h-32 opacity-20"
             style={{
-              background: 'radial-gradient(circle at 100% 0%, rgba(86, 150, 90, 0.4) 0%, transparent 70%)'
+              background: 'radial-gradient(circle at 100% 0%, rgba(34, 197, 94, 0.4) 0%, transparent 70%)'
             }}
           />
-          <div className="relative flex items-center gap-4">
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(86, 150, 90, 0.15)' }}
-            >
-              <Calendar className="w-6 h-6 text-sage-600" />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-3">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ background: 'rgba(34, 197, 94, 0.15)' }}
+              >
+                <Calendar className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="flex items-center gap-1 text-xs font-semibold text-green-600">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div>
-              <p className="text-3xl font-bold text-sage-900">{pastMatches.length}</p>
-              <p className="text-sm text-sage-600 font-medium">Completed</p>
-            </div>
+            <p className="text-3xl sm:text-4xl font-bold text-green-900 mb-1">{pastMatches.length}</p>
+            <p className="text-sm text-gray-500 font-medium">Completed</p>
           </div>
-        </div>
+        </motion.div>
 
         {/* Discover Activities CTA */}
         <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="relative overflow-hidden rounded-2xl p-5 cursor-pointer"
+          whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
+          className="relative overflow-hidden rounded-2xl p-6 cursor-pointer"
           onClick={() => navigate('/swiper')}
           style={{
             background: 'linear-gradient(135deg, #ff6b4a 0%, #f04d2e 100%)',
@@ -167,19 +202,18 @@ export default function VolunteerDashboard() {
               background: 'radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.4) 0%, transparent 60%)'
             }}
           />
-          <div
-            className="absolute bottom-0 left-0 w-24 h-24 opacity-10"
-            style={{
-              background: 'radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.5) 0%, transparent 70%)'
-            }}
-          />
 
           <div className="relative">
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-5 h-5 text-white/90" />
-              <h3 className="font-display font-bold text-white">Discover Activities</h3>
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ background: 'rgba(255, 255, 255, 0.2)' }}
+              >
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
             </div>
-            <p className="text-white/80 text-sm mb-4">Swipe through opportunities and find your perfect match</p>
+            <h3 className="text-lg font-bold text-white mb-2">Discover Activities</h3>
+            <p className="text-white/90 text-sm mb-4">Swipe through opportunities and find your perfect match</p>
             <div className="flex items-center gap-2 text-white font-semibold">
               <span>Start Swiping</span>
               <ArrowRight className="w-4 h-4" />
