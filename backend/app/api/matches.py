@@ -107,7 +107,13 @@ async def create_volunteer_match(
     db.commit()
     db.refresh(db_match)
 
-    # TODO: Send notification (will be wired in 04-02)
+    # Send notification (runs in background, doesn't block response)
+    from app.services.notification_service import NotificationService
+    notification_service = NotificationService(db)
+    await notification_service.send_volunteer_match_confirmation(
+        volunteer_id=current_user.id,
+        activity_id=match.activity_id
+    )
 
     return db_match
 
@@ -165,9 +171,16 @@ async def cancel_volunteer_match(
         raise HTTPException(status_code=400, detail="Match already cancelled")
 
     # Update status to cancelled
+    activity_id = match.activity_id  # Store before commit
     match.status = RegistrationStatus.CANCELLED
     db.commit()
 
-    # TODO: Send cancellation notification (will be wired in 04-02)
+    # Send cancellation notification
+    from app.services.notification_service import NotificationService
+    notification_service = NotificationService(db)
+    await notification_service.send_cancellation_notification(
+        user_id=current_user.id,
+        activity_id=activity_id
+    )
 
     return None
