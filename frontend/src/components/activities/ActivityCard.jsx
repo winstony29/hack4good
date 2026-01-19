@@ -12,7 +12,7 @@ export default function ActivityCard({ activity, showCapacity = true, showTTS = 
     <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={onClick}>
       <CardBody>
         <div className="flex justify-between items-start mb-3">
-          <h3 className="text-xl font-semibold text-gray-900">
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
             {activity.title}
           </h3>
           {activity.program_type && (
@@ -24,7 +24,7 @@ export default function ActivityCard({ activity, showCapacity = true, showTTS = 
           {activity.description}
         </p>
 
-        <div className="space-y-2 text-sm text-gray-600">
+        <div className="space-y-1.5 sm:space-y-2 text-sm text-gray-600">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
             <span>{formatDate(activity.date)}</span>
@@ -42,7 +42,7 @@ export default function ActivityCard({ activity, showCapacity = true, showTTS = 
         </div>
 
         {showCapacity && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-3 pt-3 sm:mt-4 sm:pt-4 border-t border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm">
                 <Users className="w-4 h-4" />
@@ -58,7 +58,7 @@ export default function ActivityCard({ activity, showCapacity = true, showTTS = 
         )}
 
         {showTTS && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-3 pt-3 sm:mt-4 sm:pt-4 border-t border-gray-200">
             <TTSButton text={`${activity.title}. ${activity.description}`} />
           </div>
         )}
