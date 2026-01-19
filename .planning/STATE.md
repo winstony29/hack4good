@@ -41,5 +41,7 @@ None
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Milestone v1.1 initialization
+Stopped at: Completed Person 3 Notification API plan (06-notifications-api/06-01-PLAN.md)
 Resume file: None
+
+Note: Person 3's TODO items from CONCERNS.md are now implemented (notifications.py endpoints).
