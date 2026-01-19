@@ -7,11 +7,12 @@ import ActivityCard from './ActivityCard'
 import TTSButton from '../accessibility/TTSButton'
 import { useAuth } from '../../contexts/AuthContext'
 import { registrationsApi } from '../../services/registrations.api'
-import { 
-  validateRegistration, 
+import {
+  validateRegistration,
   formatValidationMessage,
-  getMembershipDisplayName 
+  getMembershipDisplayName
 } from '../../utils/activityUtils'
+import { getErrorMessage } from '../../utils/errorUtils'
 
 export default function ActivityDetailModal({
   activity,
@@ -61,7 +62,7 @@ export default function ActivityDetailModal({
       onClose()
     } catch (err) {
       console.error('Action failed:', err)
-      const errorMessage = err.response?.data?.detail || err.message || 'Action failed. Please try again.'
+      const errorMessage = getErrorMessage(err, 'registration')
       setError(errorMessage)
       toast.error(errorMessage)
     } finally {
