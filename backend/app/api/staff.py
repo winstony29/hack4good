@@ -7,6 +7,7 @@ from datetime import date
 from app.core.auth import get_current_staff
 from app.core.deps import get_db
 from app.services.analytics_service import AnalyticsService
+from app.db.models import Activity
 
 router = APIRouter()
 
@@ -53,20 +54,35 @@ async def get_activity_attendance(
 ):
     """
     Get attendance list for an activity
-    
+
     Returns:
     - List of registered participants
     - List of matched volunteers
     - Activity details
     """
-    # TODO: Fetch activity
-    # Get all registrations
-    # Get all volunteer matches
-    # Return combined list
+    # Fetch activity, 404 if not found
+    activity = db.query(Activity).filter(Activity.id == activity_id).first()
+    if not activity:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Activity not found"
+        )
+
+    # Get attendance data via service
+    analytics_service = AnalyticsService(db)
+    attendance = analytics_service.get_activity_attendance(str(activity_id))
+
     return {
-        "activity": {},
-        "participants": [],
-        "volunteers": []
+        "activity": {
+            "id": str(activity.id),
+            "title": activity.title,
+            "date": activity.date.isoformat() if activity.date else None,
+            "start_time": activity.start_time.isoformat() if activity.start_time else None,
+            "end_time": activity.end_time.isoformat() if activity.end_time else None,
+            "location": activity.location
+        },
+        "participants": attendance["participants"],
+        "volunteers": attendance["volunteers"]
     }
 
 
