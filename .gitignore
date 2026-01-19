@@ -50,3 +50,6 @@ htmlcov/
 .cache/
 tmp/
 temp/
+
+# Claude
+.claude/.planning/
