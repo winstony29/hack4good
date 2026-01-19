@@ -196,11 +196,20 @@ Refresh the page - mock data resets automatically.
 
 ## 📝 Adding More Mock Data
 
+**IMPORTANT:** Activity IDs are UUIDs that must be synchronized between:
+- `frontend/src/mocks/activities.mock.js` 
+- `backend/app/db/seed.py`
+- `backend/sql/seed_activities.sql`
+
 ### Add Activities
 Edit `activities.mock.js`:
 ```javascript
+// First add UUID to ACTIVITY_UUIDS
+14: '00000000-0000-4000-a000-000000000014'
+
+// Then add activity
 {
-  id: '14',
+  id: ACTIVITY_UUIDS[14],
   title: 'New Activity',
   description: 'Description here',
   date: '2026-02-01',
@@ -216,10 +225,12 @@ Edit `activities.mock.js`:
 ### Add Registrations
 Edit `registrations.mock.js` initial data:
 ```javascript
+import { ACTIVITY_UUIDS } from './activities.mock'
+
 {
   id: 'reg-3',
   user_id: 'user-1',
-  activity_id: '2',
+  activity_id: ACTIVITY_UUIDS[2],
   status: 'confirmed',
   created_at: '2026-01-18T11:00:00Z'
 }

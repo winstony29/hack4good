@@ -3,6 +3,7 @@ import { Menu, X, User, LogOut, Settings, Accessibility } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useAccessibility } from '../../contexts/AccessibilityContext'
+import { useTranslation } from '../../hooks/useTranslation'
 import toast from 'react-hot-toast'
 import Button from '../shared/Button'
 import AccessibilityMenu from '../accessibility/AccessibilityMenu'
@@ -10,6 +11,7 @@ import AccessibilityMenu from '../accessibility/AccessibilityMenu'
 export default function Navbar() {
   const { user, logout } = useAuth()
   const { language } = useAccessibility()
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [accessibilityMenuOpen, setAccessibilityMenuOpen] = useState(false)
@@ -17,10 +19,10 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await logout()
-      toast.success('Logged out successfully')
+      toast.success(t('nav.logout'))
       navigate('/auth')
     } catch (error) {
-      toast.error('Logout failed')
+      toast.error(t('common.error'))
     }
   }
 
@@ -34,7 +36,7 @@ export default function Navbar() {
               <span className="text-white font-bold text-xl">M</span>
             </div>
             <span className="text-xl font-bold text-gray-900">
-              MINDS ActivityHub
+              {t('landing.appName')}
             </span>
           </Link>
 
@@ -44,7 +46,7 @@ export default function Navbar() {
             <button
               onClick={() => setAccessibilityMenuOpen(true)}
               className="p-2 text-gray-700 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Accessibility settings"
+              aria-label={t('nav.accessibility')}
             >
               <Accessibility size={20} />
             </button>
@@ -55,19 +57,19 @@ export default function Navbar() {
                   to="/dashboard"
                   className="text-gray-700 hover:text-primary-600 transition-colors"
                 >
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link>
                 <Link
                   to="/activities"
                   className="text-gray-700 hover:text-primary-600 transition-colors"
                 >
-                  Activities
+                  {t('nav.activities')}
                 </Link>
                 <Link
                   to="/profile"
                   className="text-gray-700 hover:text-primary-600 transition-colors"
                 >
-                  Profile
+                  {t('nav.profile')}
                 </Link>
                 <Button
                   variant="outline"
@@ -75,7 +77,7 @@ export default function Navbar() {
                   onClick={handleLogout}
                 >
                   <LogOut size={16} />
-                  Logout
+                  {t('nav.logout')}
                 </Button>
               </>
             ) : (
@@ -84,14 +86,14 @@ export default function Navbar() {
                   to="/activities"
                   className="text-gray-700 hover:text-primary-600 transition-colors"
                 >
-                  Browse Activities
+                  {t('landing.browseActivities')}
                 </Link>
                 <Button
                   variant="outline"
                   size="small"
                   onClick={() => navigate('/auth')}
                 >
-                  Sign In
+                  {t('nav.login')}
                 </Button>
               </>
             )}
@@ -102,7 +104,7 @@ export default function Navbar() {
             <button
               onClick={() => setAccessibilityMenuOpen(true)}
               className="p-2 text-gray-700 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Accessibility settings"
+              aria-label={t('nav.accessibility')}
             >
               <Accessibility size={20} />
             </button>
@@ -126,21 +128,21 @@ export default function Navbar() {
                     className="block w-full py-3 text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Dashboard
+                    {t('nav.dashboard')}
                   </Link>
                   <Link
                     to="/activities"
                     className="block w-full py-3 text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Activities
+                    {t('nav.activities')}
                   </Link>
                   <Link
                     to="/profile"
                     className="block w-full py-3 text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Profile
+                    {t('nav.profile')}
                   </Link>
                   <Button
                     variant="outline"
@@ -150,7 +152,7 @@ export default function Navbar() {
                       setMobileMenuOpen(false)
                     }}
                   >
-                    Logout
+                    {t('nav.logout')}
                   </Button>
                 </>
               ) : (
@@ -160,7 +162,7 @@ export default function Navbar() {
                     className="block w-full py-3 text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Browse Activities
+                    {t('landing.browseActivities')}
                   </Link>
                   <Button
                     variant="primary"
@@ -170,7 +172,7 @@ export default function Navbar() {
                       setMobileMenuOpen(false)
                     }}
                   >
-                    Sign In
+                    {t('nav.login')}
                   </Button>
                 </>
               )}

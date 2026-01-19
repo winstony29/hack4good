@@ -1,10 +1,14 @@
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import date, datetime
 from uuid import UUID
 
 from app.services.base_service import BaseService
 from app.db.models import Activity
+from app.integrations.google_translate import get_google_translate_client
+
+# Languages to translate to (excluding English)
+TARGET_LANGUAGES = ["zh", "ms", "ta"]
 
 
 class ActivityService(BaseService[Activity]):
@@ -12,6 +16,58 @@ class ActivityService(BaseService[Activity]):
     
     def __init__(self, db: Session):
         super().__init__(Activity, db)
+    
+    def translate_activity_content(self, title: str, description: Optional[str] = None) -> Dict[str, str]:
+        """
+        Translate activity title and description to all supported languages.
+        
+        Returns dict with keys like title_zh, title_ms, title_ta, description_zh, etc.
+        """
+        translations = {}
+        translate_client = get_google_translate_client()
+        
+        for lang in TARGET_LANGUAGES:
+            try:
+                # Translate title
+                translations[f"title_{lang}"] = translate_client.translate(
+                    title,
+                    source_language="en",
+                    target_language=lang
+                )
+                
+                # Translate description if provided
+                if description:
+                    translations[f"description_{lang}"] = translate_client.translate(
+                        description,
+                        source_language="en",
+                        target_language=lang
+                    )
+            except Exception as e:
+                print(f"[ActivityService] Translation error for {lang}: {e}")
+                # Continue with other languages even if one fails
+        
+        return translations
+    
+    def create_with_translations(self, data: Dict[str, Any]) -> Activity:
+        """
+        Create an activity and automatically translate title/description.
+        """
+        # Get translations
+        translations = self.translate_activity_content(
+            title=data.get("title", ""),
+            description=data.get("description")
+        )
+        
+        # Merge translations with activity data
+        activity_data = {**data, **translations}
+        
+        # Create the activity
+        activity = Activity(**activity_data)
+        self.db.add(activity)
+        self.db.commit()
+        self.db.refresh(activity)
+        
+        return activity
     
     def get_by_date(self, activity_date: date) -> List[Activity]:
         """Get all activities on a specific date"""

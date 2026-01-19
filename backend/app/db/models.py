@@ -43,12 +43,22 @@ class Activity(Base):
     max_capacity = Column(Integer, nullable=False)
     current_participants = Column(Integer, default=0)
     program_type = Column(String(50))
+    created_by_staff_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Translation columns - pre-translated for performance
+    title_zh = Column(String(255), nullable=True)  # Chinese
+    title_ms = Column(String(255), nullable=True)  # Malay
+    title_ta = Column(String(255), nullable=True)  # Tamil
+    description_zh = Column(Text, nullable=True)
+    description_ms = Column(Text, nullable=True)
+    description_ta = Column(Text, nullable=True)
     
     # Relationships
     registrations = relationship("Registration", back_populates="activity")
     volunteer_matches = relationship("VolunteerMatch", back_populates="activity")
+    created_by = relationship("User", foreign_keys=[created_by_staff_id])
 
 
 class Registration(Base):

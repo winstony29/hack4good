@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS activities (
     max_capacity INTEGER NOT NULL,
     current_participants INTEGER DEFAULT 0,
     program_type VARCHAR(50),
+    created_by_staff_id UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE
 );
@@ -61,6 +62,7 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_activities_date ON activities(date);
 CREATE INDEX IF NOT EXISTS idx_activities_program_type ON activities(program_type);
+CREATE INDEX IF NOT EXISTS idx_activities_created_by ON activities(created_by_staff_id);
 CREATE INDEX IF NOT EXISTS idx_registrations_user ON registrations(user_id);
 CREATE INDEX IF NOT EXISTS idx_registrations_activity ON registrations(activity_id);
 CREATE INDEX IF NOT EXISTS idx_volunteer_matches_volunteer ON volunteer_matches(volunteer_id);

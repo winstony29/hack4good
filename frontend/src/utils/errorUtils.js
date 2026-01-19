@@ -27,6 +27,10 @@ export function getErrorMessage(error, context = 'operation') {
   if (status === 404) {
     return `The requested ${context} was not found.`
   }
+  if (status === 409) {
+    // Conflict - return the server's detailed message (e.g., time conflict, already registered)
+    return message
+  }
   if (status === 422) {
     return 'Invalid data provided. Please check your input.'
   }

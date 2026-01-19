@@ -6,6 +6,7 @@ import Button from '../shared/Button'
 import ActivityCard from './ActivityCard'
 import TTSButton from '../accessibility/TTSButton'
 import { useAuth } from '../../contexts/AuthContext'
+import { useAccessibility } from '../../contexts/AccessibilityContext'
 import { registrationsApi } from '../../services/registrations.api'
 import {
   validateRegistration,
@@ -13,6 +14,7 @@ import {
   getMembershipDisplayName
 } from '../../utils/activityUtils'
 import { getErrorMessage } from '../../utils/errorUtils'
+import { getActivityTitle, getActivityDescription } from '../../utils/activityTranslations'
 
 export default function ActivityDetailModal({
   activity,
@@ -23,9 +25,14 @@ export default function ActivityDetailModal({
   userRegistrations = [] // User's existing registrations for conflict checking
 }) {
   const { user } = useAuth()
+  const { language } = useAccessibility()
   const [loading, setLoading] = useState(false)
   const [validationResult, setValidationResult] = useState(null)
   const [error, setError] = useState(null)
+  
+  // Get translated content
+  const title = activity ? getActivityTitle(activity, language) : ''
+  const description = activity ? getActivityDescription(activity, language) : ''
 
   useEffect(() => {
     if (isOpen && action === 'register' && user && activity) {
@@ -48,8 +55,7 @@ export default function ActivityDetailModal({
       if (action === 'register') {
         // Register for activity
         await registrationsApi.create({
-          activity_id: activity.id,
-          status: 'confirmed'
+          activity_id: activity.id
         })
         toast.success('Successfully registered for activity!')
       }
@@ -107,7 +113,7 @@ export default function ActivityDetailModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={activity.title}
+      title={title}
       size="large"
       footer={
         <>
@@ -203,7 +209,7 @@ export default function ActivityDetailModal({
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Description
           </h3>
-          <p className="text-gray-600 whitespace-pre-wrap">{activity.description}</p>
+          <p className="text-gray-600 whitespace-pre-wrap">{description}</p>
         </div>
 
         {/* Additional Info */}
@@ -216,9 +222,51 @@ export default function ActivityDetailModal({
           </div>
         )}
 
+        {/* Point of Contact - Only visible to volunteers and staff */}
+        {activity.point_of_contact && 
+         user?.user_metadata?.role && 
+         ['volunteer', 'staff'].includes(user.user_metadata.role) && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              Point of Contact
+            </h3>
+            <div className="space-y-2">
+              {activity.point_of_contact.full_name && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">Name:</span>
+                  <span className="text-sm text-gray-900">{activity.point_of_contact.full_name}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Email:</span>
+                <a 
+                  href={`mailto:${activity.point_of_contact.email}`}
+                  className="text-sm text-blue-600 hover:text-blue-800 underline"
+                >
+                  {activity.point_of_contact.email}
+                </a>
+              </div>
+              {activity.point_of_contact.phone && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">Phone:</span>
+                  <a 
+                    href={`tel:${activity.point_of_contact.phone}`}
+                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                  >
+                    {activity.point_of_contact.phone}
+                  </a>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Contact this person if you have questions about this activity
+            </p>
+          </div>
+        )}
+
         {/* TTS Button */}
         <div className="flex justify-end">
-          <TTSButton text={`${activity.title}. ${activity.description}`} />
+          <TTSButton text={`${title}. ${description}`} />
         </div>
 
         {/* Activity Info Card */}

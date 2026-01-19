@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Calendar, Clock, MapPin, AlertCircle, CalendarDays, List } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../contexts/AuthContext'
+import { useAccessibility } from '../../contexts/AccessibilityContext'
+import { useTranslation } from '../../hooks/useTranslation'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import Button from '../shared/Button'
 import Badge from '../shared/Badge'
@@ -10,13 +12,15 @@ import Spinner from '../shared/Spinner'
 import ActivityDetailModal from '../activities/ActivityDetailModal'
 import ActivityMonthCalendar from '../activities/ActivityMonthCalendar'
 import { registrationsApi } from '../../services/registrations.api'
-import { activitiesApi } from '../../services/activities.api'
 import { formatDate, formatTime, isUpcoming } from '../../utils/dateUtils'
 import { getMembershipDisplayName } from '../../utils/activityUtils'
+import { getActivityTitle, getActivityDescription } from '../../utils/activityTranslations'
 import { useNavigate } from 'react-router-dom'
 
 export default function ParticipantDashboard() {
   const { user } = useAuth()
+  const { language } = useAccessibility()
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [registrations, setRegistrations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -32,25 +36,9 @@ export default function ParticipantDashboard() {
   const fetchRegistrations = async () => {
     try {
       setLoading(true)
+      // Backend now returns registrations with activity details included
       const response = await registrationsApi.getAll()
-      
-      // Fetch activity details for each registration
-      const registrationsWithActivities = await Promise.all(
-        (response.data || []).map(async (reg) => {
-          try {
-            const activityResponse = await activitiesApi.getById(reg.activity_id)
-            return {
-              ...reg,
-              activity: activityResponse.data
-            }
-          } catch (error) {
-            console.error(`Failed to fetch activity ${reg.activity_id}:`, error)
-            return reg
-          }
-        })
-      )
-      
-      setRegistrations(registrationsWithActivities)
+      setRegistrations(response.data || [])
     } catch (error) {
       console.error('Failed to fetch registrations:', error)
     } finally {
@@ -95,9 +83,9 @@ export default function ParticipantDashboard() {
       {/* Welcome Section */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">
-          Welcome back, {user?.user_metadata?.full_name || 'Participant'}!
+          {t('dashboard.welcomeBack')}, {user?.user_metadata?.full_name || 'Participant'}!
         </h1>
-        <p className="text-gray-600 mt-2">Here's your activity overview</p>
+        <p className="text-gray-600 mt-2">{t('dashboard.activityOverview')}</p>
         
         {membershipType && (
           <div className="mt-4 inline-block">
@@ -113,13 +101,13 @@ export default function ParticipantDashboard() {
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <CardBody>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Browse Activities
+              {t('landing.browseActivities')}
             </h3>
             <p className="text-gray-600 text-sm mb-4">
-              Discover new activities and register
+              {t('dashboard.discoverActivities')}
             </p>
             <Button onClick={() => navigate('/activities')} variant="primary">
-              View All Activities
+              {t('dashboard.viewAllActivities')}
             </Button>
           </CardBody>
         </Card>
@@ -127,13 +115,13 @@ export default function ParticipantDashboard() {
         <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
           <CardBody>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              My Registrations
+              {t('dashboard.myRegistrations')}
             </h3>
             <p className="text-gray-600 text-sm mb-4">
-              {upcomingRegistrations.length} upcoming activities
+              {upcomingRegistrations.length} {t('dashboard.upcomingCount')}
             </p>
             <Button onClick={() => document.getElementById('registrations')?.scrollIntoView({ behavior: 'smooth' })} variant="success">
-              View My Activities
+              {t('dashboard.viewMyActivities')}
             </Button>
           </CardBody>
         </Card>
@@ -145,10 +133,10 @@ export default function ParticipantDashboard() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-3">
               <h2 className="text-2xl font-semibold text-gray-900">
-                My Activities
+                {t('dashboard.myActivities')}
               </h2>
               <Badge variant="info">
-                {upcomingRegistrations.length} upcoming
+                {upcomingRegistrations.length} {t('dashboard.upcoming')}
               </Badge>
             </div>
             
@@ -160,7 +148,7 @@ export default function ParticipantDashboard() {
                 onClick={() => setViewMode('list')}
               >
                 <List className="w-4 h-4 mr-1" />
-                List
+                {t('dashboard.list')}
               </Button>
               <Button
                 variant={viewMode === 'calendar' ? 'primary' : 'secondary'}
@@ -168,7 +156,7 @@ export default function ParticipantDashboard() {
                 onClick={() => setViewMode('calendar')}
               >
                 <CalendarDays className="w-4 h-4 mr-1" />
-                Calendar
+                {t('dashboard.calendar')}
               </Button>
             </div>
           </div>
@@ -181,11 +169,11 @@ export default function ParticipantDashboard() {
           ) : upcomingRegistrations.length === 0 ? (
             <EmptyState
               icon={Calendar}
-              title="No upcoming activities"
-              description="Browse activities to register for upcoming events"
+              title={t('dashboard.noUpcoming')}
+              description={t('dashboard.browseToRegister')}
               action={
                 <Button onClick={() => navigate('/activities')} variant="primary">
-                  Browse Activities
+                  {t('landing.browseActivities')}
                 </Button>
               }
             />
@@ -213,7 +201,7 @@ export default function ParticipantDashboard() {
                       <div className="flex-1">
                         <div className="flex items-start justify-between mb-3">
                           <h3 className="text-xl font-semibold text-gray-900">
-                            {reg.activity.title}
+                            {getActivityTitle(reg.activity, language)}
                           </h3>
                           {reg.activity.program_type && (
                             <Badge variant="info">{reg.activity.program_type}</Badge>
@@ -221,7 +209,7 @@ export default function ParticipantDashboard() {
                         </div>
 
                         <p className="text-gray-600 mb-4 line-clamp-2">
-                          {reg.activity.description}
+                          {getActivityDescription(reg.activity, language)}
                         </p>
 
                         <div className="space-y-2 text-sm text-gray-600">
@@ -258,7 +246,7 @@ export default function ParticipantDashboard() {
                               setIsModalOpen(true)
                             }}
                           >
-                            View Details
+                            {t('dashboard.viewDetails')}
                           </Button>
                           <Button
                             variant="danger"
@@ -266,7 +254,7 @@ export default function ParticipantDashboard() {
                             onClick={() => handleCancelRegistration(reg.id)}
                             loading={cancellingId === reg.id}
                           >
-                            Cancel
+                            {t('common.cancel')}
                           </Button>
                         </div>
                       </div>
@@ -286,7 +274,7 @@ export default function ParticipantDashboard() {
         <Card>
           <CardHeader>
             <h2 className="text-2xl font-semibold text-gray-900">
-              Past Activities
+              {t('dashboard.pastActivities')}
             </h2>
           </CardHeader>
           <CardBody>
@@ -297,12 +285,12 @@ export default function ParticipantDashboard() {
                   className="flex justify-between items-center py-3 border-b border-gray-200 last:border-0"
                 >
                   <div>
-                    <p className="font-medium text-gray-900">{reg.activity.title}</p>
+                    <p className="font-medium text-gray-900">{getActivityTitle(reg.activity, language)}</p>
                     <p className="text-sm text-gray-600">
                       {formatDate(reg.activity.date)}
                     </p>
                   </div>
-                  <Badge variant="secondary">Completed</Badge>
+                  <Badge variant="secondary">{t('dashboard.completed')}</Badge>
                 </div>
               ))}
             </div>

@@ -1,4 +1,5 @@
 import { useAccessibility } from '../../contexts/AccessibilityContext'
+import { useTranslation } from '../../hooks/useTranslation'
 import Modal from '../shared/Modal'
 import Button from '../shared/Button'
 import { LANGUAGES, LANGUAGE_LABELS } from '../../utils/constants'
@@ -14,19 +15,20 @@ export default function AccessibilityMenu({ isOpen, onClose }) {
     reduceMotion,
     setReduceMotion
   } = useAccessibility()
+  const { t } = useTranslation()
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Accessibility Settings"
+      title={t('accessibility.settings')}
       size="medium"
     >
       <div className="space-y-6">
         {/* Font Size */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Font Size
+            {t('accessibility.fontSize')}
           </label>
           <div className="flex gap-3">
             <Button
@@ -53,20 +55,20 @@ export default function AccessibilityMenu({ isOpen, onClose }) {
         {/* High Contrast */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            High Contrast Mode
+            {t('accessibility.contrast')}
           </label>
           <div className="flex gap-3">
             <Button
               variant={contrast === 'normal' ? 'primary' : 'outline'}
               onClick={() => setContrast('normal')}
             >
-              Normal
+              {t('accessibility.normal')}
             </Button>
             <Button
               variant={contrast === 'high' ? 'primary' : 'outline'}
               onClick={() => setContrast('high')}
             >
-              High Contrast
+              {t('accessibility.highContrast')}
             </Button>
           </div>
         </div>
@@ -74,7 +76,7 @@ export default function AccessibilityMenu({ isOpen, onClose }) {
         {/* Language */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Language
+            {t('accessibility.language')}
           </label>
           <select
             value={language}
@@ -92,7 +94,7 @@ export default function AccessibilityMenu({ isOpen, onClose }) {
         {/* Reduce Motion */}
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium text-gray-700">
-            Reduce Motion
+            {t('accessibility.reduceMotion')}
           </label>
           <button
             onClick={() => setReduceMotion(!reduceMotion)}

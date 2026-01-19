@@ -3,14 +3,14 @@
  * For testing without backend
  */
 
-import { mockActivities } from './activities.mock'
+import { mockActivities, ACTIVITY_UUIDS } from './activities.mock'
 
 // In-memory registrations store
 let mockRegistrations = [
   {
     id: 'reg-1',
     user_id: 'user-1',
-    activity_id: '1', // Morning Yoga
+    activity_id: ACTIVITY_UUIDS[1], // Morning Yoga
     status: 'confirmed',
     created_at: '2026-01-18T10:00:00Z',
     updated_at: '2026-01-18T10:00:00Z'
@@ -18,7 +18,7 @@ let mockRegistrations = [
   {
     id: 'reg-2',
     user_id: 'user-1',
-    activity_id: '13', // Past board games
+    activity_id: ACTIVITY_UUIDS[13], // Past board games
     status: 'confirmed',
     created_at: '2026-01-14T10:00:00Z',
     updated_at: '2026-01-14T10:00:00Z'
@@ -111,7 +111,7 @@ export const resetRegistrations = () => {
     {
       id: 'reg-1',
       user_id: 'user-1',
-      activity_id: '1',
+      activity_id: ACTIVITY_UUIDS[1],
       status: 'confirmed',
       created_at: '2026-01-18T10:00:00Z',
       updated_at: '2026-01-18T10:00:00Z'
@@ -119,7 +119,7 @@ export const resetRegistrations = () => {
     {
       id: 'reg-2',
       user_id: 'user-1',
-      activity_id: '13',
+      activity_id: ACTIVITY_UUIDS[13],
       status: 'confirmed',
       created_at: '2026-01-14T10:00:00Z',
       updated_at: '2026-01-14T10:00:00Z'

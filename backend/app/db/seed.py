@@ -1,19 +1,42 @@
 """
 Seed script to populate the database with sample activity data.
 Run from the backend directory: python -m app.db.seed
+
+IMPORTANT: The UUIDs here are synchronized with frontend/src/mocks/activities.mock.js
+Any changes to activities should be made in both files to keep them in sync.
 """
 
 from datetime import date, time
-import uuid
+from uuid import UUID
 from sqlalchemy import text
 
 from app.db.session import SessionLocal
 from app.db.models import Activity
 
 
+# Fixed UUIDs for activities - MUST match frontend/src/mocks/activities.mock.js
+# Format: 00000000-0000-4000-a000-00000000000X where X is the activity number
+ACTIVITY_UUIDS = {
+    1: UUID("00000000-0000-4000-a000-000000000001"),
+    2: UUID("00000000-0000-4000-a000-000000000002"),
+    3: UUID("00000000-0000-4000-a000-000000000003"),
+    4: UUID("00000000-0000-4000-a000-000000000004"),
+    5: UUID("00000000-0000-4000-a000-000000000005"),
+    6: UUID("00000000-0000-4000-a000-000000000006"),
+    7: UUID("00000000-0000-4000-a000-000000000007"),
+    8: UUID("00000000-0000-4000-a000-000000000008"),
+    9: UUID("00000000-0000-4000-a000-000000000009"),
+    10: UUID("00000000-0000-4000-a000-000000000010"),
+    11: UUID("00000000-0000-4000-a000-000000000011"),
+    12: UUID("00000000-0000-4000-a000-000000000012"),
+    13: UUID("00000000-0000-4000-a000-000000000013"),
+}
+
 # Sample activities data (matching frontend mock data)
+# SYNC NOTE: Keep this in sync with frontend/src/mocks/activities.mock.js
 SAMPLE_ACTIVITIES = [
     {
+        "id": ACTIVITY_UUIDS[1],
         "title": "Morning Yoga Session",
         "description": "Start your day with gentle stretching and breathing exercises. Perfect for all fitness levels. Bring your own mat or use ours!",
         "date": date(2026, 1, 22),
@@ -25,6 +48,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "wellness"
     },
     {
+        "id": ACTIVITY_UUIDS[2],
         "title": "Arts & Crafts Workshop",
         "description": "Create beautiful handmade cards and decorations. All materials provided. Great for developing fine motor skills!",
         "date": date(2026, 1, 22),
@@ -36,6 +60,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "arts"
     },
     {
+        "id": ACTIVITY_UUIDS[3],
         "title": "Basketball Practice",
         "description": "Fun basketball drills and friendly games. Coach will be present to guide everyone. Sports shoes required.",
         "date": date(2026, 1, 23),
@@ -47,6 +72,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "sports"
     },
     {
+        "id": ACTIVITY_UUIDS[4],
         "title": "Music Jam Session",
         "description": "Bring your instruments or use ours! Play together, learn new songs, and enjoy making music with friends.",
         "date": date(2026, 1, 23),
@@ -58,6 +84,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "music"
     },
     {
+        "id": ACTIVITY_UUIDS[5],
         "title": "Swimming Lessons",
         "description": "Learn to swim or improve your technique with certified instructors. Swimwear and towel required.",
         "date": date(2026, 1, 24),
@@ -69,6 +96,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "sports"
     },
     {
+        "id": ACTIVITY_UUIDS[6],
         "title": "Cooking Class: Healthy Snacks",
         "description": "Learn to make delicious and nutritious snacks. Take home recipes and samples of what you make!",
         "date": date(2026, 1, 25),
@@ -80,6 +108,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "educational"
     },
     {
+        "id": ACTIVITY_UUIDS[7],
         "title": "Dance Party",
         "description": "Move to the beat! Fun dance routines and free dancing. No experience needed, just bring your energy!",
         "date": date(2026, 1, 25),
@@ -91,6 +120,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "social"
     },
     {
+        "id": ACTIVITY_UUIDS[8],
         "title": "Gardening Workshop",
         "description": "Learn about plants and help maintain our community garden. Get your hands dirty and watch things grow!",
         "date": date(2026, 1, 26),
@@ -102,6 +132,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "educational"
     },
     {
+        "id": ACTIVITY_UUIDS[9],
         "title": "Movie Afternoon",
         "description": "Watch a fun, feel-good movie together with popcorn and drinks. Voting on movie choice will happen at the start.",
         "date": date(2026, 1, 26),
@@ -113,6 +144,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "social"
     },
     {
+        "id": ACTIVITY_UUIDS[10],
         "title": "Painting Class",
         "description": "Express yourself through colors! Learn basic painting techniques or create your own masterpiece.",
         "date": date(2026, 1, 27),
@@ -124,6 +156,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "arts"
     },
     {
+        "id": ACTIVITY_UUIDS[11],
         "title": "Table Tennis Tournament",
         "description": "Friendly competition for all skill levels. Prizes for winners! Sign up for singles or doubles.",
         "date": date(2026, 1, 28),
@@ -135,6 +168,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "sports"
     },
     {
+        "id": ACTIVITY_UUIDS[12],
         "title": "Mindfulness & Meditation",
         "description": "Calm your mind and reduce stress through guided meditation and mindfulness practices.",
         "date": date(2026, 1, 29),
@@ -146,6 +180,7 @@ SAMPLE_ACTIVITIES = [
         "program_type": "wellness"
     },
     {
+        "id": ACTIVITY_UUIDS[13],
         "title": "Board Games Day",
         "description": "A fun day of board games with friends. Chess, Scrabble, Monopoly, and more!",
         "date": date(2026, 1, 15),
@@ -182,12 +217,9 @@ def seed_activities(clear_existing: bool = False):
             print("Run with --clear flag to delete existing activities before seeding.")
             return
         
-        # Insert sample activities
+        # Insert sample activities with fixed UUIDs
         for activity_data in SAMPLE_ACTIVITIES:
-            activity = Activity(
-                id=uuid.uuid4(),
-                **activity_data
-            )
+            activity = Activity(**activity_data)
             db.add(activity)
         
         db.commit()
@@ -198,7 +230,7 @@ def seed_activities(clear_existing: bool = False):
         print("\nSeeded activities:")
         print("-" * 60)
         for activity in activities:
-            print(f"  {activity.date} {activity.start_time.strftime('%H:%M')} - {activity.title}")
+            print(f"  {activity.id} | {activity.date} {activity.start_time.strftime('%H:%M')} - {activity.title}")
         
     except Exception as e:
         db.rollback()
@@ -208,8 +240,40 @@ def seed_activities(clear_existing: bool = False):
         db.close()
 
 
+def generate_sql():
+    """Generate SQL statements for direct Supabase insertion."""
+    print("-- SQL to seed activities in Supabase")
+    print("-- Run this in the Supabase SQL Editor")
+    print("")
+    print("-- Clear existing activities (optional)")
+    print("-- DELETE FROM activities;")
+    print("")
+    print("INSERT INTO activities (id, title, description, date, start_time, end_time, location, max_capacity, current_participants, program_type, created_at)")
+    print("VALUES")
+    
+    values = []
+    for activity in SAMPLE_ACTIVITIES:
+        value = f"""  ('{activity["id"]}', '{activity["title"].replace("'", "''")}', '{activity["description"].replace("'", "''")}', '{activity["date"]}', '{activity["start_time"]}', '{activity["end_time"]}', '{activity["location"]}', {activity["max_capacity"]}, {activity["current_participants"]}, '{activity["program_type"]}', NOW())"""
+        values.append(value)
+    
+    print(",\n".join(values))
+    print("ON CONFLICT (id) DO UPDATE SET")
+    print("  title = EXCLUDED.title,")
+    print("  description = EXCLUDED.description,")
+    print("  date = EXCLUDED.date,")
+    print("  start_time = EXCLUDED.start_time,")
+    print("  end_time = EXCLUDED.end_time,")
+    print("  location = EXCLUDED.location,")
+    print("  max_capacity = EXCLUDED.max_capacity,")
+    print("  current_participants = EXCLUDED.current_participants,")
+    print("  program_type = EXCLUDED.program_type;")
+
+
 if __name__ == "__main__":
     import sys
     
-    clear_existing = "--clear" in sys.argv
-    seed_activities(clear_existing=clear_existing)
+    if "--sql" in sys.argv:
+        generate_sql()
+    else:
+        clear_existing = "--clear" in sys.argv
+        seed_activities(clear_existing=clear_existing)

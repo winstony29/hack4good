@@ -3,10 +3,12 @@ import { useEffect } from 'react'
 import { Calendar, Users, Heart, TrendingUp } from 'lucide-react'
 import Button from '../components/shared/Button'
 import { useAuth } from '../contexts/AuthContext'
+import { useTranslation } from '../hooks/useTranslation'
 
 export default function Landing() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   useEffect(() => {
     // Redirect authenticated users to dashboard
@@ -21,21 +23,20 @@ export default function Landing() {
       <div className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-            Welcome to <span className="text-primary-600">MINDS</span> ActivityHub
+            {t('landing.welcome')} <span className="text-primary-600">{t('landing.appName')}</span>
           </h1>
           <p className="text-lg sm:text-xl text-gray-600 mb-8">
-            An accessible, inclusive platform for managing activities for individuals
-            with intellectual disabilities
+            {t('landing.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
             <Link to="/auth">
               <Button size="large" variant="primary">
-                Get Started
+                {t('landing.getStarted')}
               </Button>
             </Link>
             <Link to="/activities">
               <Button size="large" variant="outline">
-                Browse Activities
+                {t('landing.browseActivities')}
               </Button>
             </Link>
           </div>
@@ -45,23 +46,23 @@ export default function Landing() {
         <div className="mt-12 sm:mt-16 md:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           <FeatureCard
             icon={<Calendar className="w-8 h-8 text-primary-600" />}
-            title="Easy Scheduling"
-            description="Browse and register for activities with our intuitive calendar interface"
+            title={t('landing.easyScheduling')}
+            description={t('landing.easySchedulingDesc')}
           />
           <FeatureCard
             icon={<Users className="w-8 h-8 text-primary-600" />}
-            title="Volunteer Matching"
-            description="Connect volunteers with activities through our Tinder-style swiper"
+            title={t('landing.volunteerMatching')}
+            description={t('landing.volunteerMatchingDesc')}
           />
           <FeatureCard
             icon={<Heart className="w-8 h-8 text-primary-600" />}
-            title="Accessibility First"
-            description="Text-to-speech, multi-language support, and high contrast modes"
+            title={t('landing.accessibilityFirst')}
+            description={t('landing.accessibilityFirstDesc')}
           />
           <FeatureCard
             icon={<TrendingUp className="w-8 h-8 text-primary-600" />}
-            title="Staff Analytics"
-            description="Comprehensive reporting and attendance tracking for staff"
+            title={t('landing.staffAnalytics')}
+            description={t('landing.staffAnalyticsDesc')}
           />
         </div>
       </div>

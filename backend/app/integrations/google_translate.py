@@ -5,7 +5,7 @@ Provides translation functionality with automatic fallback to mock translations
 when Google Cloud credentials are not available (demo/development mode).
 """
 
-import os
+import httpx
 from typing import Optional
 
 from app.core.config import settings
@@ -22,6 +22,10 @@ LANGUAGE_NAMES = {
     "ta": "தமிழ் (Tamil)"
 }
 
+# Google Translate API v2 REST endpoint
+TRANSLATE_API_URL = "https://translation.googleapis.com/language/translate/v2"
+DETECT_API_URL = "https://translation.googleapis.com/language/translate/v2/detect"
+
 
 class GoogleTranslateClient:
     """
@@ -32,38 +36,17 @@ class GoogleTranslateClient:
     """
 
     def __init__(self):
-        self.project_id = settings.GOOGLE_PROJECT_ID
-        self.credentials_path = settings.GOOGLE_APPLICATION_CREDENTIALS
         self.api_key = settings.GOOGLE_TRANSLATE_API_KEY
-        self._client = None
+        self._initialized = False
 
-        # Try API key first (simpler method)
         if self.api_key:
-            try:
-                from google.cloud import translate_v2 as translate
-                # Set API key as environment variable (required by google-cloud-translate)
-                os.environ['GOOGLE_API_KEY'] = self.api_key
-                self._client = translate.Client()
-                print("[Translation] Initialized with API key")
-            except ImportError:
-                print("[Translation] google-cloud-translate not installed, using mock mode")
-            except Exception as e:
-                print(f"[Translation] Failed to initialize with API key: {e}")
-        # Fall back to service account credentials
-        elif self.credentials_path and self.project_id:
-            try:
-                from google.cloud import translate_v2 as translate
-                self._client = translate.Client()
-                print("[Translation] Initialized with service account")
-            except ImportError:
-                print("[Translation] google-cloud-translate not installed, using mock mode")
-            except Exception as e:
-                print(f"[Translation] Failed to initialize Google Translate: {e}")
+            self._initialized = True
+            print("[Translation] Initialized with API key (REST API mode)")
 
     @property
     def is_mock_mode(self) -> bool:
-        """Check if running in mock mode (no credentials or client)."""
-        return self._client is None
+        """Check if running in mock mode (no API key configured)."""
+        return not self._initialized
 
     def translate(
         self,
@@ -90,19 +73,31 @@ class GoogleTranslateClient:
         if source_language == target_language:
             return text
 
-        # Use mock mode if no client
+        # Use mock mode if no API key
         if self.is_mock_mode:
             print(f"[Translation Mock] {source_language} -> {target_language}: {text[:50]}...")
             return f"[{target_language.upper()}] {text}"
 
-        # Real Google Translate API call
+        # Real Google Translate REST API call
         try:
-            result = self._client.translate(
-                text,
-                source_language=source_language,
-                target_language=target_language
+            response = httpx.post(
+                TRANSLATE_API_URL,
+                params={"key": self.api_key},
+                json={
+                    "q": text,
+                    "source": source_language,
+                    "target": target_language,
+                    "format": "text"
+                },
+                timeout=10.0
             )
-            return result['translatedText']
+            response.raise_for_status()
+            result = response.json()
+            translated_text = result["data"]["translations"][0]["translatedText"]
+            return translated_text
+        except httpx.HTTPStatusError as e:
+            print(f"[Translation] Google API HTTP error {e.response.status_code}: {e.response.text}")
+            return f"[{target_language.upper()}] {text}"
         except Exception as e:
             print(f"[Translation] Google API error: {e}, falling back to mock")
             return f"[{target_language.upper()}] {text}"
@@ -124,8 +119,15 @@ class GoogleTranslateClient:
             return "en"
 
         try:
-            result = self._client.detect_language(text)
-            detected = result.get('language', 'en')
+            response = httpx.post(
+                DETECT_API_URL,
+                params={"key": self.api_key},
+                json={"q": text},
+                timeout=10.0
+            )
+            response.raise_for_status()
+            result = response.json()
+            detected = result["data"]["detections"][0][0]["language"]
             # Only return if it's a supported language
             return detected if detected in SUPPORTED_LANGUAGES else "en"
         except Exception as e:

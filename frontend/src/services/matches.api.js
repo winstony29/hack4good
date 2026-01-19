@@ -1,46 +1,28 @@
-import api, { createCrudApi } from './api'
-import { USE_MOCK_DATA } from '../utils/env'
-import {
-  getAvailableActivitiesMock,
-  createVolunteerMatch,
-  cancelVolunteerMatch,
-  getVolunteerMatches
-} from '../mocks/volunteerMatches.mock'
+import api from './api'
 
+// Use real backend API for volunteer matches
 export const matchesApi = {
-  // Get available activities for swiping
+  // Get available activities for swiping (excludes already matched, past activities)
   getAvailable: async () => {
-    if (USE_MOCK_DATA) {
-      const activities = getAvailableActivitiesMock()
-      return { data: activities }
-    }
-    return api.get('/matches/available')
+    const response = await api.get('/matches/available')
+    return { data: response.data }
   },
 
-  // Create a new match (volunteer signs up)
+  // Create a new match (volunteer signs up for activity)
   create: async (data) => {
-    if (USE_MOCK_DATA) {
-      const match = createVolunteerMatch(data)
-      return { data: match }
-    }
-    return api.post('/matches', data)
+    const response = await api.post('/matches', data)
+    return { data: response.data }
   },
 
   // Get volunteer's current matches
-  getAll: async () => {
-    if (USE_MOCK_DATA) {
-      const matches = getVolunteerMatches()
-      return { data: matches }
-    }
-    return api.get('/matches')
+  getAll: async (userId) => {
+    const response = await api.get(`/matches/user/${userId}`)
+    return { data: response.data }
   },
 
   // Cancel a match
   cancel: async (matchId) => {
-    if (USE_MOCK_DATA) {
-      cancelVolunteerMatch(matchId)
-      return { data: { success: true } }
-    }
-    return api.delete(`/matches/${matchId}`)
+    await api.delete(`/matches/${matchId}`)
+    return { data: { success: true } }
   }
 }

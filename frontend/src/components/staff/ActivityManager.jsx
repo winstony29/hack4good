@@ -3,16 +3,18 @@ import toast from 'react-hot-toast'
 import { activitiesApi } from '../../services/activities.api'
 import ActivityForm from '../activities/ActivityForm'
 import ActivityCard from '../activities/ActivityCard'
+import ActivityAttendance from './ActivityAttendance'
 import Button from '../shared/Button'
 import Modal from '../shared/Modal'
 import EmptyState from '../shared/EmptyState'
-import { Plus } from 'lucide-react'
+import { Plus, Users } from 'lucide-react'
 
 export default function ActivityManager() {
   const [activities, setActivities] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingActivity, setEditingActivity] = useState(null)
+  const [attendanceActivity, setAttendanceActivity] = useState(null)
 
   useEffect(() => {
     fetchActivities()
@@ -83,11 +85,24 @@ export default function ActivityManager() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activities.map((activity) => (
-            <ActivityCard
-              key={activity.id}
-              activity={activity}
-              onClick={() => setEditingActivity(activity)}
-            />
+            <div key={activity.id} className="space-y-2">
+              <ActivityCard
+                activity={activity}
+                onClick={() => setEditingActivity(activity)}
+              />
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                fullWidth
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setAttendanceActivity(activity)
+                }}
+              >
+                <Users className="w-4 h-4" />
+                View Contacts
+              </Button>
+            </div>
           ))}
         </div>
       )}
@@ -120,6 +135,13 @@ export default function ActivityManager() {
           />
         )}
       </Modal>
+
+      {/* Attendance Modal */}
+      <ActivityAttendance
+        activity={attendanceActivity}
+        isOpen={!!attendanceActivity}
+        onClose={() => setAttendanceActivity(null)}
+      />
     </div>
   )
 }
