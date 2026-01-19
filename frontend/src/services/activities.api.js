@@ -2,7 +2,7 @@ import { createCrudApi } from './api'
 import { getActivities, getActivityById } from '../mocks/activities.mock'
 
 // Toggle to use mock data (set to false when backend is ready)
-const USE_MOCK_DATA = true
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
 
 // Simulate API delay for realistic testing
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))

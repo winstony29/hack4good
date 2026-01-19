@@ -98,7 +98,18 @@ export default function RegistrationsList({ type = 'registrations' }) {
   )
 
   async function handleCancel(id) {
-    // TODO: Implement cancellation logic
-    console.log('Cancel:', id)
+    if (!window.confirm('Are you sure you want to cancel this registration?')) {
+      return
+    }
+
+    try {
+      const api = type === 'registrations' ? registrationsApi : matchesApi
+      await api.cancel(id)
+      // Refresh the list after cancellation
+      fetchItems()
+    } catch (error) {
+      console.error('Failed to cancel:', error)
+      alert('Failed to cancel. Please try again.')
+    }
   }
 }

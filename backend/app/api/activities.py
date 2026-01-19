@@ -7,6 +7,7 @@ from uuid import UUID
 from app.core.auth import get_current_user, get_current_staff
 from app.core.deps import get_db
 from app.models.activity import ActivityCreate, ActivityUpdate, ActivityResponse, ActivityListResponse
+from app.services.activity_service import ActivityService
 
 router = APIRouter()
 
@@ -21,17 +22,21 @@ async def get_activities(
 ):
     """
     Get list of activities with optional filters
-    
+
     - **date_filter**: Filter activities by specific date
     - **program_type**: Filter by program type
     - **skip**: Number of records to skip (pagination)
     - **limit**: Maximum number of records to return
     """
-    # TODO: Implement activity fetching logic with filters
-    # Query activities from database
-    # Apply filters if provided
-    # Return paginated results
-    return ActivityListResponse(activities=[], total=0)
+    service = ActivityService(db)
+    activities = service.get_with_filters(
+        date_filter=date_filter,
+        program_type=program_type,
+        skip=skip,
+        limit=limit
+    )
+    total = service.count()
+    return ActivityListResponse(activities=activities, total=total)
 
 
 @router.get("/{activity_id}", response_model=ActivityResponse)
@@ -40,9 +45,11 @@ async def get_activity(
     db: Session = Depends(get_db)
 ):
     """Get single activity by ID"""
-    # TODO: Fetch activity from database
-    # Return 404 if not found
-    raise HTTPException(status_code=404, detail="Activity not found")
+    service = ActivityService(db)
+    activity = service.get_by_id(activity_id)
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    return activity
 
 
 @router.post("", response_model=ActivityResponse, status_code=status.HTTP_201_CREATED)
@@ -53,16 +60,19 @@ async def create_activity(
 ):
     """
     Create a new activity (Staff only)
-    
+
     Validates:
     - Start time is before end time
     - Date is in the future
     - Max capacity is positive
     """
-    # TODO: Validate activity data
-    # Create activity in database
-    # Return created activity
-    raise HTTPException(status_code=501, detail="Not implemented")
+    # Validate time order
+    if activity.start_time >= activity.end_time:
+        raise HTTPException(status_code=400, detail="Start time must be before end time")
+
+    service = ActivityService(db)
+    db_activity = service.create(activity.model_dump())
+    return db_activity
 
 
 @router.put("/{activity_id}", response_model=ActivityResponse)
@@ -73,11 +83,24 @@ async def update_activity(
     db: Session = Depends(get_db)
 ):
     """Update activity (Staff only)"""
-    # TODO: Fetch existing activity
-    # Update fields
-    # Validate constraints
-    # Save to database
-    raise HTTPException(status_code=501, detail="Not implemented")
+    service = ActivityService(db)
+
+    # Check activity exists
+    existing = service.get_by_id(activity_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Activity not found")
+
+    # Update with non-None fields only
+    update_data = activity.model_dump(exclude_unset=True)
+
+    # Validate time order if both times provided
+    start = update_data.get('start_time', existing.start_time)
+    end = update_data.get('end_time', existing.end_time)
+    if start >= end:
+        raise HTTPException(status_code=400, detail="Start time must be before end time")
+
+    updated = service.update(activity_id, update_data)
+    return updated
 
 
 @router.delete("/{activity_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -87,7 +110,12 @@ async def delete_activity(
     db: Session = Depends(get_db)
 ):
     """Delete activity (Staff only)"""
-    # TODO: Check if activity has registrations
-    # If yes, prevent deletion or cascade
-    # Delete activity
-    pass
+    service = ActivityService(db)
+
+    # Check activity exists
+    existing = service.get_by_id(activity_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Activity not found")
+
+    service.delete(activity_id)
+    return None

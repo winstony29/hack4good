@@ -7,13 +7,19 @@ import {
 } from '../mocks/registrations.mock'
 
 // Toggle to use mock data (set to false when backend is ready)
-const USE_MOCK_DATA = true
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
 
 // Simulate API delay for realistic testing
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 const mockRegistrationsApi = {
   getAll: async () => {
+    await delay(500)
+    const registrations = getRegistrations()
+    return { data: registrations }
+  },
+
+  getByUser: async (userId) => {
     await delay(500)
     const registrations = getRegistrations()
     return { data: registrations }
@@ -53,11 +59,15 @@ const mockRegistrationsApi = {
 
 export const registrationsApi = USE_MOCK_DATA ? mockRegistrationsApi : {
   ...createCrudApi('registrations'),
-  
+
+  // Get registrations for specific user
+  getByUser: (userId) =>
+    api.get(`/registrations/user/${userId}`),
+
   // Get registrations for specific activity
   getByActivity: (activityId) =>
     api.get(`/registrations/activity/${activityId}`),
-  
+
   // Cancel registration
   cancel: (registrationId) =>
     api.delete(`/registrations/${registrationId}`)

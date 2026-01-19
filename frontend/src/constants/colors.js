@@ -38,31 +38,90 @@ export const SEMANTIC_COLORS = {
   },
 };
 
+// Person 3: Volunteer Swiper Colors (Warm coral/sage palette)
+export const SWIPER_COLORS = {
+  // Primary action - Match/Like
+  match: {
+    DEFAULT: '#56965a',    // sage-500
+    light: '#a7d0a9',      // sage-300
+    dark: '#38623b',       // sage-700
+    glow: 'rgba(86, 150, 90, 0.4)',
+    gradient: 'linear-gradient(135deg, #56965a 0%, #78b37c 100%)',
+  },
+  // Secondary action - Pass/Skip
+  pass: {
+    DEFAULT: '#ff6b4a',    // coral-500
+    light: '#ffb3a3',      // coral-300
+    dark: '#c93d21',       // coral-700
+    glow: 'rgba(255, 107, 74, 0.4)',
+    gradient: 'linear-gradient(135deg, #ff6b4a 0%, #ff8a73 100%)',
+  },
+  // Card backgrounds
+  card: {
+    bg: '#fff5f3',         // coral-50
+    border: '#ffd4cb',     // coral-200
+  },
+  // Celebration
+  celebration: {
+    primary: '#56965a',
+    secondary: '#78b37c',
+    tertiary: '#a7d0a9',
+    accent: '#ff6b4a',
+  },
+};
+
+// Person 4: Staff Analytics Colors (Deep navy/gold palette)
+export const ANALYTICS_COLORS = {
+  // Primary chart color
+  primary: '#6271f1',      // navy-500
+  // Secondary chart color
+  secondary: '#d4a106',    // gold-500
+  // Supporting colors for multi-series charts
+  tertiary: '#8093f8',     // navy-400
+  quaternary: '#fde047',   // gold-300
+  // Background
+  bg: {
+    card: '#f0f4ff',       // navy-50
+    highlight: '#fefce8',  // gold-50
+  },
+  // Grid/axis
+  grid: '#c7d6fe',         // navy-200
+  axis: '#3435a3',         // navy-800
+  // Stats cards
+  stats: {
+    activities: '#6271f1',  // navy-500
+    registrations: '#56965a', // sage-500
+    volunteers: '#8b5cf6',  // purple-500
+    coverage: '#d4a106',    // gold-500
+  },
+};
+
 // Chart/visualization colors (hex values for Recharts)
 export const CHART_COLORS = {
-  primary: '#2563eb',     // blue-600 - registrations, primary metrics
-  secondary: '#10b981',   // green-500 - volunteers, positive trends
-  tertiary: '#f59e0b',    // amber-500 - social activities, warnings
+  // Updated to use new palette
+  primary: '#6271f1',     // navy-500
+  secondary: '#56965a',   // sage-500 - volunteers, positive trends
+  tertiary: '#d4a106',    // gold-500 - warnings, highlights
   quaternary: '#8b5cf6',  // purple-500 - music/arts
-  quinary: '#ec4899',     // pink-500 - additional category
+  quinary: '#ff6b4a',     // coral-500 - additional category
 
   // Specific chart uses
-  registrations: '#2563eb',
-  volunteers: '#10b981',
-  covered: '#10b981',
-  uncovered: '#d1d5db',   // gray-300
+  registrations: '#6271f1',
+  volunteers: '#56965a',
+  covered: '#56965a',
+  uncovered: '#e5e7eb',   // gray-200
 
   // Grid/axis
   grid: '#e5e7eb',        // gray-200
   axis: '#6b7280',        // gray-500
 };
 
-// Program/pie chart colors
+// Program/pie chart colors (updated)
 export const PROGRAM_COLORS = {
-  exercise: '#10b981',      // green-500
-  artsAndCrafts: '#3b82f6', // blue-500
-  socialActivities: '#f59e0b', // amber-500
-  musicTherapy: '#8b5cf6',  // purple-500
+  exercise: '#56965a',       // sage-500
+  artsAndCrafts: '#6271f1',  // navy-500
+  socialActivities: '#d4a106', // gold-500
+  musicTherapy: '#8b5cf6',   // purple-500
 };
 
 // Activity type colors for calendar/cards
@@ -87,16 +146,16 @@ export const ACTIVITY_TYPE_COLORS = {
     hex: { bg: '#fdf2f8', border: '#f472b6', text: '#831843' },
   },
   wellness: {
-    bg: 'bg-green-50',
-    border: 'border-green-400',
-    text: 'text-green-900',
-    hex: { bg: '#f0fdf4', border: '#4ade80', text: '#14532d' },
+    bg: 'bg-sage-50',
+    border: 'border-sage-400',
+    text: 'text-sage-900',
+    hex: { bg: '#f4f9f4', border: '#78b37c', text: '#28412b' },
   },
   social: {
-    bg: 'bg-amber-50',
-    border: 'border-amber-400',
-    text: 'text-amber-900',
-    hex: { bg: '#fffbeb', border: '#fbbf24', text: '#78350f' },
+    bg: 'bg-gold-50',
+    border: 'border-gold-400',
+    text: 'text-gold-900',
+    hex: { bg: '#fefce8', border: '#facc15', text: '#654711' },
   },
   educational: {
     bg: 'bg-orange-50',
@@ -112,28 +171,30 @@ export const ACTIVITY_TYPE_COLORS = {
   },
 };
 
-// Confetti colors for match celebration
+// Confetti colors for match celebration (updated to sage/coral)
 export const CONFETTI_COLORS = [
-  '#22c55e', // green-500
-  '#16a34a', // green-600
-  '#4ade80', // green-400
-  '#86efac', // green-300
+  '#56965a', // sage-500
+  '#78b37c', // sage-400
+  '#a7d0a9', // sage-300
+  '#ff6b4a', // coral-500
+  '#ff8a73', // coral-400
+  '#ffd4cb', // coral-200
 ];
 
 // Toast notification colors (hex for react-hot-toast)
 export const TOAST_COLORS = {
   success: {
-    icon: '#10b981',      // green-500
+    icon: '#56965a',      // sage-500
     background: '#ffffff',
     text: '#1f2937',      // gray-800
   },
   error: {
-    icon: '#ef4444',      // red-500
+    icon: '#ff6b4a',      // coral-500
     background: '#ffffff',
     text: '#1f2937',
   },
   info: {
-    icon: '#3b82f6',      // blue-500
+    icon: '#6271f1',      // navy-500
     background: '#f3f4f6', // gray-100
     text: '#6b7280',      // gray-500
   },
