@@ -116,6 +116,80 @@ class AnalyticsService:
             for program_type, count in results
         }
     
+    def get_activities_in_range(self, start_date: date, end_date: date) -> int:
+        """
+        Count activities within a date range
+
+        Returns count of activities where date is between start and end (inclusive)
+        """
+        return (
+            self.db.query(Activity)
+            .filter(
+                Activity.date >= start_date,
+                Activity.date <= end_date
+            )
+            .count()
+        )
+
+    def get_registrations_in_range(self, start_date: date, end_date: date) -> Dict:
+        """
+        Get participant and volunteer counts for activities in date range
+
+        Returns {"participants": int, "volunteers": int}
+        """
+        # Count confirmed participant registrations for activities in range
+        participants = (
+            self.db.query(Registration)
+            .join(Activity)
+            .filter(
+                Activity.date >= start_date,
+                Activity.date <= end_date,
+                Registration.status == RegistrationStatus.CONFIRMED
+            )
+            .count()
+        )
+
+        # Count confirmed volunteer matches for activities in range
+        volunteers = (
+            self.db.query(VolunteerMatch)
+            .join(Activity)
+            .filter(
+                Activity.date >= start_date,
+                Activity.date <= end_date,
+                VolunteerMatch.status == RegistrationStatus.CONFIRMED
+            )
+            .count()
+        )
+
+        return {
+            "participants": participants,
+            "volunteers": volunteers
+        }
+
+    def get_program_breakdown_in_range(self, start_date: date, end_date: date) -> Dict[str, int]:
+        """
+        Get breakdown of activities by program type within date range
+
+        Returns count per program type for activities in range
+        """
+        results = (
+            self.db.query(
+                Activity.program_type,
+                func.count(Activity.id).label('count')
+            )
+            .filter(
+                Activity.date >= start_date,
+                Activity.date <= end_date
+            )
+            .group_by(Activity.program_type)
+            .all()
+        )
+
+        return {
+            program_type or "Uncategorized": count
+            for program_type, count in results
+        }
+
     def get_activity_attendance(self, activity_id: str) -> Dict:
         """
         Get detailed attendance for a specific activity
