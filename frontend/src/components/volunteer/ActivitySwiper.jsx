@@ -57,13 +57,24 @@ export default function ActivitySwiper({ onMatch }) {
 
     if (direction === 'right') {
       try {
-        await matchesApi.create({ activity_id: activity.id })
-
-        // Show success toast
-        toast.success(`Matched with "${activity.title}"!`, {
-          duration: 3000,
-          icon: '🎉'
-        })
+        // Use toast.promise for loading state during API call
+        await toast.promise(
+          matchesApi.create({ activity_id: activity.id }),
+          {
+            loading: 'Confirming match...',
+            success: `Matched with "${activity.title}"!`,
+            error: 'Failed to create match. Please try again.'
+          },
+          {
+            success: {
+              icon: '🎉',
+              duration: 3000
+            },
+            error: {
+              duration: 4000
+            }
+          }
+        )
 
         // Show match celebration
         setMatchedActivity(activity)
@@ -75,9 +86,7 @@ export default function ActivitySwiper({ onMatch }) {
         }
       } catch (error) {
         console.error('Failed to match:', error)
-        toast.error('Failed to create match. Please try again.', {
-          duration: 4000
-        })
+        // Error already shown by toast.promise
       }
     } else {
       // Pass - show subtle info toast
