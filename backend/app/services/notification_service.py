@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
+from datetime import datetime
 import logging
 
-from app.db.models import User, Activity
+from app.db.models import User, Activity, Notification
 from app.services.twilio_client import get_twilio_client
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,83 @@ class NotificationService:
     def __init__(self, db: Session):
         self.db = db
         self.twilio = get_twilio_client()
+
+    async def send_notification(
+        self,
+        user_id: UUID,
+        message: str,
+        channel: str = 'sms'
+    ) -> Notification:
+        """
+        Send a generic notification to a user and log it to database.
+
+        Args:
+            user_id: Target user UUID
+            message: Notification text
+            channel: 'sms' or 'whatsapp'
+
+        Returns:
+            Notification record with status
+
+        Raises:
+            ValueError: If user not found or has no phone number
+        """
+        user = self.db.query(User).filter(User.id == user_id).first()
+
+        if not user:
+            raise ValueError(f"User not found: {user_id}")
+
+        phone = user.phone
+        if channel == 'whatsapp' and user.caregiver_phone:
+            phone = user.caregiver_phone
+
+        if not phone:
+            raise ValueError(f"User {user_id} has no phone number for {channel}")
+
+        # Create notification record
+        notification = Notification(
+            user_id=user_id,
+            message=message,
+            channel=channel,
+            status='pending'
+        )
+        self.db.add(notification)
+
+        # Send via Twilio
+        if channel == 'whatsapp':
+            sid = self.twilio.send_whatsapp(phone, message)
+        else:
+            sid = self.twilio.send_sms(phone, message)
+
+        # Update status
+        if sid:
+            notification.status = 'sent'
+            notification.sent_at = datetime.utcnow()
+        else:
+            notification.status = 'failed'
+
+        self.db.commit()
+        self.db.refresh(notification)
+
+        logger.info(f"Notification {notification.id} {notification.status} to {user_id} via {channel}")
+        return notification
+
+    def get_user_notifications(self, user_id: UUID) -> List[Notification]:
+        """
+        Get all notifications for a user.
+
+        Args:
+            user_id: Target user UUID
+
+        Returns:
+            List of Notification records ordered by created_at desc
+        """
+        return (
+            self.db.query(Notification)
+            .filter(Notification.user_id == user_id)
+            .order_by(Notification.created_at.desc())
+            .all()
+        )
 
     async def send_registration_confirmation(
         self,
