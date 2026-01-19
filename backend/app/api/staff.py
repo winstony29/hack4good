@@ -165,18 +165,31 @@ async def get_weekly_report(
 ):
     """
     Get weekly activity report
-    
+
     - Activities conducted
     - Total participants
     - Volunteer hours
     - Program type breakdown
     """
-    # TODO: Generate report for date range
+    # Validate date range
+    if start_date > end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="start_date must be before or equal to end_date"
+        )
+
+    analytics_service = AnalyticsService(db)
+
+    # Get counts for date range
+    activities_count = analytics_service.get_activities_in_range(start_date, end_date)
+    registrations = analytics_service.get_registrations_in_range(start_date, end_date)
+    program_breakdown = analytics_service.get_program_breakdown_in_range(start_date, end_date)
+
     return {
         "start_date": start_date,
         "end_date": end_date,
-        "activities_count": 0,
-        "participants_count": 0,
-        "volunteers_count": 0,
-        "program_breakdown": {}
+        "activities_count": activities_count,
+        "participants_count": registrations["participants"],
+        "volunteers_count": registrations["volunteers"],
+        "program_breakdown": program_breakdown
     }
