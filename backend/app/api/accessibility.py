@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from app.core.auth import get_current_user
 from app.core.deps import get_db
+from app.integrations.elevenlabs_client import get_elevenlabs_client
 
 router = APIRouter()
 
@@ -38,17 +39,32 @@ async def text_to_speech(
 ):
     """
     Convert text to speech using ElevenLabs
-    
+
     - **text**: Text to convert to speech
     - **language**: Language code (en, zh, ms, ta)
-    
-    Returns audio URL (can be base64 or S3 URL)
+
+    Returns audio URL (base64 data URL)
     """
-    # TODO: Call ElevenLabs API
-    # Generate speech audio
-    # Store audio (S3 or return base64)
-    # Return URL
-    raise HTTPException(status_code=501, detail="TTS not implemented yet")
+    # Validate input
+    if not request.text or not request.text.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Text cannot be empty"
+        )
+
+    # Truncate very long text
+    text = request.text.strip()
+    if len(text) > 5000:
+        text = text[:5000]
+
+    # Generate speech using ElevenLabs client
+    client = get_elevenlabs_client()
+    audio_url, duration = client.generate_speech(
+        text=text,
+        language=request.language
+    )
+
+    return TTSResponse(audio_url=audio_url, duration=duration)
 
 
 @router.post("/translate", response_model=TranslationResponse)
