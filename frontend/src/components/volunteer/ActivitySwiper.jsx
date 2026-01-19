@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import toast from 'react-hot-toast'
 import { matchesApi } from '../../services/matches.api'
 import SwipeableCard from './SwipeableCard'
 import SwipeButtons from './SwipeButtons'
@@ -23,6 +24,16 @@ export default function ActivitySwiper({ onMatch }) {
     fetchAvailableActivities()
   }, [])
 
+  // Show toast when all activities have been reviewed
+  useEffect(() => {
+    if (!loading && activities.length > 0 && currentIndex >= activities.length) {
+      toast('No more activities to browse!', {
+        icon: '✨',
+        duration: 3000
+      })
+    }
+  }, [currentIndex, activities.length, loading])
+
   const fetchAvailableActivities = async () => {
     try {
       setLoading(true)
@@ -30,6 +41,9 @@ export default function ActivitySwiper({ onMatch }) {
       setActivities(response.data || [])
     } catch (error) {
       console.error('Failed to fetch activities:', error)
+      toast.error('Failed to load activities. Please refresh the page.', {
+        duration: 4000
+      })
     } finally {
       setLoading(false)
     }
@@ -44,7 +58,12 @@ export default function ActivitySwiper({ onMatch }) {
     if (direction === 'right') {
       try {
         await matchesApi.create({ activity_id: activity.id })
-        console.log('Matched with activity:', activity.title)
+
+        // Show success toast
+        toast.success(`Matched with "${activity.title}"!`, {
+          duration: 3000,
+          icon: '🎉'
+        })
 
         // Show match celebration
         setMatchedActivity(activity)
@@ -56,7 +75,20 @@ export default function ActivitySwiper({ onMatch }) {
         }
       } catch (error) {
         console.error('Failed to match:', error)
+        toast.error('Failed to create match. Please try again.', {
+          duration: 4000
+        })
       }
+    } else {
+      // Pass - show subtle info toast
+      toast(`Passed on "${activity.title}"`, {
+        duration: 1500,
+        icon: '👋',
+        style: {
+          background: '#f3f4f6',
+          color: '#6b7280'
+        }
+      })
     }
 
     // Move to next card after animation completes
