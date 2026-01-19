@@ -2,15 +2,15 @@
 
 ## Current Position
 
-Phase: 4 of 4 (Person 3 Backend Completion)
-Plan: 1 of 3 in current phase
+Phase: 4 of 5 (Person 3 Backend Completion)
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-19 - Completed 04-01-PLAN.md (Matches API)
+Last activity: 2026-01-19 - Completed 04-02-PLAN.md (Notification Service Wiring)
 
 Progress (Phase 1): ██████████ 100%
 Progress (Phase 2): ██████████ 100%
 Progress (Phase 3): ██████████ 100%
-Progress (Phase 4): ███░░░░░░░ 33%
+Progress (Phase 4): ██████░░░░ 67%
 
 ## Accumulated Decisions
 
@@ -46,6 +46,11 @@ Progress (Phase 4): ███░░░░░░░ 33%
 | 04-01 | Soft delete via status=CANCELLED | Preserves match history for analytics/audit |
 | 04-01 | Time conflict detection | Prevents double-booking on same day |
 | 04-01 | Lazy imports in endpoints | Avoids circular import issues with models |
+| 04-02 | Mock mode default (true) | Safe for development, no accidental SMS sends |
+| 04-02 | Singleton TwilioClient | Reuse connection, avoid repeated initialization |
+| 04-02 | Graceful fallback to mock | If Twilio not installed or creds missing, use mock |
+| 05-01 | Query Reg/Match directly for timestamps | CSV export needs created_at/matched_at not in AnalyticsService |
+| 05-01 | Double-quoted CSV fields | Handle commas in names/emails properly |
 
 ## Deferred Issues
 
@@ -58,8 +63,8 @@ None
 ## Session Continuity
 
 Last session: 2026-01-19
-Status: 04-01 complete, 04-02 ready for execution
-Next: Execute 04-02-PLAN.md to wire notification service
+Status: 04-02 complete, 04-03 ready for execution
+Next: Execute 04-03-PLAN.md to add toast notification enhancements
 
 ## Phase Summary
 
@@ -68,8 +73,8 @@ Next: Execute 04-02-PLAN.md to wire notification service
 | 01 | Volunteer Swiper (Person 3) | Complete | 5/5 |
 | 02 | Experience Lead (Person 4) | Complete | 4/4 |
 | 03 | Integration | Complete | 1/1 |
-| 04 | Person 3 Backend Completion | In progress | 1/3 |
-| 05 | Person 4 Staff API Completion | Planned | 0/2 |
+| 04 | Person 3 Backend Completion | In progress | 2/3 |
+| 05 | Person 4 Staff API Completion | In progress | 1/2 |
 
 ## Integration Deliverables (Phase 3)
 
@@ -83,7 +88,7 @@ Next: Execute 04-02-PLAN.md to wire notification service
 | Plan | Name | Status | Dependencies |
 |------|------|--------|--------------|
 | 04-01 | Matches API Implementation | Complete | Backend stubs |
-| 04-02 | Notification Service Wiring | Planned | 04-01 |
+| 04-02 | Notification Service Wiring | Complete | 04-01 |
 | 04-03 | Toast Notification Enhancements | Planned | Phase 1 swiper |
 
 ## Summary of Phase 4 Work
@@ -110,7 +115,7 @@ Next: Execute 04-02-PLAN.md to wire notification service
 
 | Plan | Name | Status | Dependencies |
 |------|------|--------|--------------|
-| 05-01 | Staff API Wiring | Planned | None (AnalyticsService exists) |
+| 05-01 | Staff API Wiring | Complete | None (AnalyticsService exists) |
 | 05-02 | Weekly Report Implementation | Planned | 05-01 |
 
 ### Tasks in 05-01 (Staff API Wiring)

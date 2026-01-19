@@ -77,12 +77,12 @@ Integrate Person 4's accessibility features with Person 3's volunteer swiper. En
 
 ## Phase 4: Person 3 Backend Completion (Person 3)
 
-**Status:** In progress (1/3 plans complete)
+**Status:** In progress (2/3 plans complete)
 
 ### Plans
 
 - [x] **04-01: Matches API Implementation** - Complete 4 stub endpoints with full CRUD
-- [ ] **04-02: Notification Service Wiring** - Mock Twilio mode, wire into matches API
+- [x] **04-02: Notification Service Wiring** - Mock Twilio mode, wire into matches API
 - [ ] **04-03: Toast Notification Enhancements** - Add toast feedback to swiper actions
 
 ### Goal
@@ -103,11 +103,11 @@ Complete Person 3's backend work: implement the matches API endpoints, wire the 
 
 ## Phase 5: Person 4 Staff API Completion (Person 4)
 
-**Status:** Planned (0/2 plans complete)
+**Status:** In progress (1/2 plans complete)
 
 ### Plans
 
-- [ ] **05-01: Staff API Wiring** - Wire staff.py endpoints to use AnalyticsService
+- [x] **05-01: Staff API Wiring** - Wire staff.py endpoints to use AnalyticsService
 - [ ] **05-02: Weekly Report Implementation** - Add date-range methods, implement weekly report
 
 ### Goal
@@ -118,8 +118,8 @@ Wire the Staff API endpoints to use the already-implemented AnalyticsService, re
 - **Phase 2 complete** - Staff frontend components exist
 
 ### Success Criteria
-- [ ] /staff/analytics returns real metrics from database
-- [ ] /staff/attendance/{id} returns real participant/volunteer lists
-- [ ] /staff/attendance/{id}/export generates real CSV data
+- [x] /staff/analytics returns real metrics from database
+- [x] /staff/attendance/{id} returns real participant/volunteer lists
+- [x] /staff/attendance/{id}/export generates real CSV data
 - [ ] /staff/reports/weekly returns aggregated statistics for date range
-- [ ] 404 handling for invalid activity IDs
+- [x] 404 handling for invalid activity IDs
