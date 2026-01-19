@@ -3,11 +3,11 @@
 ## Current Position
 
 Phase: 1 of 1 (Volunteer Swiper)
-Plan: 2 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-19 - Completed 01-02-PLAN.md
+Last activity: 2026-01-19 - Completed 01-03-PLAN.md
 
-Progress: ████░░░░░░ 40%
+Progress: ██████░░░░ 60%
 
 ## Accumulated Decisions
 
@@ -17,6 +17,8 @@ Progress: ████░░░░░░ 40%
 | 01-01 | .env.example for documentation | .env is gitignored |
 | 01-02 | Wrap mock returns in { data: ... } | Match real API response shape |
 | 01-02 | Filter by date AND matches | getAvailableActivitiesMock excludes past + already matched |
+| 01-03 | 100px swipe threshold | Balances intentional vs accidental swipes |
+| 01-03 | Spring snap-back (500/30) | Snappy feedback for incomplete swipes |
 
 ## Deferred Issues
 
@@ -29,5 +31,5 @@ None
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 01-02-PLAN.md
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None
