@@ -3,11 +3,11 @@
 ## Current Position
 
 Phase: 1 of 1 (Volunteer Swiper)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-01-19 - Completed 01-04-PLAN.md
+Plan: 5 of 5 in current phase
+Status: Phase complete
+Last activity: 2026-01-19 - Completed 01-05-PLAN.md
 
-Progress: ████████░░ 80%
+Progress: ██████████ 100%
 
 ## Accumulated Decisions
 
@@ -22,6 +22,9 @@ Progress: ████████░░ 80%
 | 01-04 | VISIBLE_CARDS=3 | Stack depth for visual effect |
 | 01-04 | 50ms timeout before index advance | Allows animation to complete |
 | 01-04 | swiping state guard | Prevents double-swipe bugs |
+| 01-05 | 2.5s auto-dismiss for celebration | Balances delight with user flow |
+| 01-05 | Green confetti colors | Matches success/match theme |
+| 01-05 | /swiper route added | Direct access to swiper feature |
 
 ## Deferred Issues
 
@@ -29,10 +32,10 @@ None
 
 ## Blockers/Concerns Carried Forward
 
-- ActivitySwiper not yet routed - integration in 01-05
+None - all concerns resolved
 
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 01-04-PLAN.md
+Stopped at: Completed 01-05-PLAN.md (Phase complete)
 Resume file: None
