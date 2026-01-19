@@ -35,10 +35,11 @@ Plans:
 **Goal**: Consistent loading states across all async operations, clear error messages with recovery options, success/failure toast notifications, form validation feedback
 **Depends on**: Phase 6
 **Research**: Unlikely (react-hot-toast already in project)
-**Plans**: TBD
+**Plans**: 2
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01: Loading states & async error handling
+- [ ] 07-02: Form validation feedback
 
 #### Phase 8: Mobile Responsiveness
 
