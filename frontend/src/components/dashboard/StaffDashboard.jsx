@@ -2,6 +2,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import { TrendingUp, Users, Calendar, Award } from 'lucide-react'
 import AnalyticsCharts from '../staff/AnalyticsCharts'
+import ActivityManager from '../staff/ActivityManager'
 import { getDashboardMetrics } from '../../mocks/analytics.mock'
 
 export default function StaffDashboard() {
@@ -58,19 +59,7 @@ export default function StaffDashboard() {
       </Card>
 
       {/* Activity Management */}
-      <Card>
-        <CardHeader>
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Manage Activities
-          </h2>
-        </CardHeader>
-        <CardBody>
-          {/* TODO: Implement ActivityManager */}
-          <div className="py-12 text-center text-gray-500">
-            Activity management interface will be displayed here
-          </div>
-        </CardBody>
-      </Card>
+      <ActivityManager />
     </div>
   )
 }
