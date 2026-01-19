@@ -86,6 +86,26 @@ export const getMatchesByActivity = (activityId) => {
 }
 
 /**
+ * Get activities available for volunteer to swipe on
+ * Excludes activities they've already matched with
+ * Only returns future activities (date >= today)
+ */
+export const getAvailableActivitiesMock = (volunteerId = 'user-3') => {
+  const today = new Date().toISOString().split('T')[0]
+
+  // Get IDs of activities volunteer already matched with
+  const matchedActivityIds = mockVolunteerMatches
+    .filter(match => match.volunteer_id === volunteerId && match.status === 'confirmed')
+    .map(match => match.activity_id)
+
+  // Return future activities not yet matched
+  return mockActivities.filter(activity =>
+    activity.date >= today &&
+    !matchedActivityIds.includes(activity.id)
+  )
+}
+
+/**
  * Reset volunteer matches (for testing)
  */
 export const resetVolunteerMatches = () => {
