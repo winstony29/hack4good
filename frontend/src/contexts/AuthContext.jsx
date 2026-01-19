@@ -3,7 +3,7 @@ import { supabase } from '../services/supabase'
 import { getCurrentMockUser } from '../mocks/userSwitcher.mock'
 
 // Toggle to use mock data (set to false when Supabase is configured)
-const USE_MOCK_DATA = true
+const USE_MOCK_DATA = false
 
 export const AuthContext = createContext()
 
@@ -52,16 +52,33 @@ export function AuthProvider({ children }) {
       console.log('Mock signup:', email, userData)
       return { user: mockUser }
     }
-    
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: userData
-      }
+
+    // Call backend API to create user in both Supabase Auth and PostgreSQL
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        ...userData
+      })
     })
 
-    if (error) throw error
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Signup failed')
+    }
+
+    const data = await response.json()
+
+    // Set the session in Supabase client using the access token
+    await supabase.auth.setSession({
+      access_token: data.access_token,
+      refresh_token: data.access_token // Using same token as refresh for now
+    })
+
     return data
   }
 
@@ -73,13 +90,32 @@ export function AuthProvider({ children }) {
       setUser(mockUser)
       return { user: mockUser }
     }
-    
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
+
+    // Call backend API for authentication
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
     })
 
-    if (error) throw error
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.detail || 'Login failed')
+    }
+
+    const data = await response.json()
+
+    // Set the session in Supabase client using the access token
+    await supabase.auth.setSession({
+      access_token: data.access_token,
+      refresh_token: data.access_token // Using same token as refresh for now
+    })
+
     return data
   }
 

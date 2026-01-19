@@ -1,8 +1,20 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import { Calendar, Users, Heart, TrendingUp } from 'lucide-react'
 import Button from '../components/shared/Button'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Landing() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Redirect authenticated users to dashboard
+    if (user) {
+      navigate('/dashboard')
+    }
+  }, [user, navigate])
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white">
       {/* Hero Section */}

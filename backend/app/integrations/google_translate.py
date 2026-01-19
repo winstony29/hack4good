@@ -5,6 +5,7 @@ Provides translation functionality with automatic fallback to mock translations
 when Google Cloud credentials are not available (demo/development mode).
 """
 
+import os
 from typing import Optional
 
 from app.core.config import settings
@@ -33,12 +34,27 @@ class GoogleTranslateClient:
     def __init__(self):
         self.project_id = settings.GOOGLE_PROJECT_ID
         self.credentials_path = settings.GOOGLE_APPLICATION_CREDENTIALS
+        self.api_key = settings.GOOGLE_TRANSLATE_API_KEY
         self._client = None
 
-        if self.credentials_path and self.project_id:
+        # Try API key first (simpler method)
+        if self.api_key:
+            try:
+                from google.cloud import translate_v2 as translate
+                # Set API key as environment variable (required by google-cloud-translate)
+                os.environ['GOOGLE_API_KEY'] = self.api_key
+                self._client = translate.Client()
+                print("[Translation] Initialized with API key")
+            except ImportError:
+                print("[Translation] google-cloud-translate not installed, using mock mode")
+            except Exception as e:
+                print(f"[Translation] Failed to initialize with API key: {e}")
+        # Fall back to service account credentials
+        elif self.credentials_path and self.project_id:
             try:
                 from google.cloud import translate_v2 as translate
                 self._client = translate.Client()
+                print("[Translation] Initialized with service account")
             except ImportError:
                 print("[Translation] google-cloud-translate not installed, using mock mode")
             except Exception as e:

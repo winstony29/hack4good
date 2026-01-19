@@ -35,16 +35,17 @@ export default function AuthForm({ mode = 'login' }) {
     role: ROLES.PARTICIPANT,
     membership_type: MEMBERSHIP_TYPES.AD_HOC,
     full_name: '',
-    phone: ''
+    phone: '',
+    wheelchair_required: false
   })
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value, type, checked } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }))
     // Clear error when user starts typing
     if (touched[name]) {
@@ -102,7 +103,8 @@ export default function AuthForm({ mode = 'login' }) {
           membership_type: formData.role === ROLES.PARTICIPANT ? formData.membership_type : null,
           full_name: formData.full_name,
           phone: formData.phone,
-          preferred_language: 'en'
+          preferred_language: 'en',
+          wheelchair_required: formData.role === ROLES.PARTICIPANT ? formData.wheelchair_required : false
         }
         await signup(formData.email, formData.password, userData)
         toast.success('Account created successfully!')
@@ -148,24 +150,47 @@ export default function AuthForm({ mode = 'login' }) {
           </div>
 
           {formData.role === ROLES.PARTICIPANT && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Membership Type
-              </label>
-              <select
-                name="membership_type"
-                value={formData.membership_type}
-                onChange={handleChange}
-                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                required
-              >
-                {Object.entries(MEMBERSHIP_TYPES).map(([key, value]) => (
-                  <option key={value} value={value}>
-                    {MEMBERSHIP_LABELS[value]}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Membership Type
+                </label>
+                <select
+                  name="membership_type"
+                  value={formData.membership_type}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  required
+                >
+                  {Object.entries(MEMBERSHIP_TYPES).map(([key, value]) => (
+                    <option key={value} value={value}>
+                      {MEMBERSHIP_LABELS[value]}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id="wheelchair_required"
+                    name="wheelchair_required"
+                    type="checkbox"
+                    checked={formData.wheelchair_required}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                </div>
+                <div className="ml-3">
+                  <label htmlFor="wheelchair_required" className="text-sm font-medium text-gray-700">
+                    Wheelchair accessible facilities required
+                  </label>
+                  <p className="text-xs text-gray-500">
+                    Check this if you require wheelchair accessible venues
+                  </p>
+                </div>
+              </div>
+            </>
           )}
 
           <Input
