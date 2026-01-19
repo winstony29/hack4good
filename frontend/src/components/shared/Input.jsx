@@ -32,7 +32,7 @@ export default function Input({
       <div className="relative">
         <input
           className={`
-            w-full px-4 py-2 pr-10
+            w-full px-4 py-3 md:py-2 pr-10
             border ${showError ? 'border-red-500' : showSuccess ? 'border-green-500' : 'border-gray-300'}
             rounded-lg
             focus:ring-2 ${showError ? 'focus:ring-red-500' : 'focus:ring-primary-500'} focus:border-transparent

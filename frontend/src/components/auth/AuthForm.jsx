@@ -138,7 +138,7 @@ export default function AuthForm({ mode = 'login' }) {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               required
             >
               <option value={ROLES.PARTICIPANT}>Participant</option>
@@ -156,7 +156,7 @@ export default function AuthForm({ mode = 'login' }) {
                 name="membership_type"
                 value={formData.membership_type}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-4 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 required
               >
                 {Object.entries(MEMBERSHIP_TYPES).map(([key, value]) => (
