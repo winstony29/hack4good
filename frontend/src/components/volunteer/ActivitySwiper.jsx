@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { matchesApi } from '../../services/matches.api'
 import SwipeableCard from './SwipeableCard'
 import SwipeButtons from './SwipeButtons'
+import MatchAnimation from './MatchAnimation'
 import EmptyState from '../shared/EmptyState'
 import Button from '../shared/Button'
 import Spinner from '../shared/Spinner'
@@ -14,6 +15,8 @@ export default function ActivitySwiper({ onMatch }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
   const [swiping, setSwiping] = useState(false)
+  const [matchedActivity, setMatchedActivity] = useState(null)
+  const [showMatchAnimation, setShowMatchAnimation] = useState(false)
   const cardRef = useRef(null)
 
   useEffect(() => {
@@ -43,7 +46,11 @@ export default function ActivitySwiper({ onMatch }) {
         await matchesApi.create({ activity_id: activity.id })
         console.log('Matched with activity:', activity.title)
 
-        // Trigger match celebration callback
+        // Show match celebration
+        setMatchedActivity(activity)
+        setShowMatchAnimation(true)
+
+        // Also trigger parent callback if provided
         if (onMatch) {
           onMatch(activity)
         }
@@ -62,6 +69,11 @@ export default function ActivitySwiper({ onMatch }) {
   const handleButtonSwipe = (direction) => {
     // The SwipeableCard will handle its own animation via controls
     handleSwipe(direction)
+  }
+
+  const handleCloseMatchAnimation = () => {
+    setShowMatchAnimation(false)
+    setMatchedActivity(null)
   }
 
   if (loading) {
@@ -129,6 +141,13 @@ export default function ActivitySwiper({ onMatch }) {
       <div className="mt-6 text-center text-gray-500 text-sm">
         {currentIndex + 1} of {activities.length} activities
       </div>
+
+      {/* Match Celebration */}
+      <MatchAnimation
+        activity={matchedActivity}
+        isVisible={showMatchAnimation}
+        onClose={handleCloseMatchAnimation}
+      />
     </div>
   )
 }
