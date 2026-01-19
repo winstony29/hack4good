@@ -5,180 +5,226 @@
 ## Naming Patterns
 
 **Files:**
-- Python: `snake_case.py` for all modules (`activity_service.py`, `twilio_client.py`)
-- React components: `PascalCase.jsx` (`AuthForm.jsx`, `ActivityCalendar.jsx`)
-- JavaScript utilities: `camelCase.js` (`dateUtils.js`, `roleUtils.js`)
-- Test files: `*.test.jsx` for React, `test_*.py` for Python
-- API services: `*.api.js` (`activities.api.js`, `registrations.api.js`)
-- Mock files: `*.mock.js` (`users.mock.js`, `activities.mock.js`)
+- PascalCase.jsx - React components (`ActivityCard.jsx`, `Button.jsx`)
+- camelCase.js - Utilities and services (`dateUtils.js`, `validators.js`)
+- kebab-case.api.js - API services (`activities.api.js`, `matches.api.js`)
+- kebab-case.mock.js - Mock data (`analytics.mock.js`, `users.mock.js`)
+- *.test.jsx - Component tests (`Card.test.jsx`)
+- *.spec.js - E2E tests (`accessibility.spec.js`)
+- snake_case.py - Python backend files (`activity_service.py`)
 
 **Functions:**
-- Python: `snake_case` for all functions (`get_by_id`, `create_registration`)
-- JavaScript: `camelCase` for all functions (`getCurrentMockUser`, `handleSubmit`)
-- React event handlers: `handleEventName` pattern (`handleSubmit`, `handleCancel`)
-- Async functions: No special prefix (async/await used transparently)
+- camelCase for all functions (`formatDate`, `handleLogout`)
+- `handle` prefix for event handlers (`handleClick`, `handleSubmit`, `handleChange`)
+- `is`, `has`, `can` prefixes for boolean functions (`isFull`, `isUpcoming`, `isPast`)
+- No special prefix for async functions
 
 **Variables:**
-- Python: `snake_case` for variables and parameters
-- JavaScript: `camelCase` for variables
-- Constants: `UPPER_SNAKE_CASE` (`USE_MOCK_DATA`, `API_BASE_URL`)
-- React state: `[value, setValue]` pattern with useState
+- camelCase for variables (`userData`, `activityList`)
+- UPPER_SNAKE_CASE for constants (`USE_MOCK_DATA`, `TOAST_COLORS`)
+- No underscore prefix for private members
 
-**Types:**
-- Python Pydantic models: `PascalCase` (`UserBase`, `ActivityCreate`)
-- Python Enums: `PascalCase` for name, `UPPER_CASE` for values (`Role.PARTICIPANT`)
-- No TypeScript in this project (plain JavaScript)
+**Types (Python):**
+- PascalCase for classes (`ActivityService`, `TwilioClient`)
+- PascalCase for Enums (`Role`, `MembershipType`, `RegistrationStatus`)
+- snake_case for function and method names
 
 ## Code Style
 
 **Formatting:**
-- Python: Standard Python formatting (PEP 8 implied)
-- JavaScript: ESLint configuration (`frontend/.eslintrc`)
-- Indentation: 2 spaces for JS, 4 spaces for Python
-- Quotes: Single quotes preferred in JavaScript
-- Semicolons: Omitted in JavaScript (no-semi style)
+- 2 space indentation (consistent across all files)
+- Single quotes for strings, backticks for template literals
+- Semicolons present in JavaScript (mixed in JSX)
+- No Prettier config file (uses ESLint defaults)
 
 **Linting:**
-- Frontend: ESLint with React plugin
-  - Config: `frontend/eslint.config.js` or `.eslintrc`
-  - Plugins: `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`
-  - Run: `npm run lint`
-- Backend: No explicit linter configured
+- ESLint 8.55.0 with React plugins (`frontend/package.json`)
+- Command: `npm run lint` (eslint . --ext js,jsx)
+- Rules: eslint-plugin-react, eslint-plugin-react-hooks
+- No explicit Prettier configuration
+
+**Python:**
+- PEP 8 style (inferred from code patterns)
+- Type hints used in function signatures
+- Pydantic models for data validation
 
 ## Import Organization
 
-**Python (Backend):**
-1. Standard library imports
-2. Third-party imports (fastapi, sqlalchemy, pydantic)
-3. Local imports (app.core, app.db, app.services)
+**Frontend Order:**
+1. External packages (React, framer-motion, lucide-react)
+2. React hooks (useState, useEffect)
+3. Context hooks (useAuth, useAccessibility)
+4. Internal components (relative imports)
+5. Utils/services (relative imports)
 
-Example from `backend/app/main.py`:
-```python
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
-from app.core.config import settings
-from app.api.router import api_router
-```
-
-**JavaScript (Frontend):**
-1. React imports first
-2. Third-party library imports
-3. Local service/context imports
-4. Local component imports
-5. Utility imports
-
-Example from `frontend/src/contexts/AuthContext.jsx`:
+**Example from `frontend/src/components/layout/Navbar.jsx`:**
 ```javascript
-import { createContext, useState, useEffect, useContext } from 'react'
-import { supabase } from '../services/supabase'
-import { getCurrentMockUser } from '../mocks/userSwitcher.mock'
+import { Link, useNavigate } from 'react-router-dom'
+import { Menu, X, User, LogOut } from 'lucide-react'
+import { useState } from 'react'
+import { useAuth } from '../../contexts/AuthContext'
+import Button from '../shared/Button'
 ```
+
+**Grouping:**
+- Blank line between groups
+- No alphabetical sorting enforced
 
 **Path Aliases:**
-- None configured (relative imports used: `../services/`, `./components/`)
+- Relative paths used throughout (no @/ aliases)
+- Consistent `../../` for parent navigation
 
 ## Error Handling
 
-**Patterns:**
-- Frontend: try/catch with toast notifications
-- Backend: FastAPI HTTPException with status codes
-- Async: try/catch blocks around async operations
+**Frontend Patterns:**
+- Try/catch in async operations
+- Toast notifications for user feedback via react-hot-toast
+- Error state with `useState` for component-level errors
+- Console.log for development debugging
 
-**Frontend Example:**
+**Backend Patterns:**
+- HTTPException for API errors with status codes
+- Generic `except Exception as e:` blocks (should be more specific)
+- Print statements for error logging (should migrate to logging module)
+- Mock fallback for integration failures
+
+**Example:**
 ```javascript
 try {
-  const result = await api.post('/registrations', data)
-  toast.success('Registration successful!')
-} catch (error) {
-  toast.error(error.response?.data?.detail || 'Registration failed')
+  const data = await activitiesApi.getAll()
+  setActivities(data)
+} catch (err) {
+  console.error('Failed to fetch activities:', err)
+  toast.error('Failed to load activities')
 }
 ```
 
-**Backend Example:**
-```python
-from fastapi import HTTPException
-
-if not activity:
-    raise HTTPException(status_code=404, detail="Activity not found")
-```
-
-**Error Types:**
-- 401: Unauthorized (triggers logout redirect in frontend)
-- 404: Not found
-- 422: Validation error (Pydantic)
-- 500: Server error
-
 ## Logging
 
-**Framework:**
-- Frontend: `console.log`, `console.warn`, `console.error`
-- Backend: No structured logging framework (print statements)
+**Frontend:**
+- Console.log for development debugging
+- No structured logging framework
+- Toast notifications for user-facing messages
+
+**Backend:**
+- Print statements (current state - not recommended)
+- Should migrate to Python logging module
+- Integrations use print for mock mode indication
 
 **Patterns:**
-- Mock mode logging: Emoji prefixed messages (`🎭 Mock user loaded:`)
-- Debug logging with descriptive context
-- No production logging configuration
+- Log errors with context before handling
+- No production logging framework configured
 
 ## Comments
 
 **When to Comment:**
-- Explain business logic or domain-specific rules
-- Mark TODO items for incomplete features
-- Document mock/development mode toggles
+- Explain complex logic or algorithms
+- Document component sections with JSX comments
+- Explain workarounds or non-obvious behavior
 
-**JSDoc/TSDoc:**
-- Not widely used (no TypeScript)
-- Minimal function documentation
+**JSX Comments:**
+```javascript
+{/* Logo */}
+{/* Desktop Navigation */}
+{/* Mobile Navigation */}
+```
+
+**Module-Level Comments:**
+```javascript
+/**
+ * Design System Constants
+ *
+ * Central export for all design system tokens.
+ * Usage:
+ *   import { TYPOGRAPHY, SPACING } from '@/constants';
+ */
+```
 
 **TODO Comments:**
-- Format: `# TODO: description` (Python), `// TODO: description` (JS)
-- Found in: API route handlers, component files
-- Example: `# TODO: Implement registration logic`
+- Format: `// TODO: description` or `# TODO: description`
+- No linked issues in TODO comments
 
 ## Function Design
 
 **Size:**
-- Keep functions focused on single responsibility
-- Extract helpers for complex logic
+- Keep components under 300 lines (some exceed this)
+- Extract hooks for complex state logic
+- Extract sub-components for repeated UI patterns
 
 **Parameters:**
-- Python: Type hints on parameters and return types
-- JavaScript: Destructuring for props in React components
-- Use options objects for many parameters
+- Destructure props in function signature
+- Default values inline: `{ variant = 'primary', size = 'medium' }`
+- Spread remaining props: `...props`
 
 **Return Values:**
-- Python: Explicit return types via type hints
-- JavaScript: Implicit returns in arrow functions where appropriate
+- Components return JSX
+- Service methods return data or throw errors
 - Early returns for guard clauses
+
+**Example:**
+```javascript
+export default function Button({
+  children,
+  variant = 'primary',
+  size = 'medium',
+  fullWidth = false,
+  loading = false,
+  disabled = false,
+  onClick,
+  ...props
+}) {
+  // Implementation
+}
+```
 
 ## Module Design
 
-**Exports:**
-- Python: `__init__.py` files for package exports
-- JavaScript: Named exports preferred (`export const`, `export function`)
-- Default exports for React components
+**Frontend Exports:**
+- Default export for main component
+- Named exports for sub-components
+- Named exports for utilities
+
+**Example (Compound Component):**
+```javascript
+export default function Card({ children, className = '' }) { ... }
+export function CardHeader({ children, className = '' }) { ... }
+export function CardBody({ children, className = '' }) { ... }
+export function CardFooter({ children, className = '' }) { ... }
+```
+
+**Backend Exports:**
+- Classes exported directly
+- No barrel files (import from specific modules)
 
 **Barrel Files:**
-- Python: `__init__.py` re-exports (`from app.models import *`)
-- JavaScript: Not widely used (direct imports)
+- `frontend/src/constants/index.js` - Exports all design tokens
+- Components import directly from files (no component barrel)
 
-**React Component Pattern:**
+## Component Patterns
+
+**Functional Components:**
+- All components are functional (no class components)
+- Hooks for state and effects
+- Props destructuring with defaults
+
+**Styling:**
+- Tailwind CSS utility classes as primary styling
+- CSS variables for accessibility theming
+- Variant objects for component variations
+
+**Variant Pattern:**
 ```javascript
-export function ComponentName({ prop1, prop2 }) {
-  const [state, setState] = useState(initialValue)
-
-  const handleAction = () => {
-    // handler logic
-  }
-
-  return (
-    <div>
-      {/* JSX */}
-    </div>
-  )
+const variants = {
+  primary: 'bg-primary-600 hover:bg-primary-700 text-white',
+  secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
+  danger: 'bg-red-600 hover:bg-red-700 text-white',
 }
 ```
+
+**Context Pattern:**
+- Create context with createContext()
+- Custom hook with error for missing provider
+- Provider component wraps children
 
 ---
 

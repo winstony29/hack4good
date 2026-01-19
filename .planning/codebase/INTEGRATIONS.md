@@ -5,103 +5,117 @@
 ## APIs & External Services
 
 **Authentication:**
-- Supabase Auth - User authentication (email/password)
-  - SDK/Client: `@supabase/supabase-js` in frontend (`frontend/src/services/supabase.js`)
-  - SDK/Client: `supabase` Python SDK in backend
-  - Auth: `SUPABASE_URL`, `SUPABASE_ANON_KEY` env vars
-  - JWT tokens passed to backend API
+- Supabase Auth - User authentication and session management
+  - Frontend Client: `frontend/src/services/supabase.js`
+  - Backend Integration: `backend/app/core/auth.py`
+  - SDK: @supabase/supabase-js 2.38.5 (frontend), supabase 2.0.0 (backend)
+  - Auth: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (frontend), `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_KEY` (backend)
+  - Features: Email/password login, JWT sessions, role-based access
 
-**Notifications:**
-- Twilio - SMS and WhatsApp notifications (`backend/app/integrations/twilio_client.py`)
-  - SDK/Client: `twilio 8.10.0`
-  - Auth: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` env vars
-  - Config: `TWILIO_PHONE_NUMBER`, `TWILIO_WHATSAPP_NUMBER`
-  - Mock mode available via `USE_MOCK_NOTIFICATIONS=true`
+**SMS/WhatsApp Notifications:**
+- Twilio - SMS and WhatsApp messaging
+  - Client: `backend/app/integrations/twilio_client.py`
+  - Auth: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`, `TWILIO_WHATSAPP_NUMBER`
+  - Features: Send SMS, send WhatsApp messages
+  - Mock mode: Falls back to mock when credentials unavailable
 
-**Accessibility:**
-- ElevenLabs - Text-to-speech for accessibility features
-  - SDK/Client: `elevenlabs 0.2.26`
-  - Auth: `ELEVENLABS_API_KEY` env var
-  - Optional: Falls back to mock mode if not configured
+**Text-to-Speech:**
+- ElevenLabs - Multilingual TTS for accessibility
+  - Client: `backend/app/integrations/elevenlabs_client.py`
+  - Auth: `ELEVENLABS_API_KEY`
+  - Features: Generate speech from text in en, zh, ms, ta languages
+  - Voice: Rachel (multilingual model, ID: 21m00Tcm4TlvDq8ikWAM)
+  - Returns: Base64-encoded MP3 data URL
+  - Mock mode: Returns mock audio when API key unavailable
 
-- Google Cloud Translation - Multi-language support
-  - SDK/Client: `google-cloud-translate 3.12.1`
-  - Auth: `GOOGLE_APPLICATION_CREDENTIALS`, `GOOGLE_PROJECT_ID` env vars
-  - Optional: Falls back to mock mode if not configured
+**Translation:**
+- Google Cloud Translation - Language translation
+  - Client: `backend/app/integrations/google_translate.py`
+  - Auth: `GOOGLE_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS`
+  - Features: Translate between English, Mandarin, Malay, Tamil
+  - Mock mode: Returns mock translations when credentials unavailable
 
 ## Data Storage
 
 **Databases:**
-- PostgreSQL on Supabase - Primary data store
+- PostgreSQL - Primary data store
   - Connection: `DATABASE_URL` env var
-  - Client: SQLAlchemy 2.0.23 ORM (`backend/app/db/`)
+  - Client: SQLAlchemy 2.0.23 ORM (`backend/app/db/session.py`)
   - Models: `backend/app/db/models.py`
-  - Base: `backend/app/db/base.py`, `backend/app/db/session.py`
+  - Migrations: Alembic 1.12.1 (`backend/alembic/`)
+
+**Tables:**
+- `users` - User accounts with roles (participant, volunteer, staff)
+- `activities` - Volunteer activities with capacity tracking
+- `registrations` - User activity registrations
+- `volunteer_matches` - Volunteer-to-activity assignments
+- `notifications` - SMS/WhatsApp notification records
 
 **File Storage:**
-- Not currently implemented (potential future Supabase Storage)
+- Not currently implemented (no file uploads)
 
 **Caching:**
-- Not detected
+- None currently (all database queries)
 
 ## Authentication & Identity
 
 **Auth Provider:**
-- Supabase Auth - Email/password authentication
-  - Implementation: Supabase client SDK (`frontend/src/services/supabase.js`)
-  - Context: `frontend/src/contexts/AuthContext.jsx`
-  - Token storage: Supabase manages session
-  - Session management: JWT tokens with refresh handled by Supabase
-  - Mock mode: `USE_MOCK_DATA = true` in AuthContext for development
+- Supabase Auth - Primary authentication
+  - Implementation: Supabase client SDK on both frontend and backend
+  - Token storage: Supabase session management (httpOnly cookies via @supabase/ssr)
+  - Session management: JWT refresh tokens handled by Supabase
+  - Backend validation: `backend/app/core/auth.py` validates JWT tokens
 
-**Backend Auth:**
-- JWT validation via `python-jose`
-- Auth middleware: `backend/app/core/auth.py`
-- Dependencies: `backend/app/core/deps.py`
+**Role-Based Access:**
+- Three roles: `participant`, `volunteer`, `staff`
+- Role guards: `get_current_staff()`, `get_current_volunteer()`, `get_current_participant()`
+- Frontend protection: `frontend/src/components/auth/ProtectedRoute.jsx`
 
 ## Monitoring & Observability
 
 **Error Tracking:**
-- Not detected (no Sentry or similar)
+- None configured (logs to stdout/stderr)
 
 **Analytics:**
-- Built-in analytics via `backend/app/services/analytics_service.py`
-- Frontend charts: `frontend/src/components/staff/AnalyticsCharts.jsx`
+- None (planned feature)
 
 **Logs:**
-- Console logging only (stdout/stderr)
+- Print statements in backend (should migrate to proper logging)
+- Console.log in frontend for debugging
 
 ## CI/CD & Deployment
 
 **Hosting:**
-- Not configured (development only)
+- Not specified (development only currently)
+- Recommended: Vercel (frontend), Railway/Render (backend)
 
 **CI Pipeline:**
-- Not detected (no GitHub Actions or similar)
+- Not configured (no GitHub Actions workflows detected)
 
 ## Environment Configuration
 
 **Development:**
-- Required env vars: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `JWT_SECRET_KEY`
-- Secrets location: `.env` files (gitignored), `.env.example` for reference
-- Mock/stub services:
-  - Mock auth via `USE_MOCK_DATA` flag (`frontend/src/contexts/AuthContext.jsx`)
-  - Mock notifications via `USE_MOCK_NOTIFICATIONS` flag
-  - Mock users: `frontend/src/mocks/userSwitcher.mock.js`
+- Required frontend vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+- Required backend vars: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `JWT_SECRET_KEY`
+- Optional integrations: Twilio, ElevenLabs, Google Cloud (fall back to mock mode)
+- Mock data: `VITE_USE_MOCK_DATA=true` enables frontend mock mode
+- Secrets location: `.env.local` (gitignored)
 
 **Staging:**
-- Not configured
+- Not currently configured
 
 **Production:**
-- Not configured
+- Same env vars as development
+- Requires real credentials for Twilio, ElevenLabs, Google Cloud
+- Requires production PostgreSQL database
 
 ## Webhooks & Callbacks
 
 **Incoming:**
-- None detected
+- None configured
 
 **Outgoing:**
-- Twilio notifications (SMS/WhatsApp) triggered by activity events
+- None configured
 
 ---
 

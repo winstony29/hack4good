@@ -4,250 +4,329 @@
 
 ## Test Framework
 
-**Frontend Runner:**
-- Vitest 4.0.17 (`frontend/package.json`)
-- Config: `frontend/vitest.config.js` (if exists) or Vite config
+**Frontend Unit/Component Tests:**
+- Runner: Vitest 4.0.17
+- Config: `frontend/vitest.config.js`
+- Environment: jsdom
+- Setup file: `frontend/src/test/setup.js`
 
-**Frontend Assertion Library:**
-- Vitest built-in expect
-- @testing-library/jest-dom 6.9.1 for DOM matchers
+**Frontend E2E Tests:**
+- Runner: Playwright 1.57.0
+- Config: `frontend/playwright.config.js`
+- Browser: Chromium only
+- Base URL: http://localhost:5173
 
-**Backend Runner:**
-- Pytest 7.4.3 (`backend/requirements.txt`)
-- Config: `backend/pytest.ini`
+**Backend Tests:**
+- Runner: Pytest 7.4.3
+- Config: `backend/tests/conftest.py`
+- HTTP client: httpx for async testing
+
+**Assertion Libraries:**
+- Vitest: Built-in expect (toBe, toEqual, toThrow, toMatchObject)
+- Playwright: Built-in expect (toHaveTitle, toBeVisible, etc.)
+- React Testing Library: @testing-library/jest-dom matchers
 
 **Run Commands:**
 ```bash
 # Frontend
-npm test                              # Run all tests (watch mode)
-npm run test:run                      # Run all tests (single run)
-npm run test:coverage                 # Coverage report
+npm test                    # Run Vitest in watch mode
+npm run test:run           # Run Vitest once
+npm run test:coverage      # Generate coverage report
+
+# E2E (requires dev server running)
+npx playwright test        # Run Playwright tests
 
 # Backend
-cd backend && pytest                  # Run all tests
-pytest tests/unit/                    # Unit tests only
-pytest tests/integration/             # Integration tests only
+pytest                     # Run all backend tests
+pytest tests/unit/         # Run unit tests only
+pytest tests/integration/  # Run integration tests only
 ```
 
 ## Test File Organization
 
 **Frontend Location:**
-- Co-located with source: `src/components/**/*.test.jsx`
-- Example: `src/components/shared/Card.test.jsx`
+- Unit/component tests: Colocated with source (e.g., `Card.test.jsx` next to `Card.jsx`)
+- E2E tests: `frontend/tests/e2e/` directory
+- Mock data tests: `frontend/src/mocks/*.test.js`
 
 **Backend Location:**
-- Separate tests directory: `backend/tests/`
 - Unit tests: `backend/tests/unit/`
 - Integration tests: `backend/tests/integration/`
 - Fixtures: `backend/tests/conftest.py`
 
 **Naming:**
-- Frontend: `{ComponentName}.test.jsx`
-- Backend: `test_{module_name}.py`
+- Component tests: `ComponentName.test.jsx`
+- E2E tests: `feature.spec.js`
+- Backend tests: `test_feature_name.py`
 
 **Structure:**
 ```
-frontend/src/
-  components/
-    shared/
-      Card.jsx
-      Card.test.jsx
-    staff/
-      AnalyticsCharts.jsx
-      AnalyticsCharts.test.jsx
-    dashboard/
-      StaffDashboard.jsx
-      StaffDashboard.test.jsx
-    layout/
-      Layout.jsx
-      Layout.test.jsx
-  mocks/
-    analytics.mock.test.js
+frontend/
+├── src/
+│   ├── components/
+│   │   └── shared/
+│   │       ├── Card.jsx
+│   │       └── Card.test.jsx     # Colocated test
+│   └── mocks/
+│       ├── analytics.mock.js
+│       └── analytics.mock.test.js
+└── tests/
+    └── e2e/
+        └── accessibility.spec.js  # E2E tests
 
-backend/tests/
-  __init__.py
-  conftest.py              # Shared fixtures
-  unit/
-    test_*.py
-  integration/
-    test_*.py
+backend/
+└── tests/
+    ├── conftest.py               # Fixtures
+    ├── unit/
+    │   ├── test_accessibility_service.py
+    │   ├── test_elevenlabs_client.py
+    │   ├── test_google_translate.py
+    │   └── test_notification_service.py
+    └── integration/
+        └── test_accessibility_api.py
 ```
 
 ## Test Structure
 
-**Frontend Suite Organization (Vitest + React Testing Library):**
+**Vitest/React Testing Library Pattern:**
 ```javascript
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import Card, { CardHeader, CardBody } from './Card'
 
-import { ComponentName } from './ComponentName'
+describe('Card Component', () => {
+  describe('Card', () => {
+    it('renders children content', () => {
+      render(<Card>Test Content</Card>)
+      expect(screen.getByText('Test Content')).toBeInTheDocument()
+    })
 
-describe('ComponentName', () => {
-  beforeEach(() => {
-    // Reset state, clear mocks
-    vi.clearAllMocks()
+    it('applies custom className', () => {
+      render(<Card className="custom-class">Content</Card>)
+      const card = screen.getByText('Content').parentElement
+      expect(card).toHaveClass('custom-class')
+    })
   })
 
-  it('renders correctly', () => {
-    render(<ComponentName prop="value" />)
-    expect(screen.getByText('Expected Text')).toBeInTheDocument()
-  })
-
-  it('handles user interaction', async () => {
-    const mockHandler = vi.fn()
-    render(<ComponentName onClick={mockHandler} />)
-
-    await userEvent.click(screen.getByRole('button'))
-    expect(mockHandler).toHaveBeenCalled()
+  describe('CardHeader', () => {
+    it('renders with correct styles', () => {
+      // Test sub-component
+    })
   })
 })
 ```
 
-**Backend Suite Organization (Pytest):**
-```python
-import pytest
-from app.services.activity_service import ActivityService
-
-class TestActivityService:
-    @pytest.fixture
-    def service(self, db_session):
-        return ActivityService(db_session)
-
-    def test_create_activity(self, service):
-        # arrange
-        activity_data = {"title": "Test", ...}
-
-        # act
-        result = service.create(activity_data)
-
-        # assert
-        assert result.title == "Test"
-
-    def test_get_nonexistent_activity(self, service):
-        result = service.get_by_id(uuid.uuid4())
-        assert result is None
-```
-
 **Patterns:**
-- Use beforeEach/setUp for per-test setup
-- Clear mocks between tests
-- Arrange/Act/Assert structure
-- One assertion focus per test
+- Nested `describe()` blocks for component sections
+- Single responsibility per test case
+- Arrange/Act/Assert pattern (comments optional)
+- Test both rendering and CSS class application
 
 ## Mocking
 
-**Frontend Framework:**
-- Vitest built-in mocking (`vi.fn()`, `vi.mock()`)
-
-**Frontend Patterns:**
+**Vitest Module Mocking:**
 ```javascript
-import { vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 
-// Mock module
-vi.mock('../services/api', () => ({
-  default: {
-    get: vi.fn(),
-    post: vi.fn()
-  }
+// Mock module at top of file
+vi.mock('../../contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: { id: '1', name: 'Test User', role: 'staff' }
+  })
 }))
 
-// Mock in test
-const mockFn = vi.fn()
-mockFn.mockReturnValue('mocked result')
-
-// Mock async
-mockFn.mockResolvedValue({ data: 'test' })
+describe('StaffDashboard', () => {
+  it('displays stats for staff user', () => {
+    render(<StaffDashboard />)
+    expect(screen.getByText('Total Activities')).toBeInTheDocument()
+  })
+})
 ```
 
-**Backend Framework:**
-- pytest fixtures
-- unittest.mock (pytest-mock)
-
 **What to Mock:**
-- External API calls (Supabase, Twilio)
-- Database connections (in unit tests)
-- Time/dates
+- React Contexts (AuthContext, AccessibilityContext)
+- API service calls
+- External libraries (ResizeObserver, matchMedia)
+- Browser APIs
 
 **What NOT to Mock:**
 - Pure utility functions
-- Simple data transformations
+- Simple component props
+- CSS classes
 
-## Fixtures and Factories
+**Test Setup (`frontend/src/test/setup.js`):**
+```javascript
+import '@testing-library/jest-dom'
 
-**Frontend Test Data:**
-- Mock files in `frontend/src/mocks/`
-- `activities.mock.js` - Mock activity data
-- `registrations.mock.js` - Mock registration data
-- `users.mock.js` - Mock user data
-- `userSwitcher.mock.js` - Switch mock user roles
+// Mock ResizeObserver (Recharts dependency)
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
 
-**Backend Fixtures:**
+// Mock matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  value: (query) => ({
+    matches: false,
+    media: query,
+    addListener: () => {},
+    removeListener: () => {},
+  })
+})
+```
+
+## E2E Testing (Playwright)
+
+**Configuration (`frontend/playwright.config.js`):**
+```javascript
+export default defineConfig({
+  testDir: './tests/e2e',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'list',
+  use: {
+    baseURL: 'http://localhost:5173',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+  projects: [{
+    name: 'chromium',
+    use: { ...devices['Desktop Chrome'] },
+  }],
+})
+```
+
+**E2E Test Pattern:**
+```javascript
+import { test, expect } from '@playwright/test'
+
+test.describe('Accessibility Features', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('http://localhost:5173')
+    await page.waitForLoadState('networkidle')
+  })
+
+  test('page loads successfully', async ({ page }) => {
+    await expect(page).toHaveTitle(/MINDS ActivityHub/)
+  })
+
+  test('font size persists via localStorage', async ({ page }) => {
+    await page.evaluate(() => {
+      localStorage.setItem('fontSize', 'large')
+    })
+    await page.reload()
+    // Assert font size applied
+  })
+})
+```
+
+**API Mocking with Playwright:**
+```javascript
+test('displays activities from API', async ({ page }) => {
+  await page.route('**/api/activities', async route => {
+    await route.fulfill({
+      status: 200,
+      body: JSON.stringify([
+        { id: '1', title: 'Test Activity' }
+      ])
+    })
+  })
+
+  await page.goto('/activities')
+  await expect(page.locator('text=Test Activity')).toBeVisible()
+})
+```
+
+## Backend Testing (Pytest)
+
+**Test Pattern:**
 ```python
-# backend/tests/conftest.py
+import pytest
+from unittest.mock import Mock, patch
+
+class TestAccessibilityService:
+    def test_text_to_speech_returns_audio(self):
+        # Arrange
+        service = AccessibilityService()
+
+        # Act
+        result = service.generate_speech("Hello", "en")
+
+        # Assert
+        assert result is not None
+        assert "audio" in result
+```
+
+**Fixtures (`backend/tests/conftest.py`):**
+```python
 import pytest
 
 @pytest.fixture
-def db_session():
-    """Create test database session"""
-    # Setup
-    yield session
-    # Teardown
+def test_db():
+    # Setup test database
+    yield db_session
+    # Cleanup
 
 @pytest.fixture
-def test_user(db_session):
-    """Create test user"""
-    return User(email="test@example.com", ...)
+def auth_headers():
+    return {"Authorization": "Bearer test-token"}
 ```
-
-**Location:**
-- Frontend: `frontend/src/mocks/*.mock.js`
-- Backend: `backend/tests/conftest.py`
 
 ## Coverage
 
+**Frontend Configuration:**
+```javascript
+// vitest.config.js
+coverage: {
+  provider: 'v8',
+  reporter: ['text', 'json', 'html'],
+  include: ['src/**/*.{js,jsx}'],
+  exclude: ['src/test/**', 'src/mocks/**'],
+}
+```
+
 **Requirements:**
 - No enforced coverage target
-- Coverage tracked for visibility
-
-**Configuration:**
-- Frontend: Vitest with @vitest/coverage-v8
-- Backend: pytest-cov (if configured)
+- Coverage tracked for awareness
+- Focus on critical paths (auth, API calls)
 
 **View Coverage:**
 ```bash
-# Frontend
 npm run test:coverage
-# Opens coverage/index.html
-
-# Backend
-pytest --cov=app tests/
+open coverage/index.html
 ```
 
 ## Test Types
 
 **Unit Tests:**
-- Frontend: Component rendering, prop handling
-- Backend: Service methods, utility functions
 - Scope: Single function/component in isolation
-- Location: Co-located (frontend), `tests/unit/` (backend)
+- Location: Colocated with source
+- Mocking: Mock all external dependencies
+- Speed: Each test <100ms
+- Examples: `Card.test.jsx`, `StaffDashboard.test.jsx`
 
 **Integration Tests:**
-- Backend: API endpoints with database
+- Scope: Multiple modules together
 - Location: `backend/tests/integration/`
-- Setup: Test database, fixtures
+- Mocking: Mock external services only
+- Examples: `test_accessibility_api.py`
 
 **E2E Tests:**
-- Framework: Playwright 1.57.0 (configured but usage unclear)
-- Location: Not found in source files
-- Status: Available but may not be implemented
+- Scope: Full user flows
+- Location: `frontend/tests/e2e/`
+- Mocking: API responses when needed
+- Framework: Playwright
+- Examples: `accessibility.spec.js`
 
 ## Common Patterns
 
-**Async Testing (Frontend):**
+**Async Testing:**
 ```javascript
-it('handles async operation', async () => {
-  render(<AsyncComponent />)
+it('fetches data on mount', async () => {
+  render(<Component />)
 
   await waitFor(() => {
     expect(screen.getByText('Loaded')).toBeInTheDocument()
@@ -255,38 +334,22 @@ it('handles async operation', async () => {
 })
 ```
 
-**Error Testing (Frontend):**
+**Error Testing:**
 ```javascript
-it('shows error on API failure', async () => {
-  api.get.mockRejectedValue(new Error('API Error'))
+it('shows error toast on API failure', async () => {
+  vi.mocked(api.get).mockRejectedValue(new Error('Network error'))
 
   render(<Component />)
 
   await waitFor(() => {
-    expect(screen.getByText('Error loading')).toBeInTheDocument()
+    expect(screen.getByText('Error loading data')).toBeInTheDocument()
   })
 })
 ```
 
-**Async Testing (Backend):**
-```python
-@pytest.mark.asyncio
-async def test_async_function():
-    result = await async_function()
-    assert result == expected
-```
-
 **Snapshot Testing:**
-- Not widely used in this codebase
-- React Testing Library preferred for assertions
-
-## Current Test Files
-
-- `frontend/src/mocks/analytics.mock.test.js`
-- `frontend/src/components/staff/AnalyticsCharts.test.jsx`
-- `frontend/src/components/dashboard/StaffDashboard.test.jsx`
-- `frontend/src/components/layout/Layout.test.jsx`
-- `frontend/src/components/shared/Card.test.jsx`
+- Not used in this codebase
+- Prefer explicit assertions for clarity
 
 ---
 

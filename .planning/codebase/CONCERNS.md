@@ -4,135 +4,181 @@
 
 ## Tech Debt
 
-**TODO Comments Throughout API Layer:**
-- Issue: Many API route handlers have placeholder TODO comments instead of implementation
+**Unimplemented Backend API Endpoints:**
+- Issue: Core API endpoints have TODO stubs returning 501/empty responses
 - Files:
-  - `backend/app/api/activities.py` (5 TODOs: lines 30, 43, 62, 76, 90)
-  - `backend/app/api/registrations.py` (4 TODOs: lines 34, 56, 73, 90)
-  - `backend/app/api/notifications.py` (3 TODOs: lines 29, 50, 67)
-- Why: Rapid prototyping, endpoints defined before full implementation
-- Impact: API endpoints may return mock/placeholder data instead of real database operations
-- Fix approach: Implement actual database operations using service layer
+  - `backend/app/api/registrations.py` - `register_for_activity()`, `get_user_registrations()`, `cancel_registration()` all unimplemented
+  - `backend/app/api/activities.py` - `get_activities()`, `get_activity()`, `create_activity()`, `update_activity()`, `delete_activity()` all unimplemented
+- Why: Rapid prototyping phase, frontend uses mock data
+- Impact: Backend cannot serve real data; app relies entirely on mock mode
+- Fix approach: Implement CRUD operations using existing services and ORM models
 
-**Hardcoded Mock Mode Toggle:**
-- Issue: `USE_MOCK_DATA = true` hardcoded in AuthContext
-- File: `frontend/src/contexts/AuthContext.jsx` (line 6)
-- Why: Development convenience
-- Impact: Production deployment would require code change, not environment variable
-- Fix approach: Move to environment variable (`VITE_USE_MOCK_DATA`)
+**Duplicate Twilio Client Implementations:**
+- Issue: Two separate TwilioClient classes exist
+- Files:
+  - `backend/app/integrations/twilio_client.py` - Uses print statements
+  - `backend/app/services/twilio_client.py` - Uses logging module
+- Why: Likely added by different developers without coordination
+- Impact: Confusion about which to use, inconsistent logging behavior
+- Fix approach: Consolidate into single client in `integrations/`, remove duplicate
 
-**No Health Check Database Validation:**
-- Issue: Health endpoint returns hardcoded "connected" without actual DB check
-- File: `backend/app/main.py` (line 41)
-- Why: Quick placeholder
-- Impact: Health checks don't detect actual database connection issues
-- Fix approach: Add actual database ping in health check
+**Large Frontend Components:**
+- Issue: Several components exceed 250+ lines, mixing concerns
+- Files:
+  - `frontend/src/components/dashboard/ParticipantDashboard.jsx` - 330 lines
+  - `frontend/src/pages/Activities.jsx` - 316 lines
+  - `frontend/src/components/activities/ActivityMonthCalendar.jsx` - 283 lines
+  - `frontend/src/components/activities/DayActivitiesModal.jsx` - 256 lines
+  - `frontend/src/components/activities/ActivityForm.jsx` - 256 lines
+- Why: Features added incrementally without refactoring
+- Impact: Difficult to maintain, test, and reason about
+- Fix approach: Extract sub-components, custom hooks for state logic
 
 ## Known Bugs
 
-**None identified during analysis**
+**Frontend Cancellation Not Implemented:**
+- Symptoms: Cancel button logs to console but doesn't cancel registration
+- Trigger: Click "Cancel" on any registration
+- Files: `frontend/src/components/dashboard/RegistrationsList.jsx` line 101-102
+- Workaround: None - feature doesn't work
+- Root cause: TODO placeholder with console.log instead of API call
+- Fix: Implement `handleCancel()` to call registrations API
+
+**Profile Edit Not Implemented:**
+- Symptoms: Edit profile shows placeholder text
+- Trigger: Navigate to Profile page
+- File: `frontend/src/pages/Profile.jsx` line 57
+- Workaround: None - feature doesn't work
+- Root cause: TODO placeholder
 
 ## Security Considerations
 
-**Placeholder Supabase Credentials:**
-- Risk: Frontend falls back to placeholder credentials if env vars missing
-- File: `frontend/src/services/supabase.js` (lines 10-12)
-- Current mitigation: Console warning logged
-- Recommendations: Fail fast instead of using placeholders; throw error if credentials missing
+**Hardcoded Test Secrets:**
+- Risk: Test JWT secrets could be accidentally used in production
+- Files:
+  - `backend/tests/conftest.py` line 14 - `'test-secret-key-for-jwt-testing'`
+  - `backend/tests/integration/test_accessibility_api.py` line 23 - `'test-secret-key'`
+- Current mitigation: Secrets only in test files
+- Recommendations: Use environment variable for test secret, add validation that production secret differs
 
-**JWT Secret in Environment:**
-- Risk: JWT_SECRET_KEY could be weak if not properly generated
-- File: `backend/.env.example` shows example value
-- Current mitigation: Example file shows it needs changing
-- Recommendations: Document secure secret generation, validate minimum entropy
-
-**Mock Data Bypass:**
-- Risk: Mock auth mode bypasses real authentication completely
-- File: `frontend/src/contexts/AuthContext.jsx`
-- Current mitigation: Only for development
-- Recommendations: Ensure mock mode cannot be enabled in production builds
+**Hardcoded CORS Origins:**
+- Risk: CORS configuration mixes environment variable with hardcoded localhost URLs
+- File: `backend/app/main.py` line 16
+- Current mitigation: Only localhost URLs hardcoded
+- Recommendations: Move all origins to environment configuration
 
 ## Performance Bottlenecks
 
-**No significant performance issues detected**
+**N+1 Query Pattern in ParticipantDashboard:**
+- Problem: Fetches all registrations, then fetches activity details one-by-one
+- File: `frontend/src/components/dashboard/ParticipantDashboard.jsx` lines 38-51
+- Measurement: Not profiled (but pattern causes linear API calls)
+- Cause: No batch loading endpoint, separate fetch per registration
+- Improvement path: Create backend endpoint that returns registrations with activity details joined
 
-The codebase is still in development phase with limited data volumes.
+**No Database Connection Pooling:**
+- Problem: SQLAlchemy configured without pool settings
+- File: `backend/app/db/session.py`
+- Measurement: Could cause connection exhaustion under load
+- Cause: Default configuration used
+- Improvement path: Add `pool_pre_ping`, `pool_size`, `max_overflow` settings
 
 ## Fragile Areas
 
-**API Route Handlers with Placeholder Logic:**
-- Files: `backend/app/api/activities.py`, `backend/app/api/registrations.py`, `backend/app/api/notifications.py`
-- Why fragile: Returning mock data instead of real database operations
-- Common failures: Frontend expects real data, gets placeholder responses
-- Safe modification: Implement full service layer integration
-- Test coverage: Limited - needs integration tests
-
-**Mock User Switching:**
-- File: `frontend/src/mocks/userSwitcher.mock.js`
-- Why fragile: Global state for development that shouldn't exist in production
-- Common failures: Wrong user type persists, role confusion
-- Safe modification: Ensure complete removal path for production
+**Authentication Middleware:**
+- File: `backend/app/core/auth.py`
+- Why fragile: Supabase client created as global, no error handling for initialization failure
+- Common failures: Invalid credentials cause app startup failure
+- Safe modification: Add try/catch around Supabase client creation
 - Test coverage: Not tested
+
+**Integration Layer Mock Fallback:**
+- Files: `backend/app/integrations/elevenlabs_client.py`, `backend/app/integrations/google_translate.py`, `backend/app/integrations/twilio_client.py`
+- Why fragile: Generic `Exception` catches with print statements
+- Common failures: Errors swallowed silently, hard to debug
+- Safe modification: Add specific exception types, use logging module
+- Test coverage: Unit tests exist but mock the external services
 
 ## Scaling Limits
 
-**Not applicable** - Development stage, no production deployment yet
+**Mock Data Mode:**
+- Current capacity: Unlimited (static data)
+- Limit: Cannot scale to real users without implementing backend
+- Symptoms at limit: N/A (not functional for real use)
+- Scaling path: Implement backend API endpoints
+
+**Single-Browser E2E Testing:**
+- Current capacity: Tests only Chromium
+- Limit: No cross-browser validation
+- Symptoms at limit: Browser-specific bugs undetected
+- Scaling path: Add Firefox and WebKit to Playwright config
 
 ## Dependencies at Risk
 
 **react-hot-toast:**
-- Risk: Last update unknown, React 19 compatibility uncertain
-- Impact: Toast notifications
-- Migration plan: Consider switching to sonner if issues arise
-
-**ElevenLabs SDK:**
-- Risk: `elevenlabs 0.2.26` is early version, API may change
-- Impact: Text-to-speech accessibility feature
-- Migration plan: Monitor for breaking changes, abstract behind interface
+- Risk: Package update frequency declining
+- Impact: Toast notifications, used throughout app
+- Migration plan: Consider sonner (actively maintained, similar API)
 
 ## Missing Critical Features
 
-**Edit Profile Functionality:**
-- Problem: Profile page shows TODO comment for edit functionality
-- File: `frontend/src/pages/Profile.jsx` (line 57)
-- Current workaround: Users cannot edit their profile
-- Blocks: User self-service profile management
-- Implementation complexity: Low (form + API endpoint)
+**Database Health Check:**
+- Problem: Health endpoint returns hardcoded "connected" without checking
+- File: `backend/app/main.py` line 41 - `"database": "connected"  # TODO: Add actual DB health check`
+- Current workaround: None - health check is misleading
+- Blocks: Reliable health monitoring in production
+- Fix: Add actual database connectivity check
 
-**Cancellation Logic:**
-- Problem: Registration cancellation has TODO comment
-- File: `frontend/src/components/dashboard/RegistrationsList.jsx` (line 101)
-- Current workaround: Users cannot cancel registrations
-- Blocks: Self-service registration management
-- Implementation complexity: Low (API call + state update)
-
-**Activity Manager Implementation:**
-- Problem: Staff dashboard references unimplemented ActivityManager
-- File: `frontend/src/components/dashboard/StaffDashboard.jsx` (line 68)
-- Current workaround: None
-- Blocks: Staff cannot manage activities from dashboard
-- Implementation complexity: Medium (CRUD interface)
+**Error Boundary:**
+- Problem: No React Error Boundary for graceful error handling
+- Current workaround: Component-level try/catch (inconsistent)
+- Blocks: Graceful degradation when components crash
+- Fix: Add Error Boundary wrapper component
 
 ## Test Coverage Gaps
 
-**Backend API Integration Tests:**
-- What's not tested: Full request/response cycle for API endpoints
-- Risk: API behavior changes could break frontend without detection
-- Priority: High
-- Difficulty to test: Medium (need test database setup)
+**Backend API Endpoints:**
+- What's not tested: All CRUD endpoints in `activities.py`, `registrations.py`, `matches.py`
+- Risk: Endpoints will break silently when implemented
+- Priority: High (core functionality)
+- Difficulty to test: Endpoints are stubs; tests blocked until implementation
 
-**Frontend Component Tests:**
-- What's not tested: Most components lack tests
-- Current tests: Only 5 test files found
+**Frontend Page Components:**
+- What's not tested: `Activities.jsx`, `ParticipantDashboard.jsx`, `Profile.jsx`
 - Risk: UI regressions undetected
 - Priority: Medium
-- Difficulty to test: Low (React Testing Library available)
+- Difficulty to test: Large components with many dependencies to mock
 
-**Mock Mode vs Real Mode:**
-- What's not tested: Transition between mock and real authentication
-- Risk: Production deployment issues
-- Priority: High before production
-- Difficulty to test: Medium (need to toggle modes)
+**Error States:**
+- What's not tested: How components behave when API calls fail
+- Risk: Poor user experience on errors
+- Priority: Medium
+- Difficulty to test: Need to mock API failures
+
+## Error Handling Gaps
+
+**Print Statements Instead of Logging:**
+- Issue: Integration clients use print() instead of Python logging
+- Files:
+  - `backend/app/integrations/elevenlabs_client.py` lines 42-43
+  - `backend/app/integrations/google_translate.py` lines 44, 90, 115
+  - `backend/app/integrations/twilio_client.py` lines 47, 77
+- Impact: Errors lost in production, no log levels
+- Fix: Replace print() with logging.logger
+
+**Async/Await Inconsistencies:**
+- Issue: Methods marked `async` but perform only synchronous operations
+- File: `backend/app/services/notification_service.py` lines 28, 105, 140, 165, 195
+- Impact: Misleading API, potential performance issues
+- Fix: Either use async DB operations or remove async keyword
+
+**Missing Transaction Rollbacks:**
+- Issue: Database commits without try/catch/rollback pattern
+- Files:
+  - `backend/app/services/base_service.py` lines 33, 47, 58
+  - `backend/app/services/notification_service.py` lines 67, 82
+- Impact: Partial data on commit failure
+- Fix: Add transaction context manager with rollback on exception
 
 ---
 
