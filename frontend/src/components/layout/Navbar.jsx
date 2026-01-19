@@ -118,26 +118,26 @@ export default function Navbar() {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               {user ? (
                 <>
                   <Link
                     to="/dashboard"
-                    className="text-gray-700 hover:text-primary-600 transition-colors"
+                    className="block w-full py-3 text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     to="/activities"
-                    className="text-gray-700 hover:text-primary-600 transition-colors"
+                    className="block w-full py-3 text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Activities
                   </Link>
                   <Link
                     to="/profile"
-                    className="text-gray-700 hover:text-primary-600 transition-colors"
+                    className="block w-full py-3 text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Profile
@@ -157,7 +157,7 @@ export default function Navbar() {
                 <>
                   <Link
                     to="/activities"
-                    className="text-gray-700 hover:text-primary-600 transition-colors"
+                    className="block w-full py-3 text-gray-700 hover:text-primary-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Browse Activities

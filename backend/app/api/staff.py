@@ -6,6 +6,9 @@ from datetime import date
 
 from app.core.auth import get_current_staff
 from app.core.deps import get_db
+from app.services.analytics_service import AnalyticsService
+from app.db.models import Activity, Registration, VolunteerMatch, User
+from app.core.enums import RegistrationStatus
 
 router = APIRouter()
 
@@ -17,7 +20,7 @@ async def get_analytics(
 ):
     """
     Get dashboard analytics
-    
+
     Returns:
     - Total activities count
     - Total registrations count
@@ -26,18 +29,21 @@ async def get_analytics(
     - Popular programs
     - Registration trends
     """
-    # TODO: Calculate metrics
-    # - Count activities (total, upcoming, past)
-    # - Count registrations (active, cancelled)
-    # - Calculate volunteer coverage
-    # - Identify trends
+    analytics_service = AnalyticsService(db)
+
+    # Get base metrics from service
+    metrics = analytics_service.get_dashboard_metrics()
+
+    # Get weekly trends for chart data
+    weekly_trends = analytics_service.get_weekly_trends()
+
     return {
-        "total_activities": 0,
-        "total_registrations": 0,
-        "total_volunteers": 0,
-        "volunteer_coverage": 0.0,
-        "upcoming_activities": 0,
-        "weekly_registrations": []
+        "total_activities": metrics["total_activities"],
+        "total_registrations": metrics["total_registrations"],
+        "total_volunteers": metrics["total_volunteers"],
+        "volunteer_coverage": metrics["volunteer_coverage"],
+        "upcoming_activities": metrics["upcoming_activities"],
+        "weekly_registrations": weekly_trends
     }
 
 
@@ -49,20 +55,35 @@ async def get_activity_attendance(
 ):
     """
     Get attendance list for an activity
-    
+
     Returns:
     - List of registered participants
     - List of matched volunteers
     - Activity details
     """
-    # TODO: Fetch activity
-    # Get all registrations
-    # Get all volunteer matches
-    # Return combined list
+    # Fetch activity, 404 if not found
+    activity = db.query(Activity).filter(Activity.id == activity_id).first()
+    if not activity:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Activity not found"
+        )
+
+    # Get attendance data via service
+    analytics_service = AnalyticsService(db)
+    attendance = analytics_service.get_activity_attendance(str(activity_id))
+
     return {
-        "activity": {},
-        "participants": [],
-        "volunteers": []
+        "activity": {
+            "id": str(activity.id),
+            "title": activity.title,
+            "date": activity.date.isoformat() if activity.date else None,
+            "start_time": activity.start_time.isoformat() if activity.start_time else None,
+            "end_time": activity.end_time.isoformat() if activity.end_time else None,
+            "location": activity.location
+        },
+        "participants": attendance["participants"],
+        "volunteers": attendance["volunteers"]
     }
 
 
@@ -74,17 +95,60 @@ async def export_attendance_csv(
 ):
     """
     Export attendance as CSV file
-    
+
     CSV includes:
     - Participant name, email, phone
     - Registration time
     - Volunteer name, email, phone
     """
-    # TODO: Fetch attendance data
-    # Format as CSV
-    # Return file response
+    # Fetch activity, 404 if not found
+    activity = db.query(Activity).filter(Activity.id == activity_id).first()
+    if not activity:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Activity not found"
+        )
+
+    # Build CSV content with headers
     csv_content = "Name,Email,Phone,Role,Registration Time\n"
-    
+
+    # Get participants with registration timestamps
+    participant_registrations = (
+        db.query(User, Registration)
+        .join(Registration, User.id == Registration.user_id)
+        .filter(
+            Registration.activity_id == activity_id,
+            Registration.status == RegistrationStatus.CONFIRMED
+        )
+        .all()
+    )
+
+    for user, registration in participant_registrations:
+        name = user.full_name or ""
+        email = user.email or ""
+        phone = user.phone or ""
+        reg_time = registration.created_at.isoformat() if registration.created_at else ""
+        # Escape any commas in fields
+        csv_content += f'"{name}","{email}","{phone}","Participant","{reg_time}"\n'
+
+    # Get volunteers with match timestamps
+    volunteer_matches = (
+        db.query(User, VolunteerMatch)
+        .join(VolunteerMatch, User.id == VolunteerMatch.volunteer_id)
+        .filter(
+            VolunteerMatch.activity_id == activity_id,
+            VolunteerMatch.status == RegistrationStatus.CONFIRMED
+        )
+        .all()
+    )
+
+    for user, match in volunteer_matches:
+        name = user.full_name or ""
+        email = user.email or ""
+        phone = user.phone or ""
+        match_time = match.matched_at.isoformat() if match.matched_at else ""
+        csv_content += f'"{name}","{email}","{phone}","Volunteer","{match_time}"\n'
+
     return Response(
         content=csv_content,
         media_type="text/csv",
@@ -101,18 +165,31 @@ async def get_weekly_report(
 ):
     """
     Get weekly activity report
-    
+
     - Activities conducted
     - Total participants
     - Volunteer hours
     - Program type breakdown
     """
-    # TODO: Generate report for date range
+    # Validate date range
+    if start_date > end_date:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="start_date must be before or equal to end_date"
+        )
+
+    analytics_service = AnalyticsService(db)
+
+    # Get counts for date range
+    activities_count = analytics_service.get_activities_in_range(start_date, end_date)
+    registrations = analytics_service.get_registrations_in_range(start_date, end_date)
+    program_breakdown = analytics_service.get_program_breakdown_in_range(start_date, end_date)
+
     return {
         "start_date": start_date,
         "end_date": end_date,
-        "activities_count": 0,
-        "participants_count": 0,
-        "volunteers_count": 0,
-        "program_breakdown": {}
+        "activities_count": activities_count,
+        "participants_count": registrations["participants"],
+        "volunteers_count": registrations["volunteers"],
+        "program_breakdown": program_breakdown
     }

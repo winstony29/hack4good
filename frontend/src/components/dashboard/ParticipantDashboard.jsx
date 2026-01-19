@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Calendar, Clock, MapPin, AlertCircle, CalendarDays, List } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import Button from '../shared/Button'
@@ -66,9 +67,10 @@ export default function ParticipantDashboard() {
     try {
       await registrationsApi.cancel(registrationId)
       await fetchRegistrations()
+      toast.success('Registration cancelled successfully')
     } catch (error) {
       console.error('Failed to cancel registration:', error)
-      alert('Failed to cancel registration. Please try again.')
+      toast.error('Failed to cancel registration. Please try again.')
     } finally {
       setCancellingId(null)
     }

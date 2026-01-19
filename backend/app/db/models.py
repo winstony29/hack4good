@@ -10,7 +10,7 @@ from app.core.enums import Role, MembershipType, RegistrationStatus
 
 class User(Base):
     __tablename__ = "users"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
@@ -22,10 +22,11 @@ class User(Base):
     full_name = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    
+
     # Relationships
     registrations = relationship("Registration", back_populates="user")
     volunteer_matches = relationship("VolunteerMatch", back_populates="volunteer")
+    notifications = relationship("Notification", back_populates="user")
 
 
 class Activity(Base):
@@ -77,3 +78,18 @@ class VolunteerMatch(Base):
     # Relationships
     volunteer = relationship("User", back_populates="volunteer_matches")
     activity = relationship("Activity", back_populates="volunteer_matches")
+
+
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    message = Column(Text, nullable=False)
+    channel = Column(String(20), nullable=False)  # 'sms' or 'whatsapp'
+    status = Column(String(20), nullable=False, default='pending')  # 'pending', 'sent', 'failed'
+    sent_at = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    user = relationship("User", back_populates="notifications")

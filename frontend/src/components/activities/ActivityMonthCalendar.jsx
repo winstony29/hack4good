@@ -148,7 +148,7 @@ export default function ActivityMonthCalendar({
       </div>
 
       {/* Legend */}
-      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+      <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
         <p className="text-sm font-medium text-gray-700 mb-2">Activity Types:</p>
         <div className="flex flex-wrap gap-2">
           {Object.entries(ACTIVITY_LABELS).map(([type, emoji]) => (

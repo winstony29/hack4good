@@ -1,7 +1,8 @@
 import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion'
 import ActivityCard from '../activities/ActivityCard'
+import { useAccessibility } from '../../contexts/AccessibilityContext'
 
-const swipeConfidenceThreshold = 100
+const swipeConfidenceThreshold = 80
 
 export default function SwipeableCard({
   activity,
@@ -9,8 +10,12 @@ export default function SwipeableCard({
   isTop = false,
   stackIndex = 0
 }) {
+  const { reduceMotion } = useAccessibility()
   const controls = useAnimation()
   const x = useMotionValue(0)
+
+  // Animation duration based on accessibility preference
+  const animDuration = reduceMotion ? 0.01 : 0.3
 
   // Rotate card based on drag position
   const rotate = useTransform(x, [-200, 0, 200], [-15, 0, 15])
@@ -33,7 +38,7 @@ export default function SwipeableCard({
         x: -400,
         opacity: 0,
         rotate: -20,
-        transition: { duration: 0.3 }
+        transition: { duration: animDuration }
       })
       onSwipe('left')
     } else if (swipePower > swipeConfidenceThreshold * 100 || offset.x > swipeConfidenceThreshold) {
@@ -42,12 +47,15 @@ export default function SwipeableCard({
         x: 400,
         opacity: 0,
         rotate: 20,
-        transition: { duration: 0.3 }
+        transition: { duration: animDuration }
       })
       onSwipe('right')
     } else {
-      // Snap back to center
-      controls.start({ x: 0, rotate: 0, transition: { type: 'spring', stiffness: 500, damping: 30 } })
+      // Snap back to center - use instant transition if reduceMotion
+      const snapBackTransition = reduceMotion
+        ? { type: 'tween', duration: 0.01 }
+        : { type: 'spring', stiffness: 500, damping: 30 }
+      controls.start({ x: 0, rotate: 0, transition: snapBackTransition })
     }
   }
 
@@ -60,7 +68,7 @@ export default function SwipeableCard({
       x: xTarget,
       opacity: 0,
       rotate: rotateTarget,
-      transition: { duration: 0.3 }
+      transition: { duration: animDuration }
     })
     onSwipe(direction)
   }
@@ -85,13 +93,13 @@ export default function SwipeableCard({
       {isTop && (
         <>
           <motion.div
-            className="absolute top-8 left-8 bg-red-500 text-white px-6 py-2 rounded-lg font-bold text-xl z-20 rotate-[-15deg]"
+            className="absolute top-4 left-4 sm:top-8 sm:left-8 bg-red-500 text-white px-4 py-1.5 text-lg sm:px-6 sm:py-2 sm:text-xl rounded-lg font-bold z-20 rotate-[-15deg]"
             style={{ opacity: passOpacity }}
           >
             PASS
           </motion.div>
           <motion.div
-            className="absolute top-8 right-8 bg-green-500 text-white px-6 py-2 rounded-lg font-bold text-xl z-20 rotate-[15deg]"
+            className="absolute top-4 right-4 sm:top-8 sm:right-8 bg-green-500 text-white px-4 py-1.5 text-lg sm:px-6 sm:py-2 sm:text-xl rounded-lg font-bold z-20 rotate-[15deg]"
             style={{ opacity: matchOpacity }}
           >
             MATCH!
@@ -101,7 +109,7 @@ export default function SwipeableCard({
 
       {/* Activity Card */}
       <div className="h-full">
-        <ActivityCard activity={activity} />
+        <ActivityCard activity={activity} showTTS={isTop} />
       </div>
     </motion.div>
   )

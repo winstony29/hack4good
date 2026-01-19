@@ -12,7 +12,7 @@ export default function SwipeButtons({ onPass, onMatch, disabled = false }) {
                    hover:bg-red-50 hover:border-red-500 hover:scale-110
                    active:scale-95 transition-all duration-200
                    disabled:opacity-50 disabled:cursor-not-allowed
-                   focus:outline-none focus:ring-4 focus:ring-red-200"
+                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
         aria-label="Pass on this activity"
       >
         <X className="w-8 h-8" strokeWidth={3} />
@@ -27,7 +27,7 @@ export default function SwipeButtons({ onPass, onMatch, disabled = false }) {
                    hover:bg-green-50 hover:border-green-500 hover:scale-110
                    active:scale-95 transition-all duration-200
                    disabled:opacity-50 disabled:cursor-not-allowed
-                   focus:outline-none focus:ring-4 focus:ring-green-200"
+                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
         aria-label="Volunteer for this activity"
       >
         <Heart className="w-8 h-8" fill="currentColor" />

@@ -19,6 +19,7 @@ import {
   getProgramBreakdown,
   getVolunteerCoverage,
 } from '../../mocks/analytics.mock'
+import { CHART_COLORS } from '../../constants'
 
 export default function AnalyticsCharts() {
   const weeklyTrends = getWeeklyTrends()
@@ -35,17 +36,17 @@ export default function AnalyticsCharts() {
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={weeklyTrends}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
               <XAxis
                 dataKey="week"
-                stroke="#6B7280"
+                stroke={CHART_COLORS.axis}
                 fontSize={12}
               />
-              <YAxis stroke="#6B7280" fontSize={12} />
+              <YAxis stroke={CHART_COLORS.axis} fontSize={12} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: '#fff',
-                  border: '1px solid #E5E7EB',
+                  border: `1px solid ${CHART_COLORS.grid}`,
                   borderRadius: '8px',
                 }}
               />
@@ -53,17 +54,17 @@ export default function AnalyticsCharts() {
               <Line
                 type="monotone"
                 dataKey="registrations"
-                stroke="#3B82F6"
+                stroke={CHART_COLORS.registrations}
                 strokeWidth={2}
-                dot={{ fill: '#3B82F6', strokeWidth: 2 }}
+                dot={{ fill: CHART_COLORS.registrations, strokeWidth: 2 }}
                 name="Registrations"
               />
               <Line
                 type="monotone"
                 dataKey="volunteers"
-                stroke="#10B981"
+                stroke={CHART_COLORS.volunteers}
                 strokeWidth={2}
-                dot={{ fill: '#10B981', strokeWidth: 2 }}
+                dot={{ fill: CHART_COLORS.volunteers, strokeWidth: 2 }}
                 name="Volunteers"
               />
             </LineChart>
@@ -101,7 +102,7 @@ export default function AnalyticsCharts() {
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#fff',
-                    border: '1px solid #E5E7EB',
+                    border: `1px solid ${CHART_COLORS.grid}`,
                     borderRadius: '8px',
                   }}
                   formatter={(value) => [`${value} activities`, 'Count']}
@@ -131,13 +132,13 @@ export default function AnalyticsCharts() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={volunteerCoverage}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="day" stroke="#6B7280" fontSize={12} />
-                <YAxis stroke="#6B7280" fontSize={12} unit="%" />
+                <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
+                <XAxis dataKey="day" stroke={CHART_COLORS.axis} fontSize={12} />
+                <YAxis stroke={CHART_COLORS.axis} fontSize={12} unit="%" />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#fff',
-                    border: '1px solid #E5E7EB',
+                    border: `1px solid ${CHART_COLORS.grid}`,
                     borderRadius: '8px',
                   }}
                   formatter={(value) => [`${value}%`]}
@@ -146,14 +147,14 @@ export default function AnalyticsCharts() {
                 <Bar
                   dataKey="covered"
                   stackId="a"
-                  fill="#10B981"
+                  fill={CHART_COLORS.covered}
                   name="Covered"
                   radius={[0, 0, 0, 0]}
                 />
                 <Bar
                   dataKey="uncovered"
                   stackId="a"
-                  fill="#D1D5DB"
+                  fill={CHART_COLORS.uncovered}
                   name="Uncovered"
                   radius={[4, 4, 0, 0]}
                 />

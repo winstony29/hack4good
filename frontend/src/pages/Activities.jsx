@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Search, Filter, CalendarDays, List } from 'lucide-react'
+import { Search, Filter, CalendarDays, List, Calendar } from 'lucide-react'
+import toast from 'react-hot-toast'
 import Layout from '../components/layout/Layout'
 import Card, { CardHeader, CardBody } from '../components/shared/Card'
+import Spinner from '../components/shared/Spinner'
+import EmptyState from '../components/shared/EmptyState'
 import ActivityCalendar from '../components/activities/ActivityCalendar'
 import ActivityMonthCalendar from '../components/activities/ActivityMonthCalendar'
 import ActivityDetailModal from '../components/activities/ActivityDetailModal'
@@ -25,20 +28,38 @@ export default function Activities() {
   const [allActivities, setAllActivities] = useState([])
   const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode] = useState('list') // 'list' or 'calendar'
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     if (user) {
-      fetchUserRegistrations()
-      fetchAllActivities()
+      loadData()
     }
   }, [user])
+
+  const loadData = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      await Promise.all([
+        fetchUserRegistrations(),
+        fetchAllActivities()
+      ])
+    } catch (err) {
+      setError('Failed to load activities. Please try again.')
+      toast.error('Failed to load activities. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const fetchUserRegistrations = async () => {
     try {
       const response = await registrationsApi.getAll()
       setUserRegistrations(response.data || [])
-    } catch (error) {
-      console.error('Failed to fetch registrations:', error)
+    } catch (err) {
+      console.error('Failed to fetch registrations:', err)
+      throw err
     }
   }
 
@@ -46,8 +67,9 @@ export default function Activities() {
     try {
       const response = await activitiesApi.getAll()
       setAllActivities(response.data || [])
-    } catch (error) {
-      console.error('Failed to fetch activities:', error)
+    } catch (err) {
+      console.error('Failed to fetch activities:', err)
+      throw err
     }
   }
 
@@ -217,7 +239,28 @@ export default function Activities() {
             </div>
 
             {/* Activity Views */}
-            {viewMode === 'list' ? (
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Spinner size="lg" />
+              </div>
+            ) : error ? (
+              <EmptyState
+                icon={Calendar}
+                title="Failed to load activities"
+                description={error}
+                action={
+                  <Button onClick={loadData} variant="primary">
+                    Try Again
+                  </Button>
+                }
+              />
+            ) : allActivities.length === 0 ? (
+              <EmptyState
+                icon={Calendar}
+                title="No activities available"
+                description="Check back later for new activities to register for."
+              />
+            ) : viewMode === 'list' ? (
               <ActivityCalendar
                 mode="view"
                 onActivityClick={handleActivityClick}

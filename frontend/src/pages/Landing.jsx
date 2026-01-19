@@ -6,16 +6,16 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
             Welcome to <span className="text-primary-600">MINDS</span> ActivityHub
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            An accessible, inclusive platform for managing activities for individuals 
+          <p className="text-lg sm:text-xl text-gray-600 mb-8">
+            An accessible, inclusive platform for managing activities for individuals
             with intellectual disabilities
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
             <Link to="/auth">
               <Button size="large" variant="primary">
                 Get Started
@@ -30,7 +30,7 @@ export default function Landing() {
         </div>
 
         {/* Features */}
-        <div className="mt-20 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="mt-12 sm:mt-16 md:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
           <FeatureCard
             icon={<Calendar className="w-8 h-8 text-primary-600" />}
             title="Easy Scheduling"
@@ -59,9 +59,9 @@ export default function Landing() {
 
 function FeatureCard({ icon, title, description }) {
   return (
-    <div className="bg-white rounded-lg p-6 shadow-lg border border-gray-200">
-      <div className="mb-4">{icon}</div>
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
+    <div className="bg-white rounded-lg p-4 sm:p-6 shadow-lg border border-gray-200">
+      <div className="mb-3 sm:mb-4">{icon}</div>
+      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">{title}</h3>
       <p className="text-gray-600">{description}</p>
     </div>
   )

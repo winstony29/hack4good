@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import toast from 'react-hot-toast'
 import { matchesApi } from '../../services/matches.api'
 import SwipeableCard from './SwipeableCard'
 import SwipeButtons from './SwipeButtons'
@@ -23,6 +24,16 @@ export default function ActivitySwiper({ onMatch }) {
     fetchAvailableActivities()
   }, [])
 
+  // Show toast when all activities have been reviewed
+  useEffect(() => {
+    if (!loading && activities.length > 0 && currentIndex >= activities.length) {
+      toast('No more activities to browse!', {
+        icon: '✨',
+        duration: 3000
+      })
+    }
+  }, [currentIndex, activities.length, loading])
+
   const fetchAvailableActivities = async () => {
     try {
       setLoading(true)
@@ -30,6 +41,9 @@ export default function ActivitySwiper({ onMatch }) {
       setActivities(response.data || [])
     } catch (error) {
       console.error('Failed to fetch activities:', error)
+      toast.error('Failed to load activities. Please refresh the page.', {
+        duration: 4000
+      })
     } finally {
       setLoading(false)
     }
@@ -43,8 +57,24 @@ export default function ActivitySwiper({ onMatch }) {
 
     if (direction === 'right') {
       try {
-        await matchesApi.create({ activity_id: activity.id })
-        console.log('Matched with activity:', activity.title)
+        // Use toast.promise for loading state during API call
+        await toast.promise(
+          matchesApi.create({ activity_id: activity.id }),
+          {
+            loading: 'Confirming match...',
+            success: `Matched with "${activity.title}"!`,
+            error: 'Failed to create match. Please try again.'
+          },
+          {
+            success: {
+              icon: '🎉',
+              duration: 3000
+            },
+            error: {
+              duration: 4000
+            }
+          }
+        )
 
         // Show match celebration
         setMatchedActivity(activity)
@@ -56,7 +86,18 @@ export default function ActivitySwiper({ onMatch }) {
         }
       } catch (error) {
         console.error('Failed to match:', error)
+        // Error already shown by toast.promise
       }
+    } else {
+      // Pass - show subtle info toast
+      toast(`Passed on "${activity.title}"`, {
+        duration: 1500,
+        icon: '👋',
+        style: {
+          background: '#f3f4f6',
+          color: '#6b7280'
+        }
+      })
     }
 
     // Move to next card after animation completes
@@ -116,7 +157,7 @@ export default function ActivitySwiper({ onMatch }) {
   return (
     <div className="max-w-md mx-auto px-4">
       {/* Card Stack */}
-      <div className="relative h-[480px] mb-8">
+      <div className="relative h-[400px] sm:h-[440px] md:h-[480px] mb-8">
         <AnimatePresence>
           {visibleActivities.map((activity, index) => (
             <SwipeableCard

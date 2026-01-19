@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import toast from 'react-hot-toast'
 import { activitiesApi } from '../../services/activities.api'
 import ActivityForm from '../activities/ActivityForm'
 import ActivityCard from '../activities/ActivityCard'
@@ -24,6 +25,7 @@ export default function ActivityManager() {
       setActivities(response.data.activities || [])
     } catch (error) {
       console.error('Failed to fetch activities:', error)
+      toast.error('Failed to load activities. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -34,8 +36,10 @@ export default function ActivityManager() {
       await activitiesApi.create(data)
       await fetchActivities()
       setShowForm(false)
+      toast.success('Activity created successfully')
     } catch (error) {
       console.error('Failed to create activity:', error)
+      toast.error('Create failed. Please try again.')
     }
   }
 
@@ -44,8 +48,10 @@ export default function ActivityManager() {
       await activitiesApi.update(editingActivity.id, data)
       await fetchActivities()
       setEditingActivity(null)
+      toast.success('Activity updated successfully')
     } catch (error) {
       console.error('Failed to update activity:', error)
+      toast.error('Update failed. Please try again.')
     }
   }
 

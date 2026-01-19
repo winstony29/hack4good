@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react'
 import { AlertCircle, CheckCircle, AlertTriangle } from 'lucide-react'
+import toast from 'react-hot-toast'
 import Modal from '../shared/Modal'
 import Button from '../shared/Button'
 import ActivityCard from './ActivityCard'
 import TTSButton from '../accessibility/TTSButton'
 import { useAuth } from '../../contexts/AuthContext'
 import { registrationsApi } from '../../services/registrations.api'
-import { 
-  validateRegistration, 
+import {
+  validateRegistration,
   formatValidationMessage,
-  getMembershipDisplayName 
+  getMembershipDisplayName
 } from '../../utils/activityUtils'
+import { getErrorMessage } from '../../utils/errorUtils'
 
 export default function ActivityDetailModal({
   activity,
@@ -41,7 +43,7 @@ export default function ActivityDetailModal({
 
     setLoading(true)
     setError(null)
-    
+
     try {
       if (action === 'register') {
         // Register for activity
@@ -49,17 +51,20 @@ export default function ActivityDetailModal({
           activity_id: activity.id,
           status: 'confirmed'
         })
+        toast.success('Successfully registered for activity!')
       }
-      
+
       // Call parent callback
       if (onConfirm) {
         await onConfirm(activity)
       }
-      
+
       onClose()
     } catch (err) {
       console.error('Action failed:', err)
-      setError(err.response?.data?.detail || err.message || 'Action failed. Please try again.')
+      const errorMessage = getErrorMessage(err, 'registration')
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }

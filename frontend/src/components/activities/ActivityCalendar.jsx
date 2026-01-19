@@ -95,7 +95,7 @@ export default function ActivityCalendar({ mode = 'view', onActivityClick, filte
       {/* View Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         {/* Date Filter */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             variant={dateFilter === 'upcoming' ? 'primary' : 'secondary'}
             size="sm"
@@ -157,7 +157,7 @@ export default function ActivityCalendar({ mode = 'view', onActivityClick, filte
           {Object.entries(groupedActivities).map(([date, dayActivities]) => (
             <div key={date} className="space-y-3">
               {/* Date Header */}
-              <div className="sticky top-0 bg-white z-10 pb-2">
+              <div className="sticky top-0 bg-gray-50 z-10 pb-2 -mx-4 px-4">
                 <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
                   {formatDate(date)}
                 </h3>
