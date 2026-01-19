@@ -157,7 +157,7 @@ export default function ActivitySwiper({ onMatch }) {
   return (
     <div className="max-w-md mx-auto px-4">
       {/* Card Stack */}
-      <div className="relative h-[480px] mb-8">
+      <div className="relative h-[400px] sm:h-[440px] md:h-[480px] mb-8">
         <AnimatePresence>
           {visibleActivities.map((activity, index) => (
             <SwipeableCard
