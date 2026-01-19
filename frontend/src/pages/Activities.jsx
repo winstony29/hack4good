@@ -12,11 +12,13 @@ import DayActivitiesModal from '../components/activities/DayActivitiesModal'
 import Input from '../components/shared/Input'
 import Button from '../components/shared/Button'
 import { useAuth } from '../contexts/AuthContext'
+import { useTranslation } from '../hooks/useTranslation'
 import { registrationsApi } from '../services/registrations.api'
 import { activitiesApi } from '../services/activities.api'
 
 export default function Activities() {
   const { user } = useAuth()
+  const { t } = useTranslation()
   const [selectedActivity, setSelectedActivity] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDayModalOpen, setIsDayModalOpen] = useState(false)
@@ -124,10 +126,10 @@ export default function Activities() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">
-                  Browse Activities
+                  {t('activities.browseTitle')}
                 </h1>
                 <p className="text-gray-600 mt-2">
-                  Discover and register for upcoming activities
+                  {t('activities.browseSubtitle')}
                 </p>
               </div>
               
@@ -157,7 +159,7 @@ export default function Activities() {
                   className="md:hidden"
                 >
                   <Filter className="w-4 h-4 mr-2" />
-                  {showFilters ? 'Hide Filters' : 'Show Filters'}
+                  {showFilters ? t('activities.hideFilters') : t('activities.showFilters')}
                 </Button>
               </div>
             </div>
@@ -173,7 +175,7 @@ export default function Activities() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <Input
                       type="text"
-                      placeholder="Search activities..."
+                      placeholder={t('activities.searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10"
@@ -188,13 +190,13 @@ export default function Activities() {
                     onChange={(e) => setProgramFilter(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="all">All Programs</option>
-                    <option value="sports">Sports</option>
-                    <option value="arts">Arts & Crafts</option>
-                    <option value="music">Music</option>
-                    <option value="social">Social</option>
-                    <option value="educational">Educational</option>
-                    <option value="wellness">Wellness</option>
+                    <option value="all">{t('activities.allPrograms')}</option>
+                    <option value="sports">{t('activities.sports')}</option>
+                    <option value="arts">{t('activities.arts')}</option>
+                    <option value="music">{t('activities.music')}</option>
+                    <option value="social">{t('activities.social')}</option>
+                    <option value="educational">{t('activities.educational')}</option>
+                    <option value="wellness">{t('activities.wellness')}</option>
                   </select>
                 </div>
               </div>
@@ -202,10 +204,10 @@ export default function Activities() {
               {/* Active Filters Display */}
               {(searchQuery || programFilter !== 'all') && (
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm text-gray-600">Active filters:</span>
+                  <span className="text-sm text-gray-600">{t('activities.activeFilters')}</span>
                   {searchQuery && (
                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                      Search: "{searchQuery}"
+                      {t('common.search')}: "{searchQuery}"
                       <button
                         onClick={() => setSearchQuery('')}
                         className="hover:text-blue-900"
@@ -216,7 +218,7 @@ export default function Activities() {
                   )}
                   {programFilter !== 'all' && (
                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                      Program: {programFilter}
+                      {t(`activities.${programFilter}`)}
                       <button
                         onClick={() => setProgramFilter('all')}
                         className="hover:text-blue-900"
@@ -232,7 +234,7 @@ export default function Activities() {
                     }}
                     className="text-sm text-blue-600 hover:text-blue-700"
                   >
-                    Clear all
+                    {t('activities.clearAll')}
                   </button>
                 </div>
               )}
@@ -246,19 +248,19 @@ export default function Activities() {
             ) : error ? (
               <EmptyState
                 icon={Calendar}
-                title="Failed to load activities"
+                title={t('activities.failedToLoad')}
                 description={error}
                 action={
                   <Button onClick={loadData} variant="primary">
-                    Try Again
+                    {t('activities.tryAgain')}
                   </Button>
                 }
               />
             ) : allActivities.length === 0 ? (
               <EmptyState
                 icon={Calendar}
-                title="No activities available"
-                description="Check back later for new activities to register for."
+                title={t('activities.noAvailable')}
+                description={t('activities.checkBackNew')}
               />
             ) : viewMode === 'list' ? (
               <ActivityCalendar
@@ -269,7 +271,7 @@ export default function Activities() {
             ) : (
               <div>
                 <p className="text-sm text-gray-600 mb-4">
-                  Click on any day to see available activities and register. Days with your existing bookings are highlighted.
+                  {t('activities.clickDay')}
                 </p>
                 <ActivityMonthCalendar
                   activities={allActivities}

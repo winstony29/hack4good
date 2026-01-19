@@ -36,8 +36,11 @@ async def signup(user_data: UserCreate, db: Session = Depends(get_db)):
     - **membership_type**: Required for participants (ad_hoc, once_weekly, twice_weekly, 3_plus)
     """
     try:
-        # Check if user already exists in database
-        existing_user = db.query(User).filter(User.email == user_data.email).first()
+        # Check if user already exists in database (case-insensitive email check)
+        from sqlalchemy import func as sql_func
+        existing_user = db.query(User).filter(
+            sql_func.lower(User.email) == user_data.email.lower()
+        ).first()
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -65,6 +68,15 @@ async def signup(user_data: UserCreate, db: Session = Depends(get_db)):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Failed to create user in auth system"
+            )
+        
+        # Check if user already exists in PostgreSQL by Supabase Auth ID
+        # (handles case where Supabase returns existing user for duplicate email)
+        existing_user_by_id = db.query(User).filter(User.id == auth_response.user.id).first()
+        if existing_user_by_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User with this email already exists"
             )
 
         # Create user in PostgreSQL database
