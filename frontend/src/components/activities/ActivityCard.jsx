@@ -1,4 +1,4 @@
-import { Calendar, Clock, MapPin, Users } from 'lucide-react'
+import { Calendar, Clock, MapPin, Users, DollarSign, Accessibility } from 'lucide-react'
 import Card, { CardBody } from '../shared/Card'
 import Badge from '../shared/Badge'
 import TTSButton from '../accessibility/TTSButton'
@@ -22,8 +22,32 @@ export default function ActivityCard({ activity, showCapacity = true, showTTS = 
           <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
             {title}
           </h3>
-          {activity.program_type && (
-            <Badge variant="info">{activity.program_type}</Badge>
+          <div className="flex gap-2 flex-wrap justify-end">
+            {activity.program_type && (
+              <Badge variant="info">{activity.program_type}</Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Activity Flags - Payment & Accessibility */}
+        <div className="flex gap-2 mb-3">
+          {activity.payment_required && (
+            <Badge variant="warning" className="flex items-center gap-1.5">
+              <DollarSign className="w-3.5 h-3.5" />
+              <span>Payment Required</span>
+            </Badge>
+          )}
+          {activity.wheelchair_accessible && (
+            <Badge variant="success" className="flex items-center gap-1.5">
+              <Accessibility className="w-3.5 h-3.5" />
+              <span>Wheelchair Accessible</span>
+            </Badge>
+          )}
+          {activity.wheelchair_accessible === false && (
+            <Badge variant="default" className="flex items-center gap-1.5">
+              <Accessibility className="w-3.5 h-3.5" />
+              <span>Limited Accessibility</span>
+            </Badge>
           )}
         </div>
 
