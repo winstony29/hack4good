@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, MapPin, AlertCircle, CalendarDays, List } from 'lucide-react'
+import { Calendar, Clock, MapPin, AlertCircle, CalendarDays, List, Sparkles } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
@@ -112,14 +112,17 @@ export default function ParticipantDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <CardBody>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Browse Activities
-            </h3>
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-5 h-5 text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-900">
+                Discover Activities
+              </h3>
+            </div>
             <p className="text-gray-600 text-sm mb-4">
-              Discover new activities and register
+              Swipe to find your next activity
             </p>
-            <Button onClick={() => navigate('/activities')} variant="primary">
-              View All Activities
+            <Button onClick={() => navigate('/swiper')} variant="primary">
+              Start Swiping
             </Button>
           </CardBody>
         </Card>
@@ -182,10 +185,10 @@ export default function ParticipantDashboard() {
             <EmptyState
               icon={Calendar}
               title="No upcoming activities"
-              description="Browse activities to register for upcoming events"
+              description="Swipe to find your next activity"
               action={
-                <Button onClick={() => navigate('/activities')} variant="primary">
-                  Browse Activities
+                <Button onClick={() => navigate('/swiper')} variant="primary">
+                  Start Swiping
                 </Button>
               }
             />

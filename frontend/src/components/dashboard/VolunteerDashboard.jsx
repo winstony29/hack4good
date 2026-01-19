@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, MapPin, CalendarDays, List, Heart } from 'lucide-react'
+import { Calendar, Clock, MapPin, CalendarDays, List, Heart, Sparkles } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import Card, { CardHeader, CardBody } from '../shared/Card'
 import Button from '../shared/Button'
@@ -114,9 +114,13 @@ export default function VolunteerDashboard() {
 
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <CardBody>
-            <h3 className="font-semibold mb-2">Find Activities</h3>
-            <Button onClick={() => navigate('/activities')} variant="primary" size="sm">
-              Browse & Match
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-5 h-5 text-blue-600" />
+              <h3 className="font-semibold">Discover Activities</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Swipe right to volunteer</p>
+            <Button onClick={() => navigate('/swiper')} variant="primary" size="sm">
+              Start Swiping
             </Button>
           </CardBody>
         </Card>
@@ -147,8 +151,8 @@ export default function VolunteerDashboard() {
             <EmptyState
               icon={Heart}
               title="No volunteer commitments"
-              description="Browse activities and match with opportunities"
-              action={<Button onClick={() => navigate('/activities')} variant="primary">Find Activities</Button>}
+              description="Swipe through activities to find your next opportunity"
+              action={<Button onClick={() => navigate('/swiper')} variant="primary">Start Swiping</Button>}
             />
           ) : (
             <>
