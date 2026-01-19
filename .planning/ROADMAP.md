@@ -77,13 +77,13 @@ Integrate Person 4's accessibility features with Person 3's volunteer swiper. En
 
 ## Phase 4: Person 3 Backend Completion (Person 3)
 
-**Status:** In progress (2/3 plans complete)
+**Status:** Complete (3/3 plans)
 
 ### Plans
 
 - [x] **04-01: Matches API Implementation** - Complete 4 stub endpoints with full CRUD
 - [x] **04-02: Notification Service Wiring** - Mock Twilio mode, wire into matches API
-- [ ] **04-03: Toast Notification Enhancements** - Add toast feedback to swiper actions
+- [x] **04-03: Toast Notification Enhancements** - Add toast feedback to swiper actions
 
 ### Goal
 Complete Person 3's backend work: implement the matches API endpoints, wire the notification service with mock mode, and enhance frontend toast notifications for better user feedback.
@@ -93,22 +93,22 @@ Complete Person 3's backend work: implement the matches API endpoints, wire the 
 - **Backend stubs exist** - api/matches.py and notification_service.py have structure
 
 ### Success Criteria
-- [ ] All 4 matches API endpoints return real data (no 501s)
-- [ ] Notification service logs to console in mock mode
-- [ ] Notification service sends via Twilio in live mode
-- [ ] Toast notifications appear for swipe actions
-- [ ] Error states communicated via toast
+- [x] All 4 matches API endpoints return real data (no 501s)
+- [x] Notification service logs to console in mock mode
+- [x] Notification service sends via Twilio in live mode
+- [x] Toast notifications appear for swipe actions
+- [x] Error states communicated via toast
 
 ---
 
 ## Phase 5: Person 4 Staff API Completion (Person 4)
 
-**Status:** In progress (1/2 plans complete)
+**Status:** Complete (2/2 plans complete)
 
 ### Plans
 
 - [x] **05-01: Staff API Wiring** - Wire staff.py endpoints to use AnalyticsService
-- [ ] **05-02: Weekly Report Implementation** - Add date-range methods, implement weekly report
+- [x] **05-02: Weekly Report Implementation** - Add date-range methods, implement weekly report
 
 ### Goal
 Wire the Staff API endpoints to use the already-implemented AnalyticsService, replacing stub responses with real database queries. This work is independent of Person 2/3 and can run in parallel with Phase 4.
@@ -121,5 +121,5 @@ Wire the Staff API endpoints to use the already-implemented AnalyticsService, re
 - [x] /staff/analytics returns real metrics from database
 - [x] /staff/attendance/{id} returns real participant/volunteer lists
 - [x] /staff/attendance/{id}/export generates real CSV data
-- [ ] /staff/reports/weekly returns aggregated statistics for date range
+- [x] /staff/reports/weekly returns aggregated statistics for date range
 - [x] 404 handling for invalid activity IDs
