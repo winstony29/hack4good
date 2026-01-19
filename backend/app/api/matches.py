@@ -57,17 +57,59 @@ async def create_volunteer_match(
 ):
     """
     Match volunteer to an activity (Volunteer "swipes right")
-    
+
     Similar validation to registration:
     - Check activity exists
     - Check for time conflicts
     - No duplicate matches
     """
-    # TODO: Validate activity exists
-    # Check for conflicts
-    # Create volunteer_match record
-    # Send notification
-    raise HTTPException(status_code=501, detail="Not implemented")
+    from datetime import date
+    from app.db.models import Activity, VolunteerMatch
+    from app.core.enums import RegistrationStatus
+
+    # Validate activity exists and is in the future
+    activity = db.query(Activity).filter(Activity.id == match.activity_id).first()
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activity not found")
+
+    if activity.date < date.today():
+        raise HTTPException(status_code=400, detail="Cannot match to past activity")
+
+    # Check for existing active match
+    existing = db.query(VolunteerMatch).filter(
+        VolunteerMatch.volunteer_id == current_user.id,
+        VolunteerMatch.activity_id == match.activity_id,
+        VolunteerMatch.status != RegistrationStatus.CANCELLED
+    ).first()
+
+    if existing:
+        raise HTTPException(status_code=409, detail="Already matched to this activity")
+
+    # Check for time conflicts with other matched activities
+    conflicting = db.query(VolunteerMatch).join(Activity).filter(
+        VolunteerMatch.volunteer_id == current_user.id,
+        VolunteerMatch.status != RegistrationStatus.CANCELLED,
+        Activity.date == activity.date,
+        Activity.start_time < activity.end_time,
+        Activity.end_time > activity.start_time
+    ).first()
+
+    if conflicting:
+        raise HTTPException(status_code=409, detail="Time conflict with another matched activity")
+
+    # Create the match
+    db_match = VolunteerMatch(
+        volunteer_id=current_user.id,
+        activity_id=match.activity_id,
+        status=RegistrationStatus.CONFIRMED
+    )
+    db.add(db_match)
+    db.commit()
+    db.refresh(db_match)
+
+    # TODO: Send notification (will be wired in 04-02)
+
+    return db_match
 
 
 @router.get("/user/{user_id}", response_model=List[VolunteerMatchWithActivity])
