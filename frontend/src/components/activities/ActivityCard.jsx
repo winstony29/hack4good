@@ -1,9 +1,10 @@
 import { Calendar, Clock, MapPin, Users } from 'lucide-react'
 import Card, { CardBody } from '../shared/Card'
 import Badge from '../shared/Badge'
+import TTSButton from '../accessibility/TTSButton'
 import { formatDate, formatTime } from '../../utils/dateUtils'
 
-export default function ActivityCard({ activity, showCapacity = true, onClick }) {
+export default function ActivityCard({ activity, showCapacity = true, showTTS = false, onClick }) {
   const availableSpots = activity.max_capacity - activity.current_participants
   const isFull = availableSpots <= 0
 
@@ -53,6 +54,12 @@ export default function ActivityCard({ activity, showCapacity = true, onClick })
                 {isFull ? 'Full' : `${availableSpots} spots left`}
               </Badge>
             </div>
+          </div>
+        )}
+
+        {showTTS && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <TTSButton text={`${activity.title}. ${activity.description}`} />
           </div>
         )}
       </CardBody>

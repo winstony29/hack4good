@@ -109,7 +109,7 @@ export default function SwipeableCard({
 
       {/* Activity Card */}
       <div className="h-full">
-        <ActivityCard activity={activity} />
+        <ActivityCard activity={activity} showTTS={isTop} />
       </div>
     </motion.div>
   )
