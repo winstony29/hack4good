@@ -49,7 +49,9 @@ export const mockActivities = [
     max_capacity: 20,
     current_participants: 12,
     program_type: 'wellness',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[2],
@@ -68,7 +70,9 @@ export const mockActivities = [
     max_capacity: 15,
     current_participants: 8,
     program_type: 'arts',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[3],
@@ -87,7 +91,9 @@ export const mockActivities = [
     max_capacity: 25,
     current_participants: 18,
     program_type: 'sports',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: false
   },
   {
     id: ACTIVITY_UUIDS[4],
@@ -106,7 +112,9 @@ export const mockActivities = [
     max_capacity: 12,
     current_participants: 10,
     program_type: 'music',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[5],
@@ -125,7 +133,9 @@ export const mockActivities = [
     max_capacity: 10,
     current_participants: 10,
     program_type: 'sports',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: true,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[6],
@@ -144,7 +154,9 @@ export const mockActivities = [
     max_capacity: 12,
     current_participants: 7,
     program_type: 'educational',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: true,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[7],
@@ -163,7 +175,9 @@ export const mockActivities = [
     max_capacity: 30,
     current_participants: 22,
     program_type: 'social',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[8],
@@ -182,7 +196,9 @@ export const mockActivities = [
     max_capacity: 15,
     current_participants: 9,
     program_type: 'educational',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: false
   },
   {
     id: ACTIVITY_UUIDS[9],
@@ -201,7 +217,9 @@ export const mockActivities = [
     max_capacity: 40,
     current_participants: 28,
     program_type: 'social',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[10],
@@ -220,7 +238,9 @@ export const mockActivities = [
     max_capacity: 15,
     current_participants: 11,
     program_type: 'arts',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: true,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[11],
@@ -239,7 +259,9 @@ export const mockActivities = [
     max_capacity: 16,
     current_participants: 14,
     program_type: 'sports',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[12],
@@ -258,7 +280,9 @@ export const mockActivities = [
     max_capacity: 20,
     current_participants: 13,
     program_type: 'wellness',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: true
   },
   {
     id: ACTIVITY_UUIDS[13],
@@ -277,7 +301,9 @@ export const mockActivities = [
     max_capacity: 20,
     current_participants: 18,
     program_type: 'social',
-    point_of_contact: STAFF_CONTACT
+    point_of_contact: STAFF_CONTACT,
+    payment_required: false,
+    wheelchair_accessible: true
   }
 ]
 

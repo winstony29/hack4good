@@ -1,14 +1,31 @@
 import { createCrudApi } from './api'
+import { mockActivities } from '../mocks/activities.mock'
 
-// Use real backend API - activities are seeded in Supabase
+// Toggle to use mock data (set to false when backend is ready)
+const USE_MOCK_DATA = true
+
 const activitiesCrudApi = createCrudApi('activities')
 
 export const activitiesApi = {
-  // Get all activities - backend returns { activities: [...], total: n }
+  // Get all activities
   getAll: async (params = {}) => {
+    if (USE_MOCK_DATA) {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Filter mock activities based on params
+      let filtered = [...mockActivities]
+      if (params.program_type) {
+        filtered = filtered.filter(a => a.program_type === params.program_type)
+      }
+      if (params.date_filter) {
+        filtered = filtered.filter(a => a.date === params.date_filter)
+      }
+      
+      return { data: filtered }
+    }
+    
     const response = await activitiesCrudApi.getAll(params)
-    // Normalize response: backend returns { activities: [], total: n }
-    // but components expect { data: [] }
     return { data: response.data.activities || response.data }
   },
   
