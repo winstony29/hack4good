@@ -1,14 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { matchesApi } from '../../services/matches.api'
-import ActivityCard from '../activities/ActivityCard'
-import Button from '../shared/Button'
+import SwipeableCard from './SwipeableCard'
+import SwipeButtons from './SwipeButtons'
 import EmptyState from '../shared/EmptyState'
-import { ThumbsUp, ThumbsDown } from 'lucide-react'
+import Button from '../shared/Button'
+import Spinner from '../shared/Spinner'
 
-export default function ActivitySwiper() {
+const VISIBLE_CARDS = 3 // Number of cards to show in stack
+
+export default function ActivitySwiper({ onMatch }) {
   const [activities, setActivities] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [swiping, setSwiping] = useState(false)
+  const cardRef = useRef(null)
 
   useEffect(() => {
     fetchAvailableActivities()
@@ -27,24 +33,43 @@ export default function ActivitySwiper() {
   }
 
   const handleSwipe = async (direction) => {
+    if (swiping) return
+    setSwiping(true)
+
     const activity = activities[currentIndex]
 
     if (direction === 'right') {
       try {
         await matchesApi.create({ activity_id: activity.id })
-        // TODO: Show match animation
         console.log('Matched with activity:', activity.title)
+
+        // Trigger match celebration callback
+        if (onMatch) {
+          onMatch(activity)
+        }
       } catch (error) {
         console.error('Failed to match:', error)
       }
     }
 
-    // Move to next card
-    setCurrentIndex(prev => prev + 1)
+    // Move to next card after animation completes
+    setTimeout(() => {
+      setCurrentIndex(prev => prev + 1)
+      setSwiping(false)
+    }, 50)
+  }
+
+  const handleButtonSwipe = (direction) => {
+    // The SwipeableCard will handle its own animation via controls
+    handleSwipe(direction)
   }
 
   if (loading) {
-    return <div className="py-12 text-center">Loading activities...</div>
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Spinner size="large" />
+      </div>
+    )
   }
 
   if (activities.length === 0) {
@@ -70,38 +95,39 @@ export default function ActivitySwiper() {
     )
   }
 
-  const currentActivity = activities[currentIndex]
+  // Get visible cards for stack effect
+  const visibleActivities = activities.slice(
+    currentIndex,
+    currentIndex + VISIBLE_CARDS
+  )
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-md mx-auto px-4">
       {/* Card Stack */}
-      <div className="relative min-h-[500px]">
-        <ActivityCard activity={currentActivity} />
+      <div className="relative h-[480px] mb-8">
+        <AnimatePresence>
+          {visibleActivities.map((activity, index) => (
+            <SwipeableCard
+              key={activity.id}
+              activity={activity}
+              onSwipe={handleSwipe}
+              isTop={index === 0}
+              stackIndex={index}
+            />
+          ))}
+        </AnimatePresence>
       </div>
 
       {/* Swipe Buttons */}
-      <div className="flex justify-center gap-8 mt-8">
-        <Button
-          size="large"
-          variant="danger"
-          onClick={() => handleSwipe('left')}
-        >
-          <ThumbsDown className="w-6 h-6" />
-          Pass
-        </Button>
-        <Button
-          size="large"
-          variant="success"
-          onClick={() => handleSwipe('right')}
-        >
-          <ThumbsUp className="w-6 h-6" />
-          Volunteer
-        </Button>
-      </div>
+      <SwipeButtons
+        onPass={() => handleButtonSwipe('left')}
+        onMatch={() => handleButtonSwipe('right')}
+        disabled={swiping}
+      />
 
       {/* Progress */}
-      <div className="mt-8 text-center text-gray-600">
-        {currentIndex + 1} / {activities.length}
+      <div className="mt-6 text-center text-gray-500 text-sm">
+        {currentIndex + 1} of {activities.length} activities
       </div>
     </div>
   )
