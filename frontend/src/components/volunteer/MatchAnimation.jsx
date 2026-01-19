@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import { Heart, X } from 'lucide-react'
 import { useAccessibility } from '../../contexts/AccessibilityContext'
+import { CONFETTI_COLORS } from '../../constants'
 
 export default function MatchAnimation({ activity, isVisible, onClose }) {
   const { reduceMotion } = useAccessibility()
@@ -18,7 +19,7 @@ export default function MatchAnimation({ activity, isVisible, onClose }) {
             particleCount: 100,
             spread: 70,
             origin: { y: 0.6 },
-            colors: ['#22c55e', '#16a34a', '#4ade80', '#86efac']
+            colors: CONFETTI_COLORS
           })
         }, 300)
       }

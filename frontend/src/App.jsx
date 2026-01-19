@@ -6,6 +6,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { AccessibilityProvider } from './contexts/AccessibilityContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import PageTransition from './components/layout/PageTransition'
+import { TOAST_COLORS } from './constants'
 
 // Pages
 import Landing from './pages/Landing'
@@ -68,14 +69,14 @@ function App() {
               // Success toast styling
               success: {
                 iconTheme: {
-                  primary: '#10b981',
+                  primary: TOAST_COLORS.success.icon,
                   secondary: '#fff',
                 },
               },
               // Error toast styling
               error: {
                 iconTheme: {
-                  primary: '#ef4444',
+                  primary: TOAST_COLORS.error.icon,
                   secondary: '#fff',
                 },
                 duration: 4000,
