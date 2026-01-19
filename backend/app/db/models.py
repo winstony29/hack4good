@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, DateTime, Date, Time, Text, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, String, Integer, Boolean, DateTime, Date, Time, Text, ForeignKey, Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -14,12 +14,13 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
-    role = Column(SQLEnum(Role), nullable=False)
-    membership_type = Column(SQLEnum(MembershipType), nullable=True)
+    role = Column(SQLEnum(Role, values_callable=lambda x: [e.value for e in x]), nullable=False)
+    membership_type = Column(SQLEnum(MembershipType, values_callable=lambda x: [e.value for e in x]), nullable=True)
     preferred_language = Column(String(5), default='en')
     phone = Column(String(20), nullable=True)
     caregiver_phone = Column(String(20), nullable=True)
     full_name = Column(String(255), nullable=True)
+    wheelchair_required = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -42,21 +43,31 @@ class Activity(Base):
     max_capacity = Column(Integer, nullable=False)
     current_participants = Column(Integer, default=0)
     program_type = Column(String(50))
+    created_by_staff_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Translation columns - pre-translated for performance
+    title_zh = Column(String(255), nullable=True)  # Chinese
+    title_ms = Column(String(255), nullable=True)  # Malay
+    title_ta = Column(String(255), nullable=True)  # Tamil
+    description_zh = Column(Text, nullable=True)
+    description_ms = Column(Text, nullable=True)
+    description_ta = Column(Text, nullable=True)
     
     # Relationships
     registrations = relationship("Registration", back_populates="activity")
     volunteer_matches = relationship("VolunteerMatch", back_populates="activity")
+    created_by = relationship("User", foreign_keys=[created_by_staff_id])
 
 
 class Registration(Base):
     __tablename__ = "registrations"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     activity_id = Column(UUID(as_uuid=True), ForeignKey("activities.id", ondelete="CASCADE"), nullable=False, index=True)
-    status = Column(SQLEnum(RegistrationStatus), default=RegistrationStatus.CONFIRMED)
+    status = Column(SQLEnum(RegistrationStatus, values_callable=lambda x: [e.value for e in x]), default=RegistrationStatus.CONFIRMED)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
@@ -67,11 +78,11 @@ class Registration(Base):
 
 class VolunteerMatch(Base):
     __tablename__ = "volunteer_matches"
-    
+
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     volunteer_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     activity_id = Column(UUID(as_uuid=True), ForeignKey("activities.id", ondelete="CASCADE"), nullable=False, index=True)
-    status = Column(SQLEnum(RegistrationStatus), default=RegistrationStatus.CONFIRMED)
+    status = Column(SQLEnum(RegistrationStatus, values_callable=lambda x: [e.value for e in x]), default=RegistrationStatus.CONFIRMED)
     matched_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     

@@ -6,18 +6,57 @@ import logging
 
 from app.core.auth import get_current_user
 from app.core.deps import get_db
-from app.core.enums import RegistrationStatus, Role
+from app.core.enums import Role, RegistrationStatus
+from app.db.models import Registration, Activity, User
 from app.models.registration import (
     RegistrationCreate,
     RegistrationResponse,
     RegistrationWithActivity
 )
-from app.db.models import Registration, Activity
+from app.models.activity import ActivityResponse, StaffContactInfo
 from app.services.registration_service import RegistrationService, ConflictError
 from app.services.activity_service import ActivityService
+from app.services.notification_service import NotificationService
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+def _build_activity_response(activity: Activity, db: Session) -> ActivityResponse:
+    """Build ActivityResponse with POC info"""
+    response_data = {
+        "id": activity.id,
+        "title": activity.title,
+        "description": activity.description,
+        "date": activity.date,
+        "start_time": activity.start_time,
+        "end_time": activity.end_time,
+        "location": activity.location,
+        "max_capacity": activity.max_capacity,
+        "current_participants": activity.current_participants,
+        "program_type": activity.program_type,
+        "created_by_staff_id": activity.created_by_staff_id,
+        "created_at": activity.created_at,
+        "point_of_contact": None,
+        "title_zh": getattr(activity, 'title_zh', None),
+        "title_ms": getattr(activity, 'title_ms', None),
+        "title_ta": getattr(activity, 'title_ta', None),
+        "description_zh": getattr(activity, 'description_zh', None),
+        "description_ms": getattr(activity, 'description_ms', None),
+        "description_ta": getattr(activity, 'description_ta', None),
+    }
+    
+    if activity.created_by_staff_id:
+        staff = db.query(User).filter(User.id == activity.created_by_staff_id).first()
+        if staff:
+            response_data["point_of_contact"] = StaffContactInfo(
+                id=staff.id,
+                full_name=staff.full_name,
+                email=staff.email,
+                phone=staff.phone
+            )
+    
+    return ActivityResponse(**response_data)
 
 
 @router.post("", response_model=RegistrationResponse, status_code=status.HTTP_201_CREATED)
@@ -37,42 +76,74 @@ async def register_for_activity(
 
     Returns 409 Conflict if validation fails
     """
-    user_id = UUID(current_user.id)
-
-    # Run all validations via service
-    reg_service = RegistrationService(db)
+    # Check activity exists
+    activity = db.query(Activity).filter(Activity.id == registration.activity_id).first()
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    
+    # Run all validations
+    service = RegistrationService(db)
     try:
-        reg_service.validate_all(user_id, registration.activity_id)
+        service.validate_all(current_user.id, registration.activity_id)
     except ConflictError as e:
         raise HTTPException(status_code=409, detail=str(e))
-
+    
     # Create registration
     db_registration = Registration(
-        user_id=user_id,
+        user_id=current_user.id,
         activity_id=registration.activity_id,
         status=RegistrationStatus.CONFIRMED
     )
     db.add(db_registration)
-
-    # Increment participant count
+    
+    # Increment participant count using service
     activity_service = ActivityService(db)
     activity_service.increment_participants(registration.activity_id)
-
+    
     db.commit()
     db.refresh(db_registration)
-
-    # Send notification (non-blocking, don't fail registration if notification fails)
+    
+    # Send notification (don't block on failure)
     try:
-        from app.services.notification_service import NotificationService
         notification_service = NotificationService(db)
         await notification_service.send_registration_confirmation(
-            user_id=user_id,
+            user_id=current_user.id,
             activity_id=registration.activity_id
         )
     except Exception as e:
         logger.warning(f"Failed to send registration notification: {e}")
-
+    
     return db_registration
+
+
+@router.get("", response_model=List[RegistrationWithActivity])
+async def get_my_registrations(
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Get all registrations for the current user
+    """
+    registrations = (
+        db.query(Registration)
+        .filter(Registration.user_id == current_user.id)
+        .options(joinedload(Registration.activity))
+        .order_by(Registration.created_at.desc())
+        .all()
+    )
+    
+    # Build response with activity details
+    result = []
+    for reg in registrations:
+        result.append(RegistrationWithActivity(
+            id=reg.id,
+            user_id=reg.user_id,
+            activity=_build_activity_response(reg.activity, db),
+            status=reg.status,
+            created_at=reg.created_at
+        ))
+    
+    return result
 
 
 @router.get("/user/{user_id}", response_model=List[RegistrationWithActivity])
@@ -86,18 +157,30 @@ async def get_user_registrations(
 
     Users can only view their own registrations unless they are staff
     """
-    # Authorization: own registrations or staff
-    user_role = current_user.user_metadata.get('role')
-    if current_user.id != str(user_id) and user_role != Role.STAFF.value:
+    # Authorization check
+    if current_user.id != user_id and current_user.role != Role.STAFF:
         raise HTTPException(status_code=403, detail="Not authorized to view these registrations")
-
-    registrations = db.query(Registration).filter(
-        Registration.user_id == user_id
-    ).options(
-        joinedload(Registration.activity)
-    ).order_by(Registration.created_at.desc()).all()
-
-    return registrations
+    
+    registrations = (
+        db.query(Registration)
+        .filter(Registration.user_id == user_id)
+        .options(joinedload(Registration.activity))
+        .order_by(Registration.created_at.desc())
+        .all()
+    )
+    
+    # Build response with activity details
+    result = []
+    for reg in registrations:
+        result.append(RegistrationWithActivity(
+            id=reg.id,
+            user_id=reg.user_id,
+            activity=_build_activity_response(reg.activity, db),
+            status=reg.status,
+            created_at=reg.created_at
+        ))
+    
+    return result
 
 
 @router.get("/activity/{activity_id}", response_model=List[RegistrationResponse])
@@ -138,44 +221,38 @@ async def cancel_registration(
     - Sends cancellation notification
     """
     # Fetch registration
-    registration = db.query(Registration).filter(
-        Registration.id == registration_id
-    ).first()
-
+    registration = db.query(Registration).filter(Registration.id == registration_id).first()
     if not registration:
         raise HTTPException(status_code=404, detail="Registration not found")
-
-    # Verify ownership (users can only cancel their own, staff can cancel any)
-    user_role = current_user.user_metadata.get('role')
-    if str(registration.user_id) != current_user.id and user_role != Role.STAFF.value:
+    
+    # Check user owns it (or is staff)
+    if registration.user_id != current_user.id and current_user.role != Role.STAFF:
         raise HTTPException(status_code=403, detail="Not authorized to cancel this registration")
-
+    
     # Check if already cancelled
     if registration.status == RegistrationStatus.CANCELLED:
         raise HTTPException(status_code=400, detail="Registration already cancelled")
-
+    
     # Store for notification before committing
     activity_id = registration.activity_id
-    user_id = registration.user_id
-
+    
     # Update status
     registration.status = RegistrationStatus.CANCELLED
-
-    # Decrement participant count
+    
+    # Decrement participant count using service
     activity_service = ActivityService(db)
     activity_service.decrement_participants(activity_id)
-
+    
     db.commit()
-
-    # Send cancellation notification (non-blocking)
+    
+    # Send notification (don't block on failure)
     try:
-        from app.services.notification_service import NotificationService
         notification_service = NotificationService(db)
         await notification_service.send_cancellation_notification(
-            user_id=user_id,
+            user_id=current_user.id,
             activity_id=activity_id
         )
     except Exception as e:
         logger.warning(f"Failed to send cancellation notification: {e}")
-
+    
     return None

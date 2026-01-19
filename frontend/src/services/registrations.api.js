@@ -1,74 +1,34 @@
-import api, { createCrudApi } from './api'
-import { 
-  getRegistrations, 
-  createRegistration, 
-  cancelRegistration,
-  getRegistrationsByActivity 
-} from '../mocks/registrations.mock'
+import api from './api'
 
-// Toggle to use mock data (set to false when backend is ready)
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
-
-// Simulate API delay for realistic testing
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
-const mockRegistrationsApi = {
+// Use real backend API for registrations
+export const registrationsApi = {
+  // Get all registrations for current user
   getAll: async () => {
-    await delay(500)
-    const registrations = getRegistrations()
-    return { data: registrations }
+    const response = await api.get('/registrations')
+    return { data: response.data }
   },
-
+  
+  // Get registrations for specific user (for staff viewing other users)
   getByUser: async (userId) => {
-    await delay(500)
-    const registrations = getRegistrations()
-    return { data: registrations }
+    const response = await api.get(`/registrations/user/${userId}`)
+    return { data: response.data }
   },
   
-  getById: async (id) => {
-    await delay(300)
-    const registrations = getRegistrations()
-    const registration = registrations.find(r => r.id === id)
-    if (!registration) {
-      throw new Error('Registration not found')
-    }
-    return { data: registration }
-  },
-  
+  // Create a new registration
   create: async (data) => {
-    await delay(500)
-    const newReg = createRegistration(data)
-    return { data: newReg }
+    const response = await api.post('/registrations', data)
+    return { data: response.data }
   },
   
+  // Cancel a registration
   cancel: async (registrationId) => {
-    await delay(500)
-    const success = cancelRegistration(registrationId)
-    if (!success) {
-      throw new Error('Registration not found')
-    }
+    await api.delete(`/registrations/${registrationId}`)
     return { message: 'Registration cancelled successfully' }
   },
   
-  getByActivity: async (activityId) => {
-    await delay(300)
-    const registrations = getRegistrationsByActivity(activityId)
-    return { data: registrations }
-  }
-}
-
-export const registrationsApi = USE_MOCK_DATA ? mockRegistrationsApi : {
-  ...createCrudApi('registrations'),
-
-  // Get registrations for specific user
-  getByUser: (userId) =>
-    api.get(`/registrations/user/${userId}`),
-
   // Get registrations for specific activity
-  getByActivity: (activityId) =>
-    api.get(`/registrations/activity/${activityId}`),
-
-  // Cancel registration
-  cancel: (registrationId) =>
-    api.delete(`/registrations/${registrationId}`)
+  getByActivity: async (activityId) => {
+    const response = await api.get(`/registrations/activity/${activityId}`)
+    return { data: response.data }
+  }
 }

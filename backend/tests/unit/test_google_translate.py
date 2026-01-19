@@ -19,8 +19,7 @@ class TestGoogleTranslateClientMockMode:
     def client_no_credentials(self):
         """Create client with no credentials."""
         with patch('app.integrations.google_translate.settings') as mock_settings:
-            mock_settings.GOOGLE_PROJECT_ID = None
-            mock_settings.GOOGLE_APPLICATION_CREDENTIALS = None
+            mock_settings.GOOGLE_TRANSLATE_API_KEY = None
             client = GoogleTranslateClient()
             yield client
 
@@ -80,57 +79,52 @@ class TestGoogleTranslateClientMockMode:
         assert client_no_credentials.detect_language("   ") == "en"
 
 
-@pytest.mark.skip(reason="Requires actual Google Cloud Translate library")
 class TestGoogleTranslateClientRealMode:
-    """Tests for Google Translate client with credentials configured.
-
-    These tests are skipped because they require the actual Google Cloud
-    Translate library to be properly installed. The mock mode tests cover
-    the core functionality.
-    """
+    """Tests for Google Translate client with API key configured."""
 
     @pytest.fixture
-    def mock_translate_client(self):
-        """Mock the Google Translate client."""
+    def client_with_api_key(self):
+        """Create client with API key and mock httpx."""
         with patch('app.integrations.google_translate.settings') as mock_settings:
-            mock_settings.GOOGLE_PROJECT_ID = 'test-project'
-            mock_settings.GOOGLE_APPLICATION_CREDENTIALS = '/path/to/creds.json'
-            with patch('google.cloud.translate_v2.Client') as MockClient:
-                mock_instance = MagicMock()
-                mock_instance.translate.return_value = {'translatedText': '你好'}
-                mock_instance.detect_language.return_value = {'language': 'en'}
-                MockClient.return_value = mock_instance
-                yield mock_instance
+            mock_settings.GOOGLE_TRANSLATE_API_KEY = 'test-api-key'
+            client = GoogleTranslateClient()
+            yield client
 
-    def test_is_mock_mode_with_credentials(self, mock_translate_client):
-        """Client should not be in mock mode with credentials."""
-        client = GoogleTranslateClient()
-        assert client.is_mock_mode is False
+    def test_is_mock_mode_with_api_key(self, client_with_api_key):
+        """Client should not be in mock mode with API key."""
+        assert client_with_api_key.is_mock_mode is False
 
-    def test_translate_calls_google_api(self, mock_translate_client):
-        """translate() should call the Google Translate API."""
-        client = GoogleTranslateClient()
-        client.translate("Hello", "en", "zh")
-        mock_translate_client.translate.assert_called_once()
+    def test_translate_calls_google_api(self, client_with_api_key):
+        """translate() should call the Google Translate REST API."""
+        mock_response = MagicMock()
+        mock_response.json.return_value = {
+            "data": {"translations": [{"translatedText": "你好"}]}
+        }
+        mock_response.raise_for_status = MagicMock()
 
-    def test_translate_returns_api_result(self, mock_translate_client):
-        """translate() should return the translated text from API."""
-        client = GoogleTranslateClient()
-        result = client.translate("Hello", "en", "zh")
-        assert result == "你好"
+        with patch('app.integrations.google_translate.httpx.post', return_value=mock_response) as mock_post:
+            result = client_with_api_key.translate("Hello", "en", "zh")
+            mock_post.assert_called_once()
+            assert result == "你好"
 
-    def test_translate_fallback_on_api_error(self, mock_translate_client):
+    def test_translate_fallback_on_api_error(self, client_with_api_key):
         """translate() should fallback to mock on API error."""
-        mock_translate_client.translate.side_effect = Exception("API Error")
-        client = GoogleTranslateClient()
-        result = client.translate("Hello", "en", "zh")
-        assert result == "[ZH] Hello"
+        with patch('app.integrations.google_translate.httpx.post', side_effect=Exception("API Error")):
+            result = client_with_api_key.translate("Hello", "en", "zh")
+            assert result == "[ZH] Hello"
 
-    def test_detect_language_calls_google_api(self, mock_translate_client):
+    def test_detect_language_calls_google_api(self, client_with_api_key):
         """detect_language() should call the Google API."""
-        client = GoogleTranslateClient()
-        client.detect_language("Hello")
-        mock_translate_client.detect_language.assert_called_once()
+        mock_response = MagicMock()
+        mock_response.json.return_value = {
+            "data": {"detections": [[{"language": "en"}]]}
+        }
+        mock_response.raise_for_status = MagicMock()
+
+        with patch('app.integrations.google_translate.httpx.post', return_value=mock_response) as mock_post:
+            result = client_with_api_key.detect_language("Hello")
+            mock_post.assert_called_once()
+            assert result == "en"
 
 
 class TestSupportedLanguages:
@@ -194,8 +188,7 @@ class TestGetGoogleTranslateClient:
     def test_returns_google_translate_client_instance(self):
         """get_google_translate_client() should return a GoogleTranslateClient."""
         with patch('app.integrations.google_translate.settings') as mock_settings:
-            mock_settings.GOOGLE_PROJECT_ID = None
-            mock_settings.GOOGLE_APPLICATION_CREDENTIALS = None
+            mock_settings.GOOGLE_TRANSLATE_API_KEY = None
             # Reset the singleton
             import app.integrations.google_translate as module
             module._client_instance = None
@@ -206,8 +199,7 @@ class TestGetGoogleTranslateClient:
     def test_returns_same_instance(self):
         """get_google_translate_client() should return the same instance (singleton)."""
         with patch('app.integrations.google_translate.settings') as mock_settings:
-            mock_settings.GOOGLE_PROJECT_ID = None
-            mock_settings.GOOGLE_APPLICATION_CREDENTIALS = None
+            mock_settings.GOOGLE_TRANSLATE_API_KEY = None
             # Reset the singleton
             import app.integrations.google_translate as module
             module._client_instance = None

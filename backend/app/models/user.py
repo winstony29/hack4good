@@ -16,6 +16,7 @@ class UserCreate(BaseModel):
     phone: Optional[str] = None
     caregiver_phone: Optional[str] = None
     preferred_language: Language = Language.ENGLISH
+    wheelchair_required: bool = False
 
 
 class UserLogin(BaseModel):

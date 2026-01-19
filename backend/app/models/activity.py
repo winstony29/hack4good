@@ -6,6 +6,14 @@ from uuid import UUID
 from app.models.base import BaseSchema
 
 
+class StaffContactInfo(BaseModel):
+    """Point of Contact information for activities"""
+    id: UUID
+    full_name: Optional[str] = None
+    email: str
+    phone: Optional[str] = None
+
+
 class ActivityCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
@@ -28,6 +36,16 @@ class ActivityUpdate(BaseModel):
     program_type: Optional[str] = None
 
 
+class ActivityTranslations(BaseModel):
+    """Translations for activity title and description"""
+    title_zh: Optional[str] = None
+    title_ms: Optional[str] = None
+    title_ta: Optional[str] = None
+    description_zh: Optional[str] = None
+    description_ms: Optional[str] = None
+    description_ta: Optional[str] = None
+
+
 class ActivityResponse(BaseSchema):
     id: UUID
     title: str
@@ -39,7 +57,16 @@ class ActivityResponse(BaseSchema):
     max_capacity: int
     current_participants: int
     program_type: Optional[str]
+    created_by_staff_id: Optional[UUID] = None
+    point_of_contact: Optional[StaffContactInfo] = None
     created_at: datetime
+    # Translations
+    title_zh: Optional[str] = None
+    title_ms: Optional[str] = None
+    title_ta: Optional[str] = None
+    description_zh: Optional[str] = None
+    description_ms: Optional[str] = None
+    description_ta: Optional[str] = None
     
     @property
     def is_full(self) -> bool:

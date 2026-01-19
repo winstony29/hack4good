@@ -3,14 +3,14 @@
  * For testing volunteer flow
  */
 
-import { mockActivities } from './activities.mock'
+import { mockActivities, ACTIVITY_UUIDS } from './activities.mock'
 
 // In-memory volunteer matches store
 let mockVolunteerMatches = [
   {
     id: 'match-1',
     volunteer_id: 'user-3', // mockVolunteerUser
-    activity_id: '3', // Basketball Practice
+    activity_id: ACTIVITY_UUIDS[3], // Basketball Practice
     status: 'confirmed',
     matched_at: '2026-01-18T10:00:00Z',
     updated_at: '2026-01-18T10:00:00Z'
@@ -18,7 +18,7 @@ let mockVolunteerMatches = [
   {
     id: 'match-2',
     volunteer_id: 'user-3',
-    activity_id: '7', // Dance Party
+    activity_id: ACTIVITY_UUIDS[7], // Dance Party
     status: 'confirmed',
     matched_at: '2026-01-18T11:00:00Z',
     updated_at: '2026-01-18T11:00:00Z'
@@ -113,7 +113,7 @@ export const resetVolunteerMatches = () => {
     {
       id: 'match-1',
       volunteer_id: 'user-3',
-      activity_id: '3',
+      activity_id: ACTIVITY_UUIDS[3],
       status: 'confirmed',
       matched_at: '2026-01-18T10:00:00Z',
       updated_at: '2026-01-18T10:00:00Z'
@@ -121,7 +121,7 @@ export const resetVolunteerMatches = () => {
     {
       id: 'match-2',
       volunteer_id: 'user-3',
-      activity_id: '7',
+      activity_id: ACTIVITY_UUIDS[7],
       status: 'confirmed',
       matched_at: '2026-01-18T11:00:00Z',
       updated_at: '2026-01-18T11:00:00Z'

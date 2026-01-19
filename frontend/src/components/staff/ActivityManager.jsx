@@ -4,16 +4,18 @@ import toast from 'react-hot-toast'
 import { activitiesApi } from '../../services/activities.api'
 import ActivityForm from '../activities/ActivityForm'
 import ActivityCard from '../activities/ActivityCard'
+import ActivityAttendance from './ActivityAttendance'
 import Button from '../shared/Button'
 import Modal from '../shared/Modal'
 import EmptyState from '../shared/EmptyState'
-import { Plus, Calendar, Search, Filter, LayoutGrid, List } from 'lucide-react'
+import { Plus, Calendar, Search, Filter, LayoutGrid, List, Users } from 'lucide-react'
 
 export default function ActivityManager() {
   const [activities, setActivities] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingActivity, setEditingActivity] = useState(null)
+  const [attendanceActivity, setAttendanceActivity] = useState(null)
   const [viewMode, setViewMode] = useState('grid') // 'grid' or 'list'
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -229,12 +231,25 @@ export default function ActivityManager() {
                       background: '#ffffff',
                       boxShadow: '0 2px 10px -3px rgba(30, 27, 75, 0.06), 0 0 0 1px rgba(30, 27, 75, 0.03)'
                     }}
-                    onClick={() => setEditingActivity(activity)}
                   >
                     <ActivityCard
                       activity={activity}
                       onClick={() => setEditingActivity(activity)}
                     />
+                    <div className="px-4 pb-4">
+                      <Button 
+                        variant="secondary" 
+                        size="sm" 
+                        fullWidth
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setAttendanceActivity(activity)
+                        }}
+                      >
+                        <Users className="w-4 h-4" />
+                        View Contacts
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -281,6 +296,13 @@ export default function ActivityManager() {
           />
         )}
       </Modal>
+
+      {/* Attendance Modal */}
+      <ActivityAttendance
+        activity={attendanceActivity}
+        isOpen={!!attendanceActivity}
+        onClose={() => setAttendanceActivity(null)}
+      />
     </div>
   )
 }

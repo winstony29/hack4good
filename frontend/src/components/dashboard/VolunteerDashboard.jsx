@@ -11,10 +11,7 @@ import ActivityDetailModal from '../activities/ActivityDetailModal'
 import ActivityMonthCalendar from '../activities/ActivityMonthCalendar'
 import { formatDate, formatTime, isUpcoming } from '../../utils/dateUtils'
 import { useNavigate } from 'react-router-dom'
-
-// Mock API - replace with real API when available
-import { getVolunteerMatches, cancelVolunteerMatch } from '../../mocks/volunteerMatches.mock'
-import { activitiesApi } from '../../services/activities.api'
+import { matchesApi } from '../../services/matches.api'
 
 export default function VolunteerDashboard() {
   const { user } = useAuth()
@@ -33,20 +30,9 @@ export default function VolunteerDashboard() {
   const fetchMatches = async () => {
     try {
       setLoading(true)
-      const matchesData = getVolunteerMatches(user?.id)
-
-      const matchesWithActivities = await Promise.all(
-        matchesData.map(async (match) => {
-          try {
-            const activityResponse = await activitiesApi.getById(match.activity_id)
-            return { ...match, activity: activityResponse.data }
-          } catch (error) {
-            return match
-          }
-        })
-      )
-
-      setMatches(matchesWithActivities)
+      // Fetch matches from backend - includes activity data via joinedload
+      const response = await matchesApi.getAll(user?.id)
+      setMatches(response.data || [])
     } catch (error) {
       console.error('Failed to fetch volunteer matches:', error)
     } finally {
@@ -59,9 +45,10 @@ export default function VolunteerDashboard() {
 
     setCancellingId(matchId)
     try {
-      cancelVolunteerMatch(matchId)
+      await matchesApi.cancel(matchId)
       await fetchMatches()
     } catch (error) {
+      console.error('Failed to cancel match:', error)
       alert('Failed to cancel. Please try again.')
     } finally {
       setCancellingId(null)

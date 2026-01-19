@@ -28,8 +28,9 @@ async def get_available_activities(
     - Only shows activities with available spots
     """
     from datetime import date
-    from app.db.models import Activity, VolunteerMatch
+    from app.db.models import Activity, VolunteerMatch, User
     from app.core.enums import RegistrationStatus
+    from app.models.activity import StaffContactInfo
 
     # Get IDs of activities volunteer is already matched to
     matched_activity_ids = db.query(VolunteerMatch.activity_id).filter(
@@ -46,7 +47,45 @@ async def get_available_activities(
 
     activities = query.order_by(Activity.date, Activity.start_time).all()
 
-    return activities
+    # Build response with POC info for each activity
+    result = []
+    for activity in activities:
+        response_data = {
+            "id": activity.id,
+            "title": activity.title,
+            "description": activity.description,
+            "date": activity.date,
+            "start_time": activity.start_time,
+            "end_time": activity.end_time,
+            "location": activity.location,
+            "max_capacity": activity.max_capacity,
+            "current_participants": activity.current_participants,
+            "program_type": activity.program_type,
+            "created_by_staff_id": activity.created_by_staff_id,
+            "created_at": activity.created_at,
+            "point_of_contact": None,
+            "title_zh": getattr(activity, 'title_zh', None),
+            "title_ms": getattr(activity, 'title_ms', None),
+            "title_ta": getattr(activity, 'title_ta', None),
+            "description_zh": getattr(activity, 'description_zh', None),
+            "description_ms": getattr(activity, 'description_ms', None),
+            "description_ta": getattr(activity, 'description_ta', None),
+        }
+        
+        # Add POC info if available
+        if activity.created_by_staff_id:
+            staff = db.query(User).filter(User.id == activity.created_by_staff_id).first()
+            if staff:
+                response_data["point_of_contact"] = StaffContactInfo(
+                    id=staff.id,
+                    full_name=staff.full_name,
+                    email=staff.email,
+                    phone=staff.phone
+                )
+        
+        result.append(ActivityResponse(**response_data))
+
+    return result
 
 
 @router.post("", response_model=VolunteerMatchResponse, status_code=status.HTTP_201_CREATED)
