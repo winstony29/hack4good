@@ -104,6 +104,27 @@
   top: 0;
 }
 
+/* Global focus-visible states for keyboard navigation */
+*:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode focus override */
+[data-contrast="high"] *:focus-visible {
+  outline-color: #FFFF00;
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,
