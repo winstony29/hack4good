@@ -57,3 +57,10 @@ nul
 
 # Claude
 .claude/
+
+# Planning (local only)
+.planning/MILESTONES.md
+.planning/PERSON3-VOLUNTEER-SWIPER-DESIGN.md
+.planning/milestones/
+.planning/test-screenshots/
+.playwright-mcp/
