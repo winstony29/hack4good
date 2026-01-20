@@ -4,6 +4,41 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Default theme (warm inclusive) */
+  --color-bg: #FFF9F5;
+  --color-bg-card: #FFFFFF;
+  --color-text: #2D3436;
+  --color-text-muted: #636E72;
+  --color-primary: #E8505B;
+  --color-secondary: #14A085;
+  --color-border: #E8E8E8;
+
+  /* Accessibility overrides - will be toggled by JS */
+  --a11y-bg: var(--color-bg-card);
+  --a11y-bg-secondary: #F9FAFB;
+  --a11y-border: var(--color-border);
+  --a11y-text: var(--color-text);
+}
+
+/* High contrast mode */
+[data-contrast="high"] {
+  --color-bg: #000000;
+  --color-bg-card: #1A1A1A;
+  --color-text: #FFFF00;
+  --color-text-muted: #FFFF99;
+  --color-border: #FFFF00;
+  --a11y-bg: #1A1A1A;
+  --a11y-bg-secondary: #262626;
+  --a11y-border: #FFFF00;
+  --a11y-text: #FFFF00;
+}
+
+/* OpenDyslexic font mode */
+[data-font="dyslexic"] {
+  font-family: 'OpenDyslexic', sans-serif !important;
+}
+
 @layer base {
   html {
     font-size: 16px;
