@@ -2,6 +2,9 @@
 
 An accessible, inclusive activity management platform designed for individuals with intellectual disabilities. Built for MINDS (Movement for the Intellectually Disabled of Singapore).
 
+## Problem Statement
+Built for Hack4Good 2026 (organised by NUS Student Developer Group), tackling the MINDS 1 Problem Statement: "How might we reduce friction in activity sign-ups for both individuals and caregivers, while reducing manual effort for staff in managing and consolidating registration data?"
+
 ## 🌟 Features
 
 ### For Participants
@@ -266,18 +269,18 @@ npm test
 - ✅ Shared components
 
 ### Person 2: Activities Lead
-- 🏗️ Activity calendar implementation
-- 🏗️ Registration service logic
-- 🏗️ Participant dashboard
+- ✅ Activity calendar implementation
+- ✅ Registration service logic
+- ✅ Participant dashboard
 
 ### Person 3: Engagement Lead
-- 🏗️ Volunteer swiper
-- 🏗️ Twilio notifications
-- 🏗️ Match animation
+- ✅ Volunteer swiper
+- ✅ Twilio notifications
+- ✅ Match animation
 
 ### Person 4: Experience Lead
-- 🏗️ Staff analytics
-- 🏗️ Accessibility features (TTS, translation)
+- ✅ Staff analytics
+- ✅ Accessibility features (TTS, translation)
 - ✅ Weekly schedule view
 
 ## 🤝 Contributing
@@ -287,16 +290,6 @@ npm test
 3. Commit: `git commit -m "feat: add your feature"`
 4. Push: `git push origin feature/YOUR_FEATURE`
 5. Create a Pull Request to `dev` branch
-
-### Commit Convention
-
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting)
-- `refactor`: Code refactoring
-- `test`: Adding tests
-- `chore`: Maintenance tasks
 
 ## 📄 API Documentation
 
@@ -317,7 +310,7 @@ MIT License - feel free to use this project for your own purposes.
 ## 🙏 Acknowledgments
 
 - **MINDS Singapore** for the problem statement
-- **Hack4Good** hackathon organizers
+- **Hack4Good** hackathon organisers
 - Open source community for amazing tools and libraries
 
 ---
