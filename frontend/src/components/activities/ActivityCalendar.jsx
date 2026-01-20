@@ -5,9 +5,12 @@ import ActivityCard from './ActivityCard'
 import Spinner from '../shared/Spinner'
 import EmptyState from '../shared/EmptyState'
 import Button from '../shared/Button'
-import { formatDate, getWeekBoundaries, isUpcoming } from '../../utils/dateUtils'
+import { useTranslation } from '../../hooks/useTranslation'
+import { useAccessibility } from '../../contexts/AccessibilityContext'
+import { getWeekBoundaries, isUpcoming } from '../../utils/dateUtils'
 
 export default function ActivityCalendar({ mode = 'view', onActivityClick, filterOptions = {} }) {
+  const { t, language } = useTranslation()
   const [activities, setActivities] = useState([])
   const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState('list') // 'list' or 'grid'
@@ -90,6 +93,22 @@ export default function ActivityCalendar({ mode = 'view', onActivityClick, filte
     )
   }
 
+  // Format date with localization
+  const formatLocalizedDate = (dateString) => {
+    const date = new Date(dateString)
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+    
+    // Map language codes to locale codes
+    const localeMap = {
+      en: 'en-US',
+      zh: 'zh-CN',
+      ms: 'ms-MY',
+      ta: 'ta-IN'
+    }
+    
+    return date.toLocaleDateString(localeMap[language] || 'en-US', options)
+  }
+
   return (
     <div className="space-y-4">
       {/* View Controls */}
@@ -101,28 +120,28 @@ export default function ActivityCalendar({ mode = 'view', onActivityClick, filte
             size="sm"
             onClick={() => setDateFilter('upcoming')}
           >
-            Upcoming
+            {t('activities.upcoming')}
           </Button>
           <Button
             variant={dateFilter === 'week' ? 'primary' : 'secondary'}
             size="sm"
             onClick={() => setDateFilter('week')}
           >
-            This Week
+            {t('activities.thisWeek')}
           </Button>
           <Button
             variant={dateFilter === 'month' ? 'primary' : 'secondary'}
             size="sm"
             onClick={() => setDateFilter('month')}
           >
-            This Month
+            {t('activities.thisMonth')}
           </Button>
           <Button
             variant={dateFilter === 'all' ? 'primary' : 'secondary'}
             size="sm"
             onClick={() => setDateFilter('all')}
           >
-            All
+            {t('activities.all')}
           </Button>
         </div>
 
@@ -149,8 +168,8 @@ export default function ActivityCalendar({ mode = 'view', onActivityClick, filte
       {filteredActivities.length === 0 ? (
         <EmptyState
           icon={Calendar}
-          title="No activities found"
-          description="Check back later for upcoming activities"
+          title={t('activities.noActivities')}
+          description={t('activities.checkBackLater')}
         />
       ) : (
         <div className="space-y-6">
@@ -159,7 +178,7 @@ export default function ActivityCalendar({ mode = 'view', onActivityClick, filte
               {/* Date Header */}
               <div className="sticky top-0 bg-gray-50 z-10 pb-2 -mx-4 px-4">
                 <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                  {formatDate(date)}
+                  {formatLocalizedDate(date)}
                 </h3>
               </div>
 
