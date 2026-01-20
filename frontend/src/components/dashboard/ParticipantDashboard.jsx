@@ -100,7 +100,7 @@ export default function ParticipantDashboard() {
       className="space-y-8"
     >
       {/* Welcome Section with gradient header */}
-      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-8"
+      <motion.div variants={itemVariants} className="relative overflow-hidden p-8 shadow-lg border-2 border-purple-300"
         style={{
           background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)'
         }}
@@ -112,12 +112,12 @@ export default function ParticipantDashboard() {
             background: 'radial-gradient(ellipse at 0% 0%, rgba(255, 255, 255, 0.3) 0%, transparent 50%), radial-gradient(ellipse at 100% 100%, rgba(139, 92, 246, 0.3) 0%, transparent 50%)'
           }}
         />
-        
+
         <div className="relative flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                className="w-10 h-10 flex items-center justify-center border-2 border-white/40"
                 style={{ background: 'rgba(255, 255, 255, 0.2)' }}
               >
                 <Calendar className="w-5 h-5 text-white" />
@@ -148,10 +148,9 @@ export default function ParticipantDashboard() {
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <motion.div
           whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="relative overflow-hidden rounded-2xl p-6"
+          className="relative overflow-hidden p-6 border-2 border-blue-200 shadow-lg"
           style={{
-            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
-            boxShadow: '0 2px 15px -5px rgba(59, 130, 246, 0.15), 0 0 0 1px rgba(59, 130, 246, 0.08)'
+            background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)'
           }}
         >
           <div
@@ -163,7 +162,7 @@ export default function ParticipantDashboard() {
           <div className="relative">
             <div className="flex items-center gap-3 mb-3">
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                className="w-12 h-12 flex items-center justify-center border-2 border-blue-300"
                 style={{ background: 'rgba(59, 130, 246, 0.15)' }}
               >
                 <Sparkles className="w-6 h-6 text-blue-600" />
@@ -188,10 +187,9 @@ export default function ParticipantDashboard() {
 
         <motion.div
           whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="relative overflow-hidden rounded-2xl p-6"
+          className="relative overflow-hidden p-6 border-2 border-green-200 shadow-lg"
           style={{
-            background: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)',
-            boxShadow: '0 2px 15px -5px rgba(34, 197, 94, 0.15), 0 0 0 1px rgba(34, 197, 94, 0.08)'
+            background: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)'
           }}
         >
           <div
@@ -203,7 +201,7 @@ export default function ParticipantDashboard() {
           <div className="relative">
             <div className="flex items-center gap-3 mb-3">
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                className="w-12 h-12 flex items-center justify-center border-2 border-green-300"
                 style={{ background: 'rgba(34, 197, 94, 0.15)' }}
               >
                 <CalendarDays className="w-6 h-6 text-green-600" />
@@ -233,17 +231,16 @@ export default function ParticipantDashboard() {
       {/* Upcoming Registrations */}
       <motion.div variants={itemVariants} id="registrations">
         <div
-          className="rounded-3xl overflow-hidden"
+          className="overflow-hidden border-2 border-gray-200 shadow-lg"
           style={{
-            background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
-            boxShadow: '0 4px 30px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03)'
+            background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)'
           }}
         >
-          <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
+          <div className="px-6 sm:px-8 py-6 border-b-2 border-gray-200">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center gap-3">
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  className="w-10 h-10 flex items-center justify-center border-2 border-blue-300"
                   style={{ background: 'rgba(59, 130, 246, 0.1)' }}
                 >
                   <Calendar className="w-5 h-5 text-blue-600" />
@@ -259,12 +256,12 @@ export default function ParticipantDashboard() {
               </div>
               
               {/* View Toggle */}
-              <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl">
+              <div className="flex items-center gap-1 p-1 bg-gray-100 border-2 border-gray-200">
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg transition-all duration-200 flex items-center justify-center ${
+                  className={`p-2 transition-all duration-200 flex items-center justify-center ${
                     viewMode === 'list'
-                      ? 'bg-white text-blue-600 shadow-sm'
+                      ? 'bg-white text-blue-600 shadow-md border-2 border-blue-300'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -272,9 +269,9 @@ export default function ParticipantDashboard() {
                 </button>
                 <button
                   onClick={() => setViewMode('calendar')}
-                  className={`p-2 rounded-lg transition-all duration-200 flex items-center justify-center ${
+                  className={`p-2 transition-all duration-200 flex items-center justify-center ${
                     viewMode === 'calendar'
-                      ? 'bg-white text-blue-600 shadow-sm'
+                      ? 'bg-white text-blue-600 shadow-md border-2 border-blue-300'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >

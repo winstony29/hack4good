@@ -16,12 +16,12 @@ export default function Button({
   const { reduceMotion } = useAccessibility()
 
   const variants = {
-    primary: 'bg-minds-coral hover:bg-primary-600 text-white shadow-md hover:shadow-lg',
-    secondary: 'bg-minds-teal hover:bg-secondary-600 text-white shadow-md hover:shadow-lg',
-    outline: 'bg-white border-2 border-minds-coral text-minds-coral hover:bg-primary-50',
-    ghost: 'bg-transparent hover:bg-gray-100 text-minds-charcoal',
-    danger: 'bg-red-600 hover:bg-red-700 text-white',
-    success: 'bg-minds-success hover:bg-green-600 text-white',
+    primary: 'bg-purple-400 hover:bg-purple-500 text-white shadow-lg hover:shadow-xl',
+    secondary: 'bg-minds-teal hover:bg-secondary-600 text-white shadow-lg hover:shadow-xl',
+    outline: 'bg-white border-2 border-gray-800 text-gray-800 hover:bg-gray-50 shadow-md hover:shadow-lg',
+    ghost: 'bg-transparent hover:bg-gray-100 text-minds-charcoal border-2 border-transparent hover:border-gray-300',
+    danger: 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl',
+    success: 'bg-minds-success hover:bg-green-600 text-white shadow-lg hover:shadow-xl',
   }
 
   const sizes = {
@@ -34,7 +34,7 @@ export default function Button({
   // Motion config - instant transitions when reduceMotion is enabled
   const transition = reduceMotion
     ? { type: 'tween', duration: 0.01 }
-    : { type: 'spring', stiffness: 400, damping: 25 }
+    : { type: 'tween', duration: 0.2 }
 
   const isDisabled = disabled || loading
 
@@ -43,17 +43,17 @@ export default function Button({
       type={type}
       onClick={onClick}
       disabled={isDisabled}
-      whileHover={!isDisabled && !reduceMotion ? { scale: 1.02 } : undefined}
-      whileTap={!isDisabled ? { scale: 0.97 } : undefined}
+      whileHover={!isDisabled && !reduceMotion ? { y: -2 } : undefined}
+      whileTap={!isDisabled && !reduceMotion ? { y: 0 } : undefined}
       transition={transition}
       className={`
         ${variants[variant]}
         ${sizes[size]}
         ${fullWidth ? 'w-full' : ''}
-        rounded-xl font-semibold
-        transition-colors duration-200
+        font-semibold
+        transition-all duration-200
         disabled:opacity-50 disabled:cursor-not-allowed
-        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-minds-coral
+        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400
         flex items-center justify-center gap-2
       `}
       {...props}

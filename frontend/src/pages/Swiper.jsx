@@ -28,12 +28,22 @@ export default function Swiper() {
 
   return (
     <Layout>
-      {/* Page Background with Mesh Gradient */}
+      {/* Page Background with Pastel Gradient */}
       <div className="relative min-h-[calc(100vh-64px)] overflow-hidden">
-        {/* Background gradient mesh */}
+        {/* Background gradient mesh - matching landing page */}
         <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: backgroundGradient }}
+          className="absolute inset-0 pointer-events-none opacity-50"
+          style={{
+            background: 'linear-gradient(135deg, #f0f9ff 0%, #fef3c7 25%, #fce7f3 50%, #f3e8ff 75%, #dbeafe 100%)',
+          }}
+        />
+
+        {/* Subtle pattern overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-30"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)',
+          }}
         />
 
         {/* Content */}
@@ -45,26 +55,34 @@ export default function Swiper() {
             transition={{ duration: 0.4 }}
             className="text-center mb-6 sm:mb-8"
           >
-            <h1 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 mb-2">
+            <h1
+              className="font-display font-bold text-5xl sm:text-6xl mb-3"
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
               {pageTitle}
             </h1>
-            <p className="text-gray-500 max-w-md mx-auto">
+            <p className="text-gray-700 text-lg font-medium max-w-md mx-auto">
               {pageDescription}
             </p>
 
             {/* Swipe Instructions */}
-            <div className="flex items-center justify-center gap-6 mt-4 text-sm text-gray-400">
+            <div className="flex items-center justify-center gap-8 mt-6 text-base text-gray-600">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-coral-50 flex items-center justify-center">
-                  <ArrowLeft className="w-4 h-4 text-coral-400" />
+                <div className="w-10 h-10 bg-red-100 border-2 border-red-300 flex items-center justify-center shadow-md">
+                  <ArrowLeft className="w-5 h-5 text-red-500" />
                 </div>
-                <span>Pass</span>
+                <span className="font-semibold">Pass</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full ${isVolunteer ? 'bg-sage-50' : 'bg-blue-50'} flex items-center justify-center`}>
-                  <ArrowRight className={`w-4 h-4 ${isVolunteer ? 'text-sage-500' : 'text-blue-500'}`} />
+                <div className="w-10 h-10 bg-purple-100 border-2 border-purple-300 flex items-center justify-center shadow-md">
+                  <ArrowRight className="w-5 h-5 text-purple-500" />
                 </div>
-                <span>{rightSwipeLabel}</span>
+                <span className="font-semibold">{rightSwipeLabel}</span>
               </div>
             </div>
           </motion.div>

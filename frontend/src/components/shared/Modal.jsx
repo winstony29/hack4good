@@ -65,14 +65,14 @@ export default function Modal({
               exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.95 }}
               transition={contentTransition}
               className={`
-                relative bg-white rounded-lg shadow-xl
+                relative bg-white shadow-xl border-2 border-gray-300
                 w-full mx-4 sm:mx-auto ${sizes[size]}
                 max-h-[90vh] overflow-y-auto
               `}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 sm:p-6 border-b">
+              <div className="flex items-center justify-between p-4 sm:p-6 border-b-2 border-gray-200">
                 <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">{title}</h2>
                 <button
                   onClick={onClose}
@@ -88,7 +88,7 @@ export default function Modal({
 
               {/* Footer */}
               {footer && (
-                <div className="flex items-center justify-end gap-3 p-4 sm:p-6 border-t">
+                <div className="flex items-center justify-end gap-3 p-4 sm:p-6 border-t-2 border-gray-200">
                   {footer}
                 </div>
               )}

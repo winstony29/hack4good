@@ -34,10 +34,9 @@ export default function Input({
           className={`
             w-full px-4 py-3 min-h-[48px]
             bg-white
-            border-2 ${showError ? 'border-red-500' : showSuccess ? 'border-minds-success' : 'border-minds-border'}
-            rounded-xl
+            border-2 ${showError ? 'border-red-500' : showSuccess ? 'border-minds-success' : 'border-gray-300'}
             text-minds-charcoal placeholder:text-minds-gray
-            focus:ring-2 ${showError ? 'focus:ring-red-500' : 'focus:ring-minds-coral'} focus:border-transparent
+            focus:ring-2 ${showError ? 'focus:ring-red-500' : 'focus:ring-purple-400'} focus:border-transparent
             disabled:bg-gray-100 disabled:cursor-not-allowed
             ${!reduceMotion ? 'transition-all duration-200' : ''}
             ${className}

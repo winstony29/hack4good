@@ -96,11 +96,11 @@ export default function SwipeableCard({
     >
       {/* Main Card */}
       <motion.div
-        className="h-full relative overflow-hidden rounded-4xl"
+        className="h-full relative overflow-hidden border-2 border-gray-300"
         style={{
           backgroundColor: bgTint,
           boxShadow: isTop
-            ? '0 25px 50px -12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.03)'
+            ? '0 25px 50px -12px rgba(0, 0, 0, 0.12)'
             : '0 10px 30px -15px rgba(0, 0, 0, 0.1)'
         }}
       >
@@ -132,7 +132,7 @@ export default function SwipeableCard({
             >
               <div className="relative">
                 <div
-                  className="px-6 py-3 rounded-2xl font-display font-bold text-xl tracking-wide text-white shadow-lg"
+                  className="px-6 py-3  font-display font-bold text-xl tracking-wide text-white shadow-lg"
                   style={{
                     background: 'linear-gradient(135deg, #ff6b4a 0%, #f04d2e 100%)',
                     transform: 'rotate(-12deg)',
@@ -151,7 +151,7 @@ export default function SwipeableCard({
             >
               <div className="relative">
                 <div
-                  className="px-6 py-3 rounded-2xl font-display font-bold text-xl tracking-wide text-white shadow-lg flex items-center gap-2"
+                  className="px-6 py-3  font-display font-bold text-xl tracking-wide text-white shadow-lg flex items-center gap-2"
                   style={{
                     background: 'linear-gradient(135deg, #56965a 0%, #78b37c 100%)',
                     transform: 'rotate(12deg)',
@@ -167,18 +167,18 @@ export default function SwipeableCard({
         )}
 
         {/* Card Content */}
-        <div className="relative h-full flex flex-col p-6 sm:p-8">
+        <div className="relative h-full flex flex-col p-6 sm:p-8 pb-12 sm:pb-16">
           {/* Header */}
           <div className="flex-none">
             {/* Program Type Badge */}
             {activity.program_type && (
               <div className="mb-4">
                 <span
-                  className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium font-display tracking-wide"
+                  className="inline-flex items-center px-4 py-1.5 text-sm font-medium font-display tracking-wide border-2"
                   style={{
                     background: 'linear-gradient(135deg, rgba(98, 113, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
                     color: '#4a4de5',
-                    border: '1px solid rgba(98, 113, 241, 0.2)'
+                    borderColor: 'rgba(98, 113, 241, 0.3)'
                   }}
                 >
                   {activity.program_type}
@@ -213,14 +213,14 @@ export default function SwipeableCard({
             {/* Date & Time Row */}
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex items-center gap-2.5 text-gray-700">
-                <div className="w-9 h-9 rounded-xl bg-coral-50 flex items-center justify-center">
-                  <Calendar className="w-4.5 h-4.5 text-coral-500" />
+                <div className="w-9 h-9 bg-red-100 border-2 border-red-300 flex items-center justify-center">
+                  <Calendar className="w-4.5 h-4.5 text-red-600" />
                 </div>
                 <span className="font-medium">{formatDate(activity.date)}</span>
               </div>
               <div className="flex items-center gap-2.5 text-gray-700">
-                <div className="w-9 h-9 rounded-xl bg-sage-50 flex items-center justify-center">
-                  <Clock className="w-4.5 h-4.5 text-sage-600" />
+                <div className="w-9 h-9 bg-green-100 border-2 border-green-300 flex items-center justify-center">
+                  <Clock className="w-4.5 h-4.5 text-green-700" />
                 </div>
                 <span className="font-medium">
                   {formatTime(activity.start_time)} - {formatTime(activity.end_time)}
@@ -230,8 +230,8 @@ export default function SwipeableCard({
 
             {/* Location Row */}
             <div className="flex items-center gap-2.5 text-gray-700">
-              <div className="w-9 h-9 rounded-xl bg-navy-50 flex items-center justify-center">
-                <MapPin className="w-4.5 h-4.5 text-navy-500" />
+              <div className="w-9 h-9 bg-purple-100 border-2 border-purple-300 flex items-center justify-center">
+                <MapPin className="w-4.5 h-4.5 text-purple-600" />
               </div>
               <span className="font-medium">{activity.location}</span>
             </div>
@@ -239,8 +239,8 @@ export default function SwipeableCard({
             {/* Capacity Row */}
             <div className="flex items-center justify-between pt-2">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
-                  <Users className="w-4.5 h-4.5 text-gray-500" />
+                <div className="w-9 h-9 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                  <Users className="w-4.5 h-4.5 text-gray-600" />
                 </div>
                 <span className="text-gray-600">
                   <span className="font-semibold text-gray-900">{activity.current_participants}</span>
@@ -252,12 +252,12 @@ export default function SwipeableCard({
 
               {/* Spots Badge */}
               <div
-                className={`px-3 py-1.5 rounded-full text-sm font-semibold ${
+                className={`px-3 py-1.5 text-sm font-semibold border-2 ${
                   isFull
-                    ? 'bg-coral-100 text-coral-700'
+                    ? 'bg-red-100 text-red-700 border-red-300'
                     : availableSpots <= 3
-                      ? 'bg-gold-100 text-gold-700'
-                      : 'bg-sage-100 text-sage-700'
+                      ? 'bg-amber-100 text-amber-700 border-amber-300'
+                      : 'bg-green-100 text-green-700 border-green-300'
                 }`}
               >
                 {isFull ? 'Full' : `${availableSpots} spots left`}
@@ -267,19 +267,19 @@ export default function SwipeableCard({
             {/* Accessibility & Payment Indicators */}
             <div className="flex items-center gap-2 pt-3 flex-wrap">
               {activity.wheelchair_accessible && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 border-2 border-blue-300 bg-blue-50 text-blue-700 text-xs font-medium">
                   <Accessibility className="w-3.5 h-3.5" />
                   <span>Wheelchair Accessible</span>
                 </div>
               )}
               {activity.wheelchair_accessible === false && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 border-2 border-gray-300 bg-gray-100 text-gray-600 text-xs font-medium">
                   <Accessibility className="w-3.5 h-3.5" />
                   <span>Not Wheelchair Accessible</span>
                 </div>
               )}
               {activity.payment_required && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-medium">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 border-2 border-amber-300 bg-amber-50 text-amber-700 text-xs font-medium">
                   <DollarSign className="w-3.5 h-3.5" />
                   <span>Payment Required</span>
                 </div>

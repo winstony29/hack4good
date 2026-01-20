@@ -27,16 +27,21 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200">
+    <nav className="bg-white shadow-lg border-b-2 border-gray-200">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">M</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">
-              {t('landing.appName')}
+          {/* Logo with gradient text */}
+          <Link to="/" className="flex items-center gap-3">
+            <span
+              className="text-2xl font-bold"
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              MINDS
             </span>
           </Link>
 
