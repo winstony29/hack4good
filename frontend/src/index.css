@@ -39,6 +39,22 @@
   font-family: 'OpenDyslexic', sans-serif !important;
 }
 
+/* Font size scaling via data attribute */
+[data-font-size="small"] {
+  font-size: 14px;
+  --a11y-font-size: 14px;
+}
+
+[data-font-size="medium"] {
+  font-size: 16px;
+  --a11y-font-size: 16px;
+}
+
+[data-font-size="large"] {
+  font-size: 18px;
+  --a11y-font-size: 18px;
+}
+
 @layer base {
   html {
     font-size: 16px;

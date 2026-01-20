@@ -25,12 +25,17 @@ export function AccessibilityProvider({ children }) {
     localStorage.getItem('reduceMotion') === 'true'
   )
 
-  // Apply settings to document
+  // Apply font size via data attribute
   useEffect(() => {
-    document.documentElement.className = `font-${fontSize} contrast-${contrast}`
+    document.documentElement.setAttribute('data-font-size', fontSize)
     localStorage.setItem('fontSize', fontSize)
+  }, [fontSize])
+
+  // Apply contrast via data attribute
+  useEffect(() => {
+    document.documentElement.setAttribute('data-contrast', contrast)
     localStorage.setItem('contrast', contrast)
-  }, [fontSize, contrast])
+  }, [contrast])
 
   useEffect(() => {
     localStorage.setItem('language', language)
