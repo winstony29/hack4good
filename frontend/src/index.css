@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/opendyslexic');
 
 @tailwind base;
 @tailwind components;
@@ -35,7 +36,9 @@
 }
 
 /* OpenDyslexic font mode */
-[data-font="dyslexic"] {
+[data-font="dyslexic"],
+[data-font="dyslexic"] body,
+[data-font="dyslexic"] * {
   font-family: 'OpenDyslexic', sans-serif !important;
 }
 

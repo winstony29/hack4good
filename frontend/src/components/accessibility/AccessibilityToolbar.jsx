@@ -9,7 +9,8 @@ import {
   ZapOff,
   X,
   Minus,
-  Plus
+  Plus,
+  BookOpen
 } from 'lucide-react'
 
 export default function AccessibilityToolbar() {
@@ -22,7 +23,9 @@ export default function AccessibilityToolbar() {
     contrast,
     setContrast,
     reduceMotion,
-    setReduceMotion
+    setReduceMotion,
+    dyslexicFont,
+    setDyslexicFont
   } = useAccessibility()
 
   // Handle escape key to close toolbar
@@ -68,6 +71,10 @@ export default function AccessibilityToolbar() {
 
   const toggleMotion = () => {
     setReduceMotion(!reduceMotion)
+  }
+
+  const toggleDyslexicFont = () => {
+    setDyslexicFont(!dyslexicFont)
   }
 
   // Button base styles - 48px minimum touch target
@@ -184,6 +191,16 @@ export default function AccessibilityToolbar() {
             ) : (
               <Zap className="w-5 h-5" />
             )}
+          </button>
+
+          {/* Readable font toggle (OpenDyslexic) */}
+          <button
+            onClick={toggleDyslexicFont}
+            className={dyslexicFont ? activeButton : inactiveButton}
+            aria-label={dyslexicFont ? 'Disable readable font' : 'Enable readable font'}
+            aria-pressed={dyslexicFont}
+          >
+            <BookOpen className="w-5 h-5" />
           </button>
 
           {/* Close button */}

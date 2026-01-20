@@ -24,6 +24,9 @@ export function AccessibilityProvider({ children }) {
   const [reduceMotion, setReduceMotion] = useState(
     localStorage.getItem('reduceMotion') === 'true'
   )
+  const [dyslexicFont, setDyslexicFont] = useState(
+    localStorage.getItem('dyslexicFont') === 'true'
+  )
 
   // Apply font size via data attribute
   useEffect(() => {
@@ -49,6 +52,12 @@ export function AccessibilityProvider({ children }) {
       document.documentElement.style.removeProperty('--animation-duration')
     }
   }, [reduceMotion])
+
+  // Apply dyslexic font via data attribute
+  useEffect(() => {
+    document.documentElement.setAttribute('data-font', dyslexicFont ? 'dyslexic' : 'default')
+    localStorage.setItem('dyslexicFont', dyslexicFont)
+  }, [dyslexicFont])
 
   const speak = async (text) => {
     try {
@@ -83,6 +92,8 @@ export function AccessibilityProvider({ children }) {
     setLanguage,
     reduceMotion,
     setReduceMotion,
+    dyslexicFont,
+    setDyslexicFont,
     speak,
     translate
   }
