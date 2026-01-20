@@ -55,7 +55,12 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <AccessibilityProvider>
-          <AnimatedRoutes />
+          <a href="#main-content" className="skip-link">
+            Skip to main content
+          </a>
+          <main id="main-content">
+            <AnimatedRoutes />
+          </main>
           <AccessibilityToolbar />
           <Toaster
             position="top-center"
