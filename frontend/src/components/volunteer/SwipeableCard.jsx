@@ -1,8 +1,7 @@
 import { motion, useMotionValue, useTransform, useAnimation } from 'framer-motion'
-import { Calendar, Clock, MapPin, Users, Sparkles } from 'lucide-react'
+import { Calendar, Clock, MapPin, Users, Sparkles, Accessibility, DollarSign } from 'lucide-react'
 import { useAccessibility } from '../../contexts/AccessibilityContext'
 import { formatDate, formatTime } from '../../utils/dateUtils'
-import Badge from '../shared/Badge'
 
 const swipeConfidenceThreshold = 80
 
@@ -10,8 +9,10 @@ export default function SwipeableCard({
   activity,
   onSwipe,
   isTop = false,
-  stackIndex = 0
+  stackIndex = 0,
+  userRole = 'volunteer'
 }) {
+  const isVolunteer = userRole === 'volunteer'
   const { reduceMotion } = useAccessibility()
   const controls = useAnimation()
   const x = useMotionValue(0)
@@ -245,7 +246,7 @@ export default function SwipeableCard({
                   <span className="font-semibold text-gray-900">{activity.current_participants}</span>
                   <span className="text-gray-400"> / </span>
                   <span>{activity.max_capacity}</span>
-                  <span className="text-gray-400 ml-1">volunteers</span>
+                  <span className="text-gray-400 ml-1">{isVolunteer ? 'volunteers' : 'participants'}</span>
                 </span>
               </div>
 
@@ -261,6 +262,28 @@ export default function SwipeableCard({
               >
                 {isFull ? 'Full' : `${availableSpots} spots left`}
               </div>
+            </div>
+
+            {/* Accessibility & Payment Indicators */}
+            <div className="flex items-center gap-2 pt-3 flex-wrap">
+              {activity.wheelchair_accessible && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-medium">
+                  <Accessibility className="w-3.5 h-3.5" />
+                  <span>Wheelchair Accessible</span>
+                </div>
+              )}
+              {activity.wheelchair_accessible === false && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium">
+                  <Accessibility className="w-3.5 h-3.5" />
+                  <span>Not Wheelchair Accessible</span>
+                </div>
+              )}
+              {activity.payment_required && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-medium">
+                  <DollarSign className="w-3.5 h-3.5" />
+                  <span>Payment Required</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

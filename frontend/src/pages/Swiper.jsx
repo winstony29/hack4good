@@ -1,12 +1,30 @@
 import { motion } from 'framer-motion'
 import Layout from '../components/layout/Layout'
 import ActivitySwiper from '../components/volunteer/ActivitySwiper'
-import { Heart, ArrowLeft, ArrowRight } from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ROLES } from '../utils/constants'
 
 export default function Swiper() {
+  const { user } = useAuth()
+  const userRole = user?.user_metadata?.role || ROLES.PARTICIPANT
+  const isVolunteer = userRole === ROLES.VOLUNTEER
+
   const handleMatch = (activity) => {
     // Match notification is handled by ActivitySwiper component
   }
+
+  // Dynamic content based on user role
+  const pageTitle = 'Find Activities'
+  const pageDescription = isVolunteer
+    ? 'Swipe through volunteer opportunities and find your perfect match'
+    : 'Swipe through activities and register with one swipe'
+  const rightSwipeLabel = isVolunteer ? 'Match' : 'Register'
+
+  // Dynamic gradient based on role
+  const backgroundGradient = isVolunteer
+    ? 'radial-gradient(ellipse at 20% 0%, rgba(255, 212, 203, 0.25) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(206, 229, 207, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 100% 50%, rgba(224, 233, 255, 0.15) 0%, transparent 40%)'
+    : 'radial-gradient(ellipse at 20% 0%, rgba(191, 219, 254, 0.25) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(196, 181, 253, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 100% 50%, rgba(224, 233, 255, 0.15) 0%, transparent 40%)'
 
   return (
     <Layout>
@@ -15,9 +33,7 @@ export default function Swiper() {
         {/* Background gradient mesh */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse at 20% 0%, rgba(255, 212, 203, 0.25) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(206, 229, 207, 0.2) 0%, transparent 50%), radial-gradient(ellipse at 100% 50%, rgba(224, 233, 255, 0.15) 0%, transparent 40%)'
-          }}
+          style={{ background: backgroundGradient }}
         />
 
         {/* Content */}
@@ -30,10 +46,10 @@ export default function Swiper() {
             className="text-center mb-6 sm:mb-8"
           >
             <h1 className="font-display font-bold text-3xl sm:text-4xl text-gray-900 mb-2">
-              Find Activities
+              {pageTitle}
             </h1>
             <p className="text-gray-500 max-w-md mx-auto">
-              Swipe through volunteer opportunities and find your perfect match
+              {pageDescription}
             </p>
 
             {/* Swipe Instructions */}
@@ -45,10 +61,10 @@ export default function Swiper() {
                 <span>Pass</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-sage-50 flex items-center justify-center">
-                  <ArrowRight className="w-4 h-4 text-sage-500" />
+                <div className={`w-8 h-8 rounded-full ${isVolunteer ? 'bg-sage-50' : 'bg-blue-50'} flex items-center justify-center`}>
+                  <ArrowRight className={`w-4 h-4 ${isVolunteer ? 'text-sage-500' : 'text-blue-500'}`} />
                 </div>
-                <span>Match</span>
+                <span>{rightSwipeLabel}</span>
               </div>
             </div>
           </motion.div>
@@ -59,7 +75,7 @@ export default function Swiper() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <ActivitySwiper onMatch={handleMatch} />
+            <ActivitySwiper onMatch={handleMatch} userRole={userRole} />
           </motion.div>
         </div>
       </div>

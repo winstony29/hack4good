@@ -22,11 +22,8 @@ export const matchesApi = {
 
   // Get matches for specific user (alias for dashboard)
   getByUser: async (userId) => {
-    if (USE_MOCK_DATA) {
-      const matches = getVolunteerMatches()
-      return { data: matches }
-    }
-    return api.get(`/matches/user/${userId}`)
+    const response = await api.get(`/matches/user/${userId}`)
+    return { data: response.data }
   },
 
   // Cancel a match

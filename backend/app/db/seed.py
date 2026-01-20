@@ -45,7 +45,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Main Hall",
         "max_capacity": 20,
         "current_participants": 12,
-        "program_type": "wellness"
+        "program_type": "wellness",
+        "wheelchair_accessible": True,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[2],
@@ -57,7 +59,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Creative Studio",
         "max_capacity": 15,
         "current_participants": 8,
-        "program_type": "arts"
+        "program_type": "arts",
+        "wheelchair_accessible": True,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[3],
@@ -69,7 +73,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Sports Hall",
         "max_capacity": 25,
         "current_participants": 18,
-        "program_type": "sports"
+        "program_type": "sports",
+        "wheelchair_accessible": False,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[4],
@@ -81,7 +87,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Music Room",
         "max_capacity": 12,
         "current_participants": 10,
-        "program_type": "music"
+        "program_type": "music",
+        "wheelchair_accessible": True,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[5],
@@ -93,7 +101,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Swimming Pool",
         "max_capacity": 10,
         "current_participants": 10,
-        "program_type": "sports"
+        "program_type": "sports",
+        "wheelchair_accessible": True,
+        "payment_required": True
     },
     {
         "id": ACTIVITY_UUIDS[6],
@@ -105,7 +115,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Kitchen",
         "max_capacity": 12,
         "current_participants": 7,
-        "program_type": "educational"
+        "program_type": "educational",
+        "wheelchair_accessible": True,
+        "payment_required": True
     },
     {
         "id": ACTIVITY_UUIDS[7],
@@ -117,7 +129,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Main Hall",
         "max_capacity": 30,
         "current_participants": 22,
-        "program_type": "social"
+        "program_type": "social",
+        "wheelchair_accessible": True,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[8],
@@ -129,7 +143,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Garden Area",
         "max_capacity": 15,
         "current_participants": 9,
-        "program_type": "educational"
+        "program_type": "educational",
+        "wheelchair_accessible": False,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[9],
@@ -141,7 +157,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Theater Room",
         "max_capacity": 40,
         "current_participants": 28,
-        "program_type": "social"
+        "program_type": "social",
+        "wheelchair_accessible": True,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[10],
@@ -153,7 +171,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Art Studio",
         "max_capacity": 15,
         "current_participants": 11,
-        "program_type": "arts"
+        "program_type": "arts",
+        "wheelchair_accessible": True,
+        "payment_required": True
     },
     {
         "id": ACTIVITY_UUIDS[11],
@@ -165,7 +185,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Recreation Room",
         "max_capacity": 16,
         "current_participants": 14,
-        "program_type": "sports"
+        "program_type": "sports",
+        "wheelchair_accessible": True,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[12],
@@ -177,7 +199,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Quiet Room",
         "max_capacity": 20,
         "current_participants": 13,
-        "program_type": "wellness"
+        "program_type": "wellness",
+        "wheelchair_accessible": True,
+        "payment_required": False
     },
     {
         "id": ACTIVITY_UUIDS[13],
@@ -189,7 +213,9 @@ SAMPLE_ACTIVITIES = [
         "location": "Recreation Room",
         "max_capacity": 20,
         "current_participants": 18,
-        "program_type": "social"
+        "program_type": "social",
+        "wheelchair_accessible": True,
+        "payment_required": False
     }
 ]
 
@@ -248,12 +274,14 @@ def generate_sql():
     print("-- Clear existing activities (optional)")
     print("-- DELETE FROM activities;")
     print("")
-    print("INSERT INTO activities (id, title, description, date, start_time, end_time, location, max_capacity, current_participants, program_type, created_at)")
+    print("INSERT INTO activities (id, title, description, date, start_time, end_time, location, max_capacity, current_participants, program_type, wheelchair_accessible, payment_required, created_at)")
     print("VALUES")
     
     values = []
     for activity in SAMPLE_ACTIVITIES:
-        value = f"""  ('{activity["id"]}', '{activity["title"].replace("'", "''")}', '{activity["description"].replace("'", "''")}', '{activity["date"]}', '{activity["start_time"]}', '{activity["end_time"]}', '{activity["location"]}', {activity["max_capacity"]}, {activity["current_participants"]}, '{activity["program_type"]}', NOW())"""
+        wheelchair = "TRUE" if activity.get("wheelchair_accessible", True) else "FALSE"
+        payment = "TRUE" if activity.get("payment_required", False) else "FALSE"
+        value = f"""  ('{activity["id"]}', '{activity["title"].replace("'", "''")}', '{activity["description"].replace("'", "''")}', '{activity["date"]}', '{activity["start_time"]}', '{activity["end_time"]}', '{activity["location"]}', {activity["max_capacity"]}, {activity["current_participants"]}, '{activity["program_type"]}', {wheelchair}, {payment}, NOW())"""
         values.append(value)
     
     print(",\n".join(values))
@@ -266,7 +294,9 @@ def generate_sql():
     print("  location = EXCLUDED.location,")
     print("  max_capacity = EXCLUDED.max_capacity,")
     print("  current_participants = EXCLUDED.current_participants,")
-    print("  program_type = EXCLUDED.program_type;")
+    print("  program_type = EXCLUDED.program_type,")
+    print("  wheelchair_accessible = EXCLUDED.wheelchair_accessible,")
+    print("  payment_required = EXCLUDED.payment_required;")
 
 
 if __name__ == "__main__":

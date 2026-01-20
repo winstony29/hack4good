@@ -43,6 +43,8 @@ class Activity(Base):
     max_capacity = Column(Integer, nullable=False)
     current_participants = Column(Integer, default=0)
     program_type = Column(String(50))
+    wheelchair_accessible = Column(Boolean, default=True, nullable=False)
+    payment_required = Column(Boolean, default=False, nullable=False)
     created_by_staff_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

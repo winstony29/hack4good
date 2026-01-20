@@ -3,7 +3,7 @@ import { supabase } from '../services/supabase'
 import { getCurrentMockUser } from '../mocks/userSwitcher.mock'
 
 // Toggle to use mock data (set to false when Supabase is configured)
-const USE_MOCK_DATA = true;
+const USE_MOCK_DATA = false;
 
 export const AuthContext = createContext()
 

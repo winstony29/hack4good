@@ -23,6 +23,8 @@ class ActivityCreate(BaseModel):
     location: Optional[str] = None
     max_capacity: int = Field(..., gt=0)
     program_type: Optional[str] = None
+    wheelchair_accessible: bool = True
+    payment_required: bool = False
 
 
 class ActivityUpdate(BaseModel):
@@ -34,6 +36,8 @@ class ActivityUpdate(BaseModel):
     location: Optional[str] = None
     max_capacity: Optional[int] = Field(None, gt=0)
     program_type: Optional[str] = None
+    wheelchair_accessible: Optional[bool] = None
+    payment_required: Optional[bool] = None
 
 
 class ActivityTranslations(BaseModel):
@@ -57,6 +61,8 @@ class ActivityResponse(BaseSchema):
     max_capacity: int
     current_participants: int
     program_type: Optional[str]
+    wheelchair_accessible: bool = True
+    payment_required: bool = False
     created_by_staff_id: Optional[UUID] = None
     point_of_contact: Optional[StaffContactInfo] = None
     created_at: datetime
