@@ -21,7 +21,8 @@ export default function ProfileForm({ user, onSave, onCancel }) {
     full_name: user?.user_metadata?.full_name || '',
     phone: user?.user_metadata?.phone || '',
     caregiver_phone: user?.user_metadata?.caregiver_phone || '',
-    preferred_language: user?.user_metadata?.preferred_language || 'en'
+    preferred_language: user?.user_metadata?.preferred_language || 'en',
+    membership_type: user?.user_metadata?.membership_type || 'ad_hoc'
   })
 
   const [errors, setErrors] = useState({})
@@ -129,6 +130,28 @@ export default function ProfileForm({ user, onSave, onCancel }) {
           placeholder="+65 XXXX XXXX"
           helperText="Optional: For activity notifications"
         />
+      )}
+
+      {role === 'participant' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Membership Type
+          </label>
+          <select
+            name="membership_type"
+            value={formData.membership_type}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          >
+            <option value="ad_hoc">Ad-hoc</option>
+            <option value="once_weekly">1x a week</option>
+            <option value="twice_weekly">2x a week</option>
+            <option value="3_plus">3x a week</option>
+          </select>
+          <p className="mt-1 text-sm text-gray-500">
+            How often do you plan to participate in activities?
+          </p>
+        </div>
       )}
 
       <div>
