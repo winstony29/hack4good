@@ -180,7 +180,7 @@ export default function MatchAnimation({ activity, isVisible, onClose, userRole 
           <button
             onClick={onClose}
             className="absolute top-4 right-4 sm:top-6 sm:right-6 p-3 text-white/70 hover:text-white
-                       hover:bg-white/10 rounded-2xl transition-all duration-200"
+                       hover:bg-white/10  transition-all duration-200"
             aria-label="Close"
           >
             <X className="w-6 h-6 sm:w-7 sm:h-7" />
@@ -252,7 +252,7 @@ export default function MatchAnimation({ activity, isVisible, onClose, userRole 
             <motion.div
               custom={2}
               variants={textVariants}
-              className="bg-white/15 backdrop-blur-sm rounded-3xl p-5 sm:p-6 mb-6"
+              className="bg-white/15 backdrop-blur-sm  p-5 sm:p-6 mb-6"
               style={{
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.2)'
@@ -282,7 +282,7 @@ export default function MatchAnimation({ activity, isVisible, onClose, userRole 
               onClick={onClose}
               whileHover={{ scale: reduceMotion ? 1 : 1.03 }}
               whileTap={{ scale: reduceMotion ? 1 : 0.97 }}
-              className="w-full py-4 px-6 rounded-2xl font-display font-semibold text-lg
+              className="w-full py-4 px-6  font-display font-semibold text-lg
                          transition-all duration-200
                          focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50"
               style={{

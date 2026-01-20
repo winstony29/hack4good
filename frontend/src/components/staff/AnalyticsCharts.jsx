@@ -91,7 +91,7 @@ export default function AnalyticsCharts() {
     <div className="space-y-8">
       {/* Registration Trends - Area Chart */}
       <div
-        className="rounded-2xl p-6"
+        className=" p-6"
         style={{
           background: 'linear-gradient(145deg, #f8fafc 0%, #ffffff 100%)',
           border: '1px solid rgba(30, 27, 75, 0.05)'
@@ -176,7 +176,7 @@ export default function AnalyticsCharts() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Program Distribution - Donut Chart */}
         <div
-          className="rounded-2xl p-6"
+          className=" p-6"
           style={{
             background: 'linear-gradient(145deg, #f8fafc 0%, #ffffff 100%)',
             border: '1px solid rgba(30, 27, 75, 0.05)'
@@ -230,7 +230,7 @@ export default function AnalyticsCharts() {
 
         {/* Volunteer Coverage - Stacked Bar Chart */}
         <div
-          className="rounded-2xl p-6"
+          className=" p-6"
           style={{
             background: 'linear-gradient(145deg, #f8fafc 0%, #ffffff 100%)',
             border: '1px solid rgba(30, 27, 75, 0.05)'

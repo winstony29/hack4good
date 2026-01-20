@@ -67,7 +67,7 @@ export default function StaffDashboard() {
       className="space-y-8"
     >
       {/* Header with mesh background */}
-      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-8"
+      <motion.div variants={itemVariants} className="relative overflow-hidden  p-8"
         style={{
           background: 'linear-gradient(135deg, #1e1b4b 0%, #3435a3 100%)'
         }}
@@ -90,7 +90,7 @@ export default function StaffDashboard() {
         <div className="relative">
           <div className="flex items-center gap-3 mb-2">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              className="w-10 h-10 border-2 border-gray-300 flex items-center justify-center"
               style={{ background: 'rgba(212, 161, 6, 0.2)' }}
             >
               <BarChart3 className="w-5 h-5 text-gold-400" />
@@ -148,7 +148,7 @@ export default function StaffDashboard() {
       {/* Analytics Section */}
       <motion.div variants={itemVariants}>
         <div
-          className="rounded-3xl overflow-hidden"
+          className=" overflow-hidden"
           style={{
             background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
             boxShadow: '0 4px 30px -10px rgba(30, 27, 75, 0.08), 0 0 0 1px rgba(30, 27, 75, 0.03)'
@@ -165,7 +165,7 @@ export default function StaffDashboard() {
                 </p>
               </div>
               <div
-                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 border-2 border-gray-300 text-sm font-medium"
                 style={{
                   background: 'linear-gradient(135deg, rgba(98, 113, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
                   color: '#4a4de5'
@@ -189,7 +189,7 @@ export default function StaffDashboard() {
       {/* Weekly Timetable Section */}
       <motion.div variants={itemVariants}>
         <div
-          className="rounded-3xl overflow-hidden"
+          className=" overflow-hidden"
           style={{
             background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
             boxShadow: '0 4px 30px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03)'
@@ -198,7 +198,7 @@ export default function StaffDashboard() {
           <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
             <div className="flex items-center gap-3">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                className="w-10 h-10 border-2 border-gray-300 flex items-center justify-center"
                 style={{ background: 'rgba(98, 113, 241, 0.1)' }}
               >
                 <Calendar className="w-5 h-5 text-primary-600" />
@@ -232,7 +232,7 @@ function StatsCard({ icon, title, value, trend, color, bgGradient }) {
   return (
     <motion.div
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
-      className="relative rounded-2xl overflow-hidden p-5 sm:p-6"
+      className="relative  overflow-hidden p-5 sm:p-6"
       style={{
         background: bgGradient,
         boxShadow: '0 2px 15px -5px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02)'
@@ -250,7 +250,7 @@ function StatsCard({ icon, title, value, trend, color, bgGradient }) {
         {/* Icon and trend row */}
         <div className="flex items-center justify-between mb-3">
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            className="w-10 h-10 border-2 border-gray-300 flex items-center justify-center"
             style={{
               background: `${color}15`,
               color: color

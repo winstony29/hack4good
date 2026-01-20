@@ -19,7 +19,7 @@ export default function SwipeButtons({ onPass, onMatch, onUndo, disabled = false
           initial="idle"
           whileHover="hover"
           whileTap="tap"
-          className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center
+          className="w-12 h-12  bg-white flex items-center justify-center
                      shadow-soft hover:shadow-lg
                      disabled:opacity-40 disabled:cursor-not-allowed
                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400
@@ -44,31 +44,24 @@ export default function SwipeButtons({ onPass, onMatch, onUndo, disabled = false
         className="relative w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full
                    flex items-center justify-center
                    disabled:opacity-40 disabled:cursor-not-allowed
-                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral-500
-                   transition-shadow duration-200 overflow-hidden group"
+                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
+                   transition-shadow duration-200 overflow-hidden group
+                   border-2 border-red-300 shadow-lg hover:shadow-xl"
         style={{
-          background: 'linear-gradient(145deg, #ffffff 0%, #fff5f3 100%)',
-          boxShadow: '0 4px 20px -4px rgba(255, 107, 74, 0.25), 0 0 0 2px rgba(255, 107, 74, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+          background: 'linear-gradient(145deg, #ffffff 0%, #fff5f3 100%)'
         }}
         aria-label="Pass on this activity"
       >
         {/* Gradient border effect on hover */}
         <div
-          className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           style={{
             background: 'linear-gradient(145deg, rgba(255, 107, 74, 0.15) 0%, rgba(240, 77, 46, 0.1) 100%)'
           }}
         />
-        {/* Glow effect */}
-        <div
-          className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          style={{
-            boxShadow: '0 8px 30px -8px rgba(255, 107, 74, 0.5)'
-          }}
-        />
         <X
           className="w-7 h-7 sm:w-8 sm:h-8 relative z-10 transition-colors duration-200"
-          style={{ color: '#ff6b4a' }}
+          style={{ color: '#ef4444' }}
           strokeWidth={3}
         />
       </motion.button>
@@ -84,26 +77,19 @@ export default function SwipeButtons({ onPass, onMatch, onUndo, disabled = false
         className="relative w-20 h-20 sm:w-[88px] sm:h-[88px] rounded-full
                    flex items-center justify-center
                    disabled:opacity-40 disabled:cursor-not-allowed
-                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage-500
-                   transition-all duration-200 overflow-hidden group"
+                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
+                   transition-all duration-200 overflow-hidden group
+                   border-2 border-green-400 shadow-xl hover:shadow-2xl"
         style={{
-          background: 'linear-gradient(145deg, #78b37c 0%, #56965a 100%)',
-          boxShadow: '0 8px 25px -6px rgba(86, 150, 90, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+          background: 'linear-gradient(145deg, #78b37c 0%, #56965a 100%)'
         }}
         aria-label="Volunteer for this activity"
       >
         {/* Shine effect */}
         <div
-          className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           style={{
             background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.15) 0%, transparent 50%)'
-          }}
-        />
-        {/* Glow pulse effect */}
-        <div
-          className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          style={{
-            boxShadow: '0 0 40px 8px rgba(86, 150, 90, 0.3)'
           }}
         />
         <Heart
@@ -125,7 +111,7 @@ export default function SwipeButtons({ onPass, onMatch, onUndo, disabled = false
           className="relative w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full
                      flex items-center justify-center
                      disabled:opacity-40 disabled:cursor-not-allowed
-                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral-500
+                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500
                      transition-shadow duration-200 overflow-hidden group invisible"
           aria-hidden="true"
         >

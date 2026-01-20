@@ -80,7 +80,7 @@ export default function ActivityManager() {
 
   return (
     <div
-      className="rounded-3xl overflow-hidden"
+      className=" overflow-hidden"
       style={{
         background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
         boxShadow: '0 4px 30px -10px rgba(30, 27, 75, 0.08), 0 0 0 1px rgba(30, 27, 75, 0.03)'
@@ -226,7 +226,7 @@ export default function ActivityManager() {
                   transition={{ duration: 0.2 }}
                 >
                   <div
-                    className="cursor-pointer rounded-2xl overflow-hidden transition-shadow duration-200 hover:shadow-lg"
+                    className="cursor-pointer  overflow-hidden transition-shadow duration-200 hover:shadow-lg"
                     style={{
                       background: '#ffffff',
                       boxShadow: '0 2px 10px -3px rgba(30, 27, 75, 0.06), 0 0 0 1px rgba(30, 27, 75, 0.03)'

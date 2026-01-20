@@ -5,6 +5,7 @@ from typing import Optional
 class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
+    DIRECT_URL: Optional[str] = None
     SUPABASE_URL: str
     SUPABASE_ANON_KEY: str
     SUPABASE_SERVICE_KEY: Optional[str] = None

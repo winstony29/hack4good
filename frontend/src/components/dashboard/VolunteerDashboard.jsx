@@ -85,7 +85,7 @@ export default function VolunteerDashboard() {
       className="space-y-8"
     >
       {/* Welcome Header with gradient */}
-      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-8"
+      <motion.div variants={itemVariants} className="relative overflow-hidden  p-8"
         style={{
           background: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)'
         }}
@@ -102,7 +102,7 @@ export default function VolunteerDashboard() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                className="w-10 h-10 border-2 border-gray-300 flex items-center justify-center"
                 style={{ background: 'rgba(255, 255, 255, 0.2)' }}
               >
                 <Heart className="w-5 h-5 text-white" />
@@ -124,7 +124,7 @@ export default function VolunteerDashboard() {
         {/* Upcoming Card */}
         <motion.div
           whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="relative overflow-hidden rounded-2xl p-6"
+          className="relative overflow-hidden  p-6"
           style={{
             background: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)',
             boxShadow: '0 2px 15px -5px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.08)'
@@ -139,7 +139,7 @@ export default function VolunteerDashboard() {
           <div className="relative">
             <div className="flex items-center justify-between mb-3">
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                className="w-12 h-12 border-2 border-gray-300 flex items-center justify-center"
                 style={{ background: 'rgba(139, 92, 246, 0.15)' }}
               >
                 <Heart className="w-6 h-6 text-purple-600" />
@@ -156,7 +156,7 @@ export default function VolunteerDashboard() {
         {/* Completed Card */}
         <motion.div
           whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="relative overflow-hidden rounded-2xl p-6"
+          className="relative overflow-hidden  p-6"
           style={{
             background: 'linear-gradient(135deg, #f4f9f4 0%, #e6f2e6 100%)',
             boxShadow: '0 2px 15px -5px rgba(34, 197, 94, 0.15), 0 0 0 1px rgba(34, 197, 94, 0.08)'
@@ -171,7 +171,7 @@ export default function VolunteerDashboard() {
           <div className="relative">
             <div className="flex items-center justify-between mb-3">
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                className="w-12 h-12 border-2 border-gray-300 flex items-center justify-center"
                 style={{ background: 'rgba(34, 197, 94, 0.15)' }}
               >
                 <Calendar className="w-6 h-6 text-green-600" />
@@ -188,7 +188,7 @@ export default function VolunteerDashboard() {
         {/* Discover Activities CTA */}
         <motion.div
           whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
-          className="relative overflow-hidden rounded-2xl p-6 cursor-pointer"
+          className="relative overflow-hidden  p-6 cursor-pointer"
           onClick={() => navigate('/swiper')}
           style={{
             background: 'linear-gradient(135deg, #ff6b4a 0%, #f04d2e 100%)',
@@ -206,7 +206,7 @@ export default function VolunteerDashboard() {
           <div className="relative">
             <div className="flex items-center gap-2 mb-2">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                className="w-10 h-10 border-2 border-gray-300 flex items-center justify-center"
                 style={{ background: 'rgba(255, 255, 255, 0.2)' }}
               >
                 <Sparkles className="w-5 h-5 text-white" />
@@ -225,7 +225,7 @@ export default function VolunteerDashboard() {
       {/* Schedule Section */}
       <motion.div variants={itemVariants}>
         <div
-          className="rounded-3xl overflow-hidden"
+          className=" overflow-hidden"
           style={{
             background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
             boxShadow: '0 4px 30px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03)'
@@ -245,7 +245,7 @@ export default function VolunteerDashboard() {
                   {upcomingMatches.length} upcoming
                 </span>
               </div>
-              <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-xl">
+              <div className="flex items-center gap-1 p-1 bg-gray-100 border-2 border-gray-300">
                 <button
                   onClick={() => setViewMode('list')}
                   className={`p-2 rounded-lg transition-all duration-200 ${
@@ -288,7 +288,7 @@ export default function VolunteerDashboard() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => navigate('/swiper')}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-display font-semibold text-white"
+                    className="inline-flex items-center gap-2 px-6 py-3 border-2 border-gray-300 font-display font-semibold text-white"
                     style={{
                       background: 'linear-gradient(135deg, #ff6b4a 0%, #f04d2e 100%)'
                     }}
@@ -315,7 +315,7 @@ export default function VolunteerDashboard() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         whileHover={{ y: -2 }}
-                        className="rounded-2xl overflow-hidden"
+                        className=" overflow-hidden"
                         style={{
                           background: '#ffffff',
                           boxShadow: '0 2px 10px -3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.03)'
@@ -365,7 +365,7 @@ export default function VolunteerDashboard() {
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => { setSelectedActivity(m.activity); setIsModalOpen(true) }}
-                                  className="px-4 py-2 rounded-xl text-sm font-medium text-gray-700
+                                  className="px-4 py-2 border-2 border-gray-300 text-sm font-medium text-gray-700
                                              bg-gray-100 hover:bg-gray-200 transition-colors"
                                 >
                                   Details
@@ -373,7 +373,7 @@ export default function VolunteerDashboard() {
                                 <button
                                   onClick={() => handleCancelMatch(m.id)}
                                   disabled={cancellingId === m.id}
-                                  className="px-4 py-2 rounded-xl text-sm font-medium text-coral-700
+                                  className="px-4 py-2 border-2 border-gray-300 text-sm font-medium text-coral-700
                                              bg-coral-50 hover:bg-coral-100 transition-colors
                                              disabled:opacity-50"
                                 >

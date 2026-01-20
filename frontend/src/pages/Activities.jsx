@@ -120,15 +120,31 @@ export default function Activities() {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto">
-        <Card>
-          <CardHeader>
+      {/* Page background with gradient mesh */}
+      <div
+        className="fixed inset-0 pointer-events-none opacity-40"
+        style={{
+          background: 'linear-gradient(135deg, #f0f9ff 0%, #fef3c7 25%, #fce7f3 50%, #f3e8ff 75%, #dbeafe 100%)',
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        <Card className="backdrop-blur-sm bg-white/95">
+          <CardHeader className="border-b-2 border-purple-100">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1
+                  className="text-4xl sm:text-5xl font-bold mb-2"
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
                   {t('activities.browseTitle')}
                 </h1>
-                <p className="text-gray-600 mt-2">
+                <p className="text-gray-700 text-lg font-medium mt-2">
                   {t('activities.browseSubtitle')}
                 </p>
               </div>

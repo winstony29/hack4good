@@ -197,7 +197,7 @@ export default function ActivitySwiper({ onMatch, userRole = 'volunteer' }) {
           <Button
             onClick={() => setCurrentIndex(0)}
             variant="secondary"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-display font-semibold
+            className="inline-flex items-center gap-2 px-6 py-3  font-display font-semibold
                        bg-white border-2 border-sage-200 text-sage-700
                        hover:bg-sage-50 hover:border-sage-300 transition-all duration-200"
           >
@@ -218,7 +218,7 @@ export default function ActivitySwiper({ onMatch, userRole = 'volunteer' }) {
   return (
     <div className="max-w-md mx-auto px-4">
       {/* Card Stack */}
-      <div className="relative h-[420px] sm:h-[460px] md:h-[500px] mb-8">
+      <div className="relative h-[480px] sm:h-[520px] md:h-[560px] mb-8">
         <AnimatePresence>
           {visibleActivities.map((activity, index) => (
             <SwipeableCard
