@@ -105,7 +105,7 @@ Plans:
 
 Plans:
 - [x] 11-01: Floating accessibility toolbar
-- [ ] 11-02: Skip link, focus states, OpenDyslexic font
+- [x] 11-02: Skip link, focus states, OpenDyslexic font
 
 #### Phase 12: Navigation Redesign
 
@@ -153,7 +153,7 @@ Plans:
 | 8. Mobile Responsiveness | v1.1 | 2/3 | In progress | - |
 | 9. Visual Consistency | v1.1 | 0/? | Not started | - |
 | 10. Design Foundation | v2.0 | 2/2 | Complete | 2026-01-20 |
-| 11. Accessibility Enhancement | v2.0 | 1/2 | In progress | - |
+| 11. Accessibility Enhancement | v2.0 | 2/2 | Complete | 2026-01-20 |
 | 12. Navigation Redesign | v2.0 | 0/1 | Planned | - |
 | 13. Landing Page Redesign | v2.0 | 0/1 | Planned | - |
 | 14. Activity Cards Redesign | v2.0 | 0/1 | Planned | - |
