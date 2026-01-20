@@ -22,11 +22,11 @@ export default function Profile() {
   const getMembershipLabel = (type) => {
     const labels = {
       'ad_hoc': 'Ad-hoc',
-      'once_weekly': 'Once Weekly',
-      'twice_weekly': 'Twice Weekly',
-      '3_plus': '3+ Times Weekly'
+      'once_weekly': '1x a week',
+      'twice_weekly': '2x a week',
+      '3_plus': '3x a week'
     }
-    return labels[type] || type
+    return labels[type] || type || 'Not set'
   }
 
   return (
@@ -101,7 +101,7 @@ export default function Profile() {
                   </div>
                 )}
 
-                {role === 'participant' && membershipType && (
+                {role === 'participant' && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Membership Type
