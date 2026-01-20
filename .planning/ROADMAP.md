@@ -8,6 +8,10 @@
 
 - 🚧 **v1.1 UX Polish** - Phases 6-9 (in progress)
 
+## Upcoming Milestone
+
+- 📋 **v2.0 Inclusive Design Overhaul** - Phases 10-14 (planned)
+
 ---
 
 ### 🚧 v1.1 UX Polish (In Progress)
@@ -64,6 +68,77 @@ Plans:
 
 ---
 
+### 📋 v2.0 Inclusive Design Overhaul (Planned)
+
+**Milestone Goal:** Complete visual redesign with warm, inclusive aesthetic inspired by Zebra Strategies. Focus on cognitive accessibility for persons with intellectual disabilities (PWIDs).
+
+**Constraints:**
+- All changes must improve accessibility (WCAG 2.1 AA minimum)
+- Maintain all existing functionality
+- Test with screen readers and keyboard navigation
+- Keep language simple and clear
+
+**Design Direction:**
+- Warm, welcoming colors (cream background, coral primary)
+- Larger touch targets (48px minimum)
+- Clear visual hierarchy
+- Rounded, friendly shapes
+- Cognitive accessibility features
+
+#### Phase 10: Design Foundation
+
+**Goal**: Update Tailwind theme with MINDS color palette (coral, teal, amber, cream), install Nunito + DM Sans fonts, establish CSS custom properties for accessibility modes
+**Depends on**: v1.1 complete (or can run in parallel)
+**Research**: Unlikely (Tailwind already configured)
+**Plans**: 2
+
+Plans:
+- [x] 10-01: Color palette & typography configuration
+- [x] 10-02: Core component restyling (Button, Input, Card)
+
+#### Phase 11: Accessibility Enhancement
+
+**Goal**: Floating accessibility toolbar (text size, high contrast, readable font, reduce motion), skip-to-content link, improved keyboard navigation, visible focus states
+**Depends on**: Phase 10
+**Research**: Unlikely (building on existing AccessibilityContext)
+**Plans**: 2
+
+Plans:
+- [ ] 11-01: Floating accessibility toolbar
+- [ ] 11-02: Skip link, focus states, OpenDyslexic font
+
+#### Phase 12: Navigation Redesign
+
+**Goal**: Warm cream navbar, prominent coral CTAs, improved mobile hamburger menu with large touch targets
+**Depends on**: Phase 11
+**Research**: Unlikely
+**Plans**: 1
+
+Plans:
+- [ ] 12-01: Navbar redesign (desktop + mobile)
+
+#### Phase 13: Landing Page Redesign
+
+**Goal**: Hero section with "Everyone Belongs Here" message, warm gradient background, features section, community CTA
+**Depends on**: Phase 12
+**Research**: Unlikely
+**Plans**: 1
+
+Plans:
+- [ ] 13-01: Landing page hero & features
+
+#### Phase 14: Activity Cards Redesign
+
+**Goal**: Warm activity cards with color accent bars, icon boxes, accessibility badges, keyboard navigation
+**Depends on**: Phase 13
+**Research**: Unlikely
+**Plans**: 1
+
+Plans:
+- [ ] 14-01: ActivityCard & Badge redesign
+
+---
+
 ## Progress
 
 | Phase | Milestone | Plans | Status | Completed |
@@ -77,3 +152,8 @@ Plans:
 | 7. Error Handling & Feedback | v1.1 | 2/2 | Complete | 2026-01-19 |
 | 8. Mobile Responsiveness | v1.1 | 2/3 | In progress | - |
 | 9. Visual Consistency | v1.1 | 0/? | Not started | - |
+| 10. Design Foundation | v2.0 | 2/2 | Complete | 2026-01-20 |
+| 11. Accessibility Enhancement | v2.0 | 0/2 | Planned | - |
+| 12. Navigation Redesign | v2.0 | 0/1 | Planned | - |
+| 13. Landing Page Redesign | v2.0 | 0/1 | Planned | - |
+| 14. Activity Cards Redesign | v2.0 | 0/1 | Planned | - |

@@ -24,20 +24,22 @@ export default function Input({
       `}
     >
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-semibold text-minds-charcoal mb-2">
           {label}
-          {props.required && <span className="text-red-500 ml-1">*</span>}
+          {props.required && <span className="text-minds-coral ml-1" aria-hidden="true">*</span>}
         </label>
       )}
       <div className="relative">
         <input
           className={`
-            w-full px-4 py-3 md:py-2 pr-10
-            border ${showError ? 'border-red-500' : showSuccess ? 'border-green-500' : 'border-gray-300'}
-            rounded-lg
-            focus:ring-2 ${showError ? 'focus:ring-red-500' : 'focus:ring-primary-500'} focus:border-transparent
+            w-full px-4 py-3 min-h-[48px]
+            bg-white
+            border-2 ${showError ? 'border-red-500' : showSuccess ? 'border-minds-success' : 'border-minds-border'}
+            rounded-xl
+            text-minds-charcoal placeholder:text-minds-gray
+            focus:ring-2 ${showError ? 'focus:ring-red-500' : 'focus:ring-minds-coral'} focus:border-transparent
             disabled:bg-gray-100 disabled:cursor-not-allowed
-            ${!reduceMotion ? 'transition-colors duration-200' : ''}
+            ${!reduceMotion ? 'transition-all duration-200' : ''}
             ${className}
           `}
           {...props}
@@ -50,12 +52,13 @@ export default function Input({
         )}
       </div>
       {showError && (
-        <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+        <p className="mt-2 text-sm text-red-600 flex items-center gap-1.5 font-medium">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
           {error}
         </p>
       )}
       {helperText && !showError && (
-        <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+        <p className="mt-2 text-sm text-minds-gray">{helperText}</p>
       )}
     </div>
   )

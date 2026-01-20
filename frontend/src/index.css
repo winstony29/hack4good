@@ -1,12 +1,60 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Default theme (warm inclusive) */
+  --color-bg: #FFF9F5;
+  --color-bg-card: #FFFFFF;
+  --color-text: #2D3436;
+  --color-text-muted: #636E72;
+  --color-primary: #E8505B;
+  --color-secondary: #14A085;
+  --color-border: #E8E8E8;
+
+  /* Accessibility overrides - will be toggled by JS */
+  --a11y-bg: var(--color-bg-card);
+  --a11y-bg-secondary: #F9FAFB;
+  --a11y-border: var(--color-border);
+  --a11y-text: var(--color-text);
+}
+
+/* High contrast mode */
+[data-contrast="high"] {
+  --color-bg: #000000;
+  --color-bg-card: #1A1A1A;
+  --color-text: #FFFF00;
+  --color-text-muted: #FFFF99;
+  --color-border: #FFFF00;
+  --a11y-bg: #1A1A1A;
+  --a11y-bg-secondary: #262626;
+  --a11y-border: #FFFF00;
+  --a11y-text: #FFFF00;
+}
+
+/* OpenDyslexic font mode */
+[data-font="dyslexic"] {
+  font-family: 'OpenDyslexic', sans-serif !important;
+}
+
 @layer base {
+  html {
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+  }
+
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    @apply bg-minds-cream text-minds-charcoal font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+    line-height: 1.3;
   }
 }
 

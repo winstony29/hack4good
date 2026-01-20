@@ -7,18 +7,45 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+        // MINDS Inclusive Design Palette (v2.0)
+        minds: {
+          cream: '#FFF9F5',
+          coral: '#E8505B',
+          teal: '#14A085',
+          amber: '#F9A826',
+          charcoal: '#2D3436',
+          gray: '#636E72',
+          white: '#FFFFFF',
+          success: '#27AE60',
+          border: '#E8E8E8',
         },
+        // Primary color scale (coral tones)
+        primary: {
+          50: '#FFF5F5',
+          100: '#FFE8E9',
+          200: '#FFCCCF',
+          300: '#FFA8AD',
+          400: '#F07580',
+          500: '#E8505B',
+          600: '#D03A45',
+          700: '#B02835',
+          800: '#901D28',
+          900: '#701520',
+        },
+        // Secondary color scale (teal tones)
+        secondary: {
+          50: '#F0FDF9',
+          100: '#CCFBEF',
+          200: '#99F6DF',
+          300: '#5EEAD8',
+          400: '#2DD4C0',
+          500: '#14A085',
+          600: '#0D8A73',
+          700: '#0A6F5E',
+          800: '#085A4D',
+          900: '#064A40',
+        },
+        // Legacy palettes (kept for backwards compatibility)
         // Person 3: Volunteer Swiper - Warm coral/salmon palette
         coral: {
           50: '#fff5f3',
@@ -72,11 +99,10 @@ export default {
         },
       },
       fontFamily: {
-        // Person 3: Friendly, modern display font
-        display: ['Outfit', 'system-ui', 'sans-serif'],
-        // Person 4: Professional, refined font for data
-        sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
-        // Accent font for special elements
+        // MINDS Inclusive Design fonts (v2.0)
+        display: ['Nunito', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+        // Legacy fonts (kept for backwards compatibility)
         accent: ['Bricolage Grotesque', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
