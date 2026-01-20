@@ -26,6 +26,7 @@ async def get_available_activities(
     - Excludes activities volunteer is already matched to
     - Excludes past activities
     - Only shows activities with available spots
+    - Filters by wheelchair accessibility if volunteer requires wheelchair
     """
     from datetime import date
     from app.db.models import Activity, VolunteerMatch, User
@@ -44,6 +45,12 @@ async def get_available_activities(
 
     if matched_ids:
         query = query.filter(~Activity.id.in_(matched_ids))
+    
+    # Filter by wheelchair accessibility if volunteer requires wheelchair
+    # Access from user_metadata since current_user is a Supabase user object
+    wheelchair_required = current_user.user_metadata.get('wheelchair_required', False)
+    if wheelchair_required:
+        query = query.filter(Activity.wheelchair_accessible == True)
 
     activities = query.order_by(Activity.date, Activity.start_time).all()
 
@@ -61,6 +68,8 @@ async def get_available_activities(
             "max_capacity": activity.max_capacity,
             "current_participants": activity.current_participants,
             "program_type": activity.program_type,
+            "wheelchair_accessible": activity.wheelchair_accessible,
+            "payment_required": activity.payment_required,
             "created_by_staff_id": activity.created_by_staff_id,
             "created_at": activity.created_at,
             "point_of_contact": None,
@@ -171,8 +180,12 @@ async def get_volunteer_matches(
     from app.db.models import VolunteerMatch
     from app.core.enums import Role
 
+    # Get user role from Supabase user metadata
+    user_role = current_user.user_metadata.get('role')
+    
     # Authorization: can view own matches, or staff can view any
-    if current_user.id != user_id and current_user.role != Role.STAFF:
+    # Compare as strings since current_user.id is a string UUID
+    if str(current_user.id) != str(user_id) and user_role != Role.STAFF.value:
         raise HTTPException(status_code=403, detail="Not authorized to view these matches")
 
     # Fetch matches with activity details (eager load)
@@ -201,8 +214,8 @@ async def cancel_volunteer_match(
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
 
-    # Verify ownership
-    if match.volunteer_id != current_user.id:
+    # Verify ownership - compare as strings since current_user.id is a string UUID
+    if str(match.volunteer_id) != str(current_user.id):
         raise HTTPException(status_code=403, detail="Not authorized to cancel this match")
 
     # Check if already cancelled

@@ -22,6 +22,49 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
+@router.get("/available", response_model=List[ActivityResponse])
+async def get_available_activities_for_participant(
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Get activities available for participant registration (swiper)
+
+    - Excludes activities participant is already registered to
+    - Excludes past activities
+    - Only shows activities with available spots
+    - Filters by wheelchair accessibility if user requires wheelchair
+    """
+    from datetime import date
+    
+    # Get IDs of activities participant is already registered to
+    registered_activity_ids = db.query(Registration.activity_id).filter(
+        Registration.user_id == current_user.id,
+        Registration.status != RegistrationStatus.CANCELLED
+    ).all()
+    registered_ids = [r[0] for r in registered_activity_ids]
+
+    # Query future activities not already registered
+    query = db.query(Activity).filter(
+        Activity.date >= date.today(),
+        Activity.current_participants < Activity.max_capacity  # Only show activities with spots
+    )
+
+    if registered_ids:
+        query = query.filter(~Activity.id.in_(registered_ids))
+    
+    # Filter by wheelchair accessibility if user requires wheelchair
+    # Access from user_metadata since current_user is a Supabase user object
+    wheelchair_required = current_user.user_metadata.get('wheelchair_required', False)
+    if wheelchair_required:
+        query = query.filter(Activity.wheelchair_accessible == True)
+
+    activities = query.order_by(Activity.date, Activity.start_time).all()
+
+    # Build response with POC info for each activity
+    return [_build_activity_response(activity, db) for activity in activities]
+
+
 def _build_activity_response(activity: Activity, db: Session) -> ActivityResponse:
     """Build ActivityResponse with POC info"""
     response_data = {
@@ -35,6 +78,8 @@ def _build_activity_response(activity: Activity, db: Session) -> ActivityRespons
         "max_capacity": activity.max_capacity,
         "current_participants": activity.current_participants,
         "program_type": activity.program_type,
+        "wheelchair_accessible": activity.wheelchair_accessible,
+        "payment_required": activity.payment_required,
         "created_by_staff_id": activity.created_by_staff_id,
         "created_at": activity.created_at,
         "point_of_contact": None,
@@ -157,8 +202,11 @@ async def get_user_registrations(
 
     Users can only view their own registrations unless they are staff
     """
-    # Authorization check
-    if current_user.id != user_id and current_user.role != Role.STAFF:
+    # Get user role from Supabase user metadata
+    user_role = current_user.user_metadata.get('role')
+    
+    # Authorization check - compare as strings since current_user.id is a string UUID
+    if str(current_user.id) != str(user_id) and user_role != Role.STAFF.value:
         raise HTTPException(status_code=403, detail="Not authorized to view these registrations")
     
     registrations = (
@@ -225,8 +273,11 @@ async def cancel_registration(
     if not registration:
         raise HTTPException(status_code=404, detail="Registration not found")
     
-    # Check user owns it (or is staff)
-    if registration.user_id != current_user.id and current_user.role != Role.STAFF:
+    # Get user role from Supabase user metadata
+    user_role = current_user.user_metadata.get('role')
+    
+    # Check user owns it (or is staff) - compare as strings
+    if str(registration.user_id) != str(current_user.id) and user_role != Role.STAFF.value:
         raise HTTPException(status_code=403, detail="Not authorized to cancel this registration")
     
     # Check if already cancelled

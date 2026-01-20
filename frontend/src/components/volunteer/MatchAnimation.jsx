@@ -4,10 +4,11 @@ import confetti from 'canvas-confetti'
 import { Heart, X, Sparkles, Calendar, MapPin } from 'lucide-react'
 import { useAccessibility } from '../../contexts/AccessibilityContext'
 import { CONFETTI_COLORS } from '../../constants'
-import { formatDate, formatTime } from '../../utils/dateUtils'
+import { formatDate } from '../../utils/dateUtils'
 
-export default function MatchAnimation({ activity, isVisible, onClose }) {
+export default function MatchAnimation({ activity, isVisible, onClose, userRole = 'volunteer' }) {
   const { reduceMotion } = useAccessibility()
+  const isVolunteer = userRole === 'volunteer'
 
   // Fire celebratory confetti when animation becomes visible
   useEffect(() => {
@@ -235,7 +236,7 @@ export default function MatchAnimation({ activity, isVisible, onClose }) {
               className="font-display font-bold text-4xl sm:text-5xl text-white text-center mb-2 tracking-tight"
               style={{ textShadow: '0 2px 10px rgba(0, 0, 0, 0.2)' }}
             >
-              It's a Match!
+              {isVolunteer ? "It's a Match!" : "You're In!"}
             </motion.h2>
 
             {/* Subtitle */}
@@ -244,7 +245,7 @@ export default function MatchAnimation({ activity, isVisible, onClose }) {
               variants={textVariants}
               className="text-white/80 text-lg text-center mb-6"
             >
-              You signed up to volunteer for
+              {isVolunteer ? 'You signed up to volunteer for' : 'You registered for'}
             </motion.p>
 
             {/* Activity Card */}

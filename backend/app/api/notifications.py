@@ -95,7 +95,8 @@ async def get_user_notifications(
     from app.core.enums import Role
 
     # Authorization check: user can only view own notifications unless staff
-    is_staff = current_user.role == Role.STAFF
+    user_role = current_user.user_metadata.get('role')
+    is_staff = user_role == Role.STAFF.value
     is_owner = str(current_user.id) == str(user_id)
 
     if not is_staff and not is_owner:

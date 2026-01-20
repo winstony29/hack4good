@@ -2,9 +2,15 @@ import api from './api'
 import { getRegistrations, createRegistration, cancelRegistration, getAllRegistrations } from '../mocks/registrations.mock'
 
 // Toggle to use mock data (set to false when backend is ready)
-const USE_MOCK_DATA = true
+const USE_MOCK_DATA = false
 
 export const registrationsApi = {
+  // Get available activities for participant swiping (excludes already registered, filters by wheelchair if needed)
+  getAvailable: async () => {
+    const response = await api.get('/registrations/available')
+    return { data: response.data }
+  },
+
   // Get all registrations for current user
   getAll: async () => {
     if (USE_MOCK_DATA) {

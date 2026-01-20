@@ -26,6 +26,8 @@ def _build_activity_response(activity: Activity, db: Session) -> ActivityRespons
         "max_capacity": activity.max_capacity,
         "current_participants": activity.current_participants,
         "program_type": activity.program_type,
+        "wheelchair_accessible": activity.wheelchair_accessible,
+        "payment_required": activity.payment_required,
         "created_by_staff_id": activity.created_by_staff_id,
         "created_at": activity.created_at,
         "point_of_contact": None,

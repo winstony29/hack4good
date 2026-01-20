@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS activities (
     max_capacity INTEGER NOT NULL,
     current_participants INTEGER DEFAULT 0,
     program_type VARCHAR(50),
+    wheelchair_accessible BOOLEAN DEFAULT TRUE,
+    payment_required BOOLEAN DEFAULT FALSE,
     created_by_staff_id UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE

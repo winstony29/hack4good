@@ -1,29 +1,36 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { matchesApi } from '../../services/matches.api'
+import { registrationsApi } from '../../services/registrations.api'
 import SwipeableCard from './SwipeableCard'
 import SwipeButtons from './SwipeButtons'
 import MatchAnimation from './MatchAnimation'
 import EmptyState from '../shared/EmptyState'
 import Button from '../shared/Button'
-import Spinner from '../shared/Spinner'
 import { Sparkles, RefreshCw, Heart } from 'lucide-react'
 
 const VISIBLE_CARDS = 3 // Number of cards to show in stack
 
-export default function ActivitySwiper({ onMatch }) {
+/**
+ * ActivitySwiper component for both volunteers and participants
+ * @param {Object} props
+ * @param {Function} props.onMatch - Callback when user swipes right
+ * @param {'volunteer' | 'participant'} props.userRole - The role of the current user
+ */
+export default function ActivitySwiper({ onMatch, userRole = 'volunteer' }) {
   const [activities, setActivities] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loading, setLoading] = useState(true)
   const [swiping, setSwiping] = useState(false)
   const [matchedActivity, setMatchedActivity] = useState(null)
   const [showMatchAnimation, setShowMatchAnimation] = useState(false)
-  const cardRef = useRef(null)
+
+  const isVolunteer = userRole === 'volunteer'
 
   useEffect(() => {
     fetchAvailableActivities()
-  }, [])
+  }, [userRole])
 
   // Show toast when all activities have been reviewed
   useEffect(() => {
@@ -38,7 +45,10 @@ export default function ActivitySwiper({ onMatch }) {
   const fetchAvailableActivities = async () => {
     try {
       setLoading(true)
-      const response = await matchesApi.getAvailable()
+      // Use different API based on user role
+      const response = isVolunteer 
+        ? await matchesApi.getAvailable()
+        : await registrationsApi.getAvailable()
       setActivities(response.data || [])
     } catch (error) {
       console.error('Failed to fetch activities:', error)
@@ -58,17 +68,27 @@ export default function ActivitySwiper({ onMatch }) {
 
     if (direction === 'right') {
       try {
-        // Use toast.promise for loading state during API call
+        // Use different API and messages based on user role
+        const actionText = isVolunteer ? 'Confirming match...' : 'Registering...'
+        const successText = isVolunteer 
+          ? `Matched with "${activity.title}"!`
+          : `Registered for "${activity.title}"!`
+        const errorText = isVolunteer 
+          ? 'Failed to create match. Please try again.'
+          : 'Failed to register. Please try again.'
+
         await toast.promise(
-          matchesApi.create({ activity_id: activity.id }),
+          isVolunteer 
+            ? matchesApi.create({ activity_id: activity.id })
+            : registrationsApi.create({ activity_id: activity.id }),
           {
-            loading: 'Confirming match...',
-            success: `Matched with "${activity.title}"!`,
-            error: 'Failed to create match. Please try again.'
+            loading: actionText,
+            success: successText,
+            error: errorText
           },
           {
             success: {
-              icon: '💚',
+              icon: isVolunteer ? '💚' : '🎉',
               duration: 3000
             },
             error: {
@@ -86,7 +106,7 @@ export default function ActivitySwiper({ onMatch }) {
           onMatch(activity)
         }
       } catch (error) {
-        console.error('Failed to match:', error)
+        console.error('Failed to match/register:', error)
         // Error already shown by toast.promise
       }
     } else {
@@ -118,6 +138,10 @@ export default function ActivitySwiper({ onMatch }) {
     setMatchedActivity(null)
   }
 
+  const emptyDescription = isVolunteer
+    ? 'Check back later for more volunteer opportunities'
+    : 'Check back later for more activities to join'
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
@@ -139,7 +163,7 @@ export default function ActivitySwiper({ onMatch }) {
         <EmptyState
           icon={Sparkles}
           title="No activities available"
-          description="Check back later for more volunteer opportunities"
+          description={emptyDescription}
         />
       </div>
     )
@@ -203,6 +227,7 @@ export default function ActivitySwiper({ onMatch }) {
               onSwipe={handleSwipe}
               isTop={index === 0}
               stackIndex={index}
+              userRole={userRole}
             />
           ))}
         </AnimatePresence>
@@ -246,6 +271,7 @@ export default function ActivitySwiper({ onMatch }) {
         activity={matchedActivity}
         isVisible={showMatchAnimation}
         onClose={handleCloseMatchAnimation}
+        userRole={userRole}
       />
     </div>
   )
