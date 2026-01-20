@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/opendyslexic');
 
 @tailwind base;
 @tailwind components;
@@ -35,8 +36,26 @@
 }
 
 /* OpenDyslexic font mode */
-[data-font="dyslexic"] {
+[data-font="dyslexic"],
+[data-font="dyslexic"] body,
+[data-font="dyslexic"] * {
   font-family: 'OpenDyslexic', sans-serif !important;
+}
+
+/* Font size scaling via data attribute */
+[data-font-size="small"] {
+  font-size: 14px;
+  --a11y-font-size: 14px;
+}
+
+[data-font-size="medium"] {
+  font-size: 16px;
+  --a11y-font-size: 16px;
+}
+
+[data-font-size="large"] {
+  font-size: 18px;
+  --a11y-font-size: 18px;
 }
 
 @layer base {
@@ -68,6 +87,45 @@
   .focus-visible:focus {
     @apply outline-none ring-2 ring-primary-500 ring-offset-2;
   }
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 100;
+  padding: 1rem 1.5rem;
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Global focus-visible states for keyboard navigation */
+*:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode focus override */
+[data-contrast="high"] *:focus-visible {
+  outline-color: #FFFF00;
 }
 
 /* Reduced motion support */

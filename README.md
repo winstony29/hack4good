@@ -18,7 +18,7 @@ An accessible, inclusive activity management platform designed for individuals w
 ### For Staff
 - **Comprehensive Analytics**: Track participation, volunteer coverage, and trends
 - **Activity Management**: Create, edit, and manage activities
-- **Attendance Export**: Download attendance lists as CSV
+- **Weekly Schedule**: View all activities and attendees by day
 - **Real-Time Reporting**: Monitor registrations and volunteer matches
 
 ### Accessibility Features
@@ -210,7 +210,7 @@ VITE_API_BASE_URL=http://localhost:8000/api
 
 1. **Participant**: Can browse and register for activities
 2. **Volunteer**: Can swipe and match with activities to volunteer
-3. **Staff**: Can manage activities, view analytics, and export reports
+3. **Staff**: Can manage activities, view analytics, and view weekly schedules
 
 ### Creating Test Users
 
@@ -278,7 +278,7 @@ npm test
 ### Person 4: Experience Lead
 - 🏗️ Staff analytics
 - 🏗️ Accessibility features (TTS, translation)
-- 🏗️ CSV export
+- ✅ Weekly schedule view
 
 ## 🤝 Contributing
 
@@ -303,20 +303,6 @@ npm test
 Once the backend is running, visit:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
-
-## 🐛 Known Issues & TODOs
-
-- [ ] FullCalendar integration for activity view
-- [ ] Framer Motion animations for swiper
-- [ ] Recharts implementation for analytics
-- [ ] Complete Twilio SMS integration
-- [ ] Complete ElevenLabs TTS integration
-- [ ] Complete Google Translate integration
-- [ ] Add comprehensive error handling
-- [ ] Add loading states for all async operations
-- [ ] Add form validation feedback
-- [ ] Implement activity search and filters
-- [ ] Add unit and integration tests
 
 ## 📞 Support
 
