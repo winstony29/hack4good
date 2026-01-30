@@ -59,58 +59,58 @@ let mockRegistrations = [
   {
     id: 'reg-1',
     user_id: 'user-1',
-    activity_id: ACTIVITY_UUIDS[0], // Morning Yoga
+    activity_id: ACTIVITY_UUIDS[1], // Morning Yoga
     status: 'confirmed',
-    created_at: '2026-01-18T10:00:00Z',
-    updated_at: '2026-01-18T10:00:00Z'
+    created_at: '2026-01-28T10:00:00Z',
+    updated_at: '2026-01-28T10:00:00Z'
   },
   {
     id: 'reg-2',
     user_id: 'user-2',
-    activity_id: ACTIVITY_UUIDS[0], // Morning Yoga
+    activity_id: ACTIVITY_UUIDS[1], // Morning Yoga
     status: 'confirmed',
-    created_at: '2026-01-18T10:00:00Z',
-    updated_at: '2026-01-18T10:00:00Z'
+    created_at: '2026-01-28T10:00:00Z',
+    updated_at: '2026-01-28T10:00:00Z'
   },
   {
     id: 'reg-3',
     user_id: 'user-3',
-    activity_id: ACTIVITY_UUIDS[1], // Arts & Crafts
+    activity_id: ACTIVITY_UUIDS[2], // Arts & Crafts
     status: 'confirmed',
-    created_at: '2026-01-18T11:00:00Z',
-    updated_at: '2026-01-18T11:00:00Z'
+    created_at: '2026-01-28T11:00:00Z',
+    updated_at: '2026-01-28T11:00:00Z'
   },
   {
     id: 'reg-4',
     user_id: 'user-4',
-    activity_id: ACTIVITY_UUIDS[1], // Arts & Crafts
+    activity_id: ACTIVITY_UUIDS[2], // Arts & Crafts
     status: 'confirmed',
-    created_at: '2026-01-18T11:00:00Z',
-    updated_at: '2026-01-18T11:00:00Z'
+    created_at: '2026-01-28T11:00:00Z',
+    updated_at: '2026-01-28T11:00:00Z'
   },
   {
     id: 'reg-5',
     user_id: 'user-5',
-    activity_id: ACTIVITY_UUIDS[1], // Arts & Crafts
+    activity_id: ACTIVITY_UUIDS[2], // Arts & Crafts
     status: 'confirmed',
-    created_at: '2026-01-18T11:00:00Z',
-    updated_at: '2026-01-18T11:00:00Z'
+    created_at: '2026-01-28T11:00:00Z',
+    updated_at: '2026-01-28T11:00:00Z'
   },
   {
     id: 'reg-6',
     user_id: 'user-1',
-    activity_id: ACTIVITY_UUIDS[4], // Swimming
+    activity_id: ACTIVITY_UUIDS[5], // Swimming
     status: 'confirmed',
-    created_at: '2026-01-19T10:00:00Z',
-    updated_at: '2026-01-19T10:00:00Z'
+    created_at: '2026-01-29T10:00:00Z',
+    updated_at: '2026-01-29T10:00:00Z'
   },
   {
     id: 'reg-7',
     user_id: 'user-2',
-    activity_id: ACTIVITY_UUIDS[4], // Swimming
+    activity_id: ACTIVITY_UUIDS[5], // Swimming
     status: 'confirmed',
-    created_at: '2026-01-19T10:00:00Z',
-    updated_at: '2026-01-19T10:00:00Z'
+    created_at: '2026-01-29T10:00:00Z',
+    updated_at: '2026-01-29T10:00:00Z'
   }
 ]
 
@@ -215,18 +215,18 @@ export const resetRegistrations = () => {
     {
       id: 'reg-1',
       user_id: 'user-1',
-      activity_id: ACTIVITY_UUIDS[0],
+      activity_id: ACTIVITY_UUIDS[1],
       status: 'confirmed',
-      created_at: '2026-01-18T10:00:00Z',
-      updated_at: '2026-01-18T10:00:00Z'
+      created_at: '2026-01-28T10:00:00Z',
+      updated_at: '2026-01-28T10:00:00Z'
     },
     {
       id: 'reg-2',
       user_id: 'user-2',
-      activity_id: ACTIVITY_UUIDS[0],
+      activity_id: ACTIVITY_UUIDS[1],
       status: 'confirmed',
-      created_at: '2026-01-18T10:00:00Z',
-      updated_at: '2026-01-18T10:00:00Z'
+      created_at: '2026-01-28T10:00:00Z',
+      updated_at: '2026-01-28T10:00:00Z'
     }
   ]
 }
