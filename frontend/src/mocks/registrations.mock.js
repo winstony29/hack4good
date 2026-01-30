@@ -54,65 +54,56 @@ const mockUsers = [
   }
 ]
 
-// In-memory registrations store
+// In-memory registrations store — populated for realistic demo across all 3 portals
 let mockRegistrations = [
-  {
-    id: 'reg-1',
-    user_id: 'user-1',
-    activity_id: ACTIVITY_UUIDS[1], // Morning Yoga
-    status: 'confirmed',
-    created_at: '2026-01-28T10:00:00Z',
-    updated_at: '2026-01-28T10:00:00Z'
-  },
-  {
-    id: 'reg-2',
-    user_id: 'user-2',
-    activity_id: ACTIVITY_UUIDS[1], // Morning Yoga
-    status: 'confirmed',
-    created_at: '2026-01-28T10:00:00Z',
-    updated_at: '2026-01-28T10:00:00Z'
-  },
-  {
-    id: 'reg-3',
-    user_id: 'user-3',
-    activity_id: ACTIVITY_UUIDS[2], // Arts & Crafts
-    status: 'confirmed',
-    created_at: '2026-01-28T11:00:00Z',
-    updated_at: '2026-01-28T11:00:00Z'
-  },
-  {
-    id: 'reg-4',
-    user_id: 'user-4',
-    activity_id: ACTIVITY_UUIDS[2], // Arts & Crafts
-    status: 'confirmed',
-    created_at: '2026-01-28T11:00:00Z',
-    updated_at: '2026-01-28T11:00:00Z'
-  },
-  {
-    id: 'reg-5',
-    user_id: 'user-5',
-    activity_id: ACTIVITY_UUIDS[2], // Arts & Crafts
-    status: 'confirmed',
-    created_at: '2026-01-28T11:00:00Z',
-    updated_at: '2026-01-28T11:00:00Z'
-  },
-  {
-    id: 'reg-6',
-    user_id: 'user-1',
-    activity_id: ACTIVITY_UUIDS[5], // Swimming
-    status: 'confirmed',
-    created_at: '2026-01-29T10:00:00Z',
-    updated_at: '2026-01-29T10:00:00Z'
-  },
-  {
-    id: 'reg-7',
-    user_id: 'user-2',
-    activity_id: ACTIVITY_UUIDS[5], // Swimming
-    status: 'confirmed',
-    created_at: '2026-01-29T10:00:00Z',
-    updated_at: '2026-01-29T10:00:00Z'
-  }
+  // === Morning Yoga (ACTIVITY 1) — Jan 31 — 12/20 capacity ===
+  { id: 'reg-1', user_id: 'user-1', activity_id: ACTIVITY_UUIDS[1], status: 'confirmed', created_at: '2026-01-27T08:00:00Z', updated_at: '2026-01-27T08:00:00Z' },
+  { id: 'reg-2', user_id: 'user-2', activity_id: ACTIVITY_UUIDS[1], status: 'confirmed', created_at: '2026-01-27T09:30:00Z', updated_at: '2026-01-27T09:30:00Z' },
+  { id: 'reg-3', user_id: 'user-4', activity_id: ACTIVITY_UUIDS[1], status: 'confirmed', created_at: '2026-01-28T10:00:00Z', updated_at: '2026-01-28T10:00:00Z' },
+
+  // === Arts & Crafts (ACTIVITY 2) — Jan 31 — 8/15 capacity ===
+  { id: 'reg-4', user_id: 'user-3', activity_id: ACTIVITY_UUIDS[2], status: 'confirmed', created_at: '2026-01-27T11:00:00Z', updated_at: '2026-01-27T11:00:00Z' },
+  { id: 'reg-5', user_id: 'user-4', activity_id: ACTIVITY_UUIDS[2], status: 'confirmed', created_at: '2026-01-28T11:00:00Z', updated_at: '2026-01-28T11:00:00Z' },
+  { id: 'reg-6', user_id: 'user-5', activity_id: ACTIVITY_UUIDS[2], status: 'confirmed', created_at: '2026-01-28T14:00:00Z', updated_at: '2026-01-28T14:00:00Z' },
+
+  // === Basketball Practice (ACTIVITY 3) — Feb 1 — 18/25 capacity ===
+  { id: 'reg-7', user_id: 'user-1', activity_id: ACTIVITY_UUIDS[3], status: 'confirmed', created_at: '2026-01-28T09:00:00Z', updated_at: '2026-01-28T09:00:00Z' },
+  { id: 'reg-8', user_id: 'user-5', activity_id: ACTIVITY_UUIDS[3], status: 'confirmed', created_at: '2026-01-28T10:00:00Z', updated_at: '2026-01-28T10:00:00Z' },
+
+  // === Music Jam (ACTIVITY 4) — Feb 1 ===
+  { id: 'reg-9', user_id: 'user-1', activity_id: ACTIVITY_UUIDS[4], status: 'confirmed', created_at: '2026-01-29T08:00:00Z', updated_at: '2026-01-29T08:00:00Z' },
+  { id: 'reg-10', user_id: 'user-3', activity_id: ACTIVITY_UUIDS[4], status: 'confirmed', created_at: '2026-01-29T09:00:00Z', updated_at: '2026-01-29T09:00:00Z' },
+
+  // === Swimming (ACTIVITY 5) — Feb 2 — 19/20 capacity (nearly full!) ===
+  { id: 'reg-11', user_id: 'user-1', activity_id: ACTIVITY_UUIDS[5], status: 'confirmed', created_at: '2026-01-28T10:00:00Z', updated_at: '2026-01-28T10:00:00Z' },
+  { id: 'reg-12', user_id: 'user-2', activity_id: ACTIVITY_UUIDS[5], status: 'confirmed', created_at: '2026-01-28T10:30:00Z', updated_at: '2026-01-28T10:30:00Z' },
+  { id: 'reg-13', user_id: 'user-4', activity_id: ACTIVITY_UUIDS[5], status: 'confirmed', created_at: '2026-01-29T08:00:00Z', updated_at: '2026-01-29T08:00:00Z' },
+
+  // === Cooking Class (ACTIVITY 6) — Feb 3 ===
+  { id: 'reg-14', user_id: 'user-2', activity_id: ACTIVITY_UUIDS[6], status: 'confirmed', created_at: '2026-01-29T11:00:00Z', updated_at: '2026-01-29T11:00:00Z' },
+  { id: 'reg-15', user_id: 'user-5', activity_id: ACTIVITY_UUIDS[6], status: 'confirmed', created_at: '2026-01-29T12:00:00Z', updated_at: '2026-01-29T12:00:00Z' },
+
+  // === Dance Party (ACTIVITY 7) — Feb 3 ===
+  { id: 'reg-16', user_id: 'user-1', activity_id: ACTIVITY_UUIDS[7], status: 'confirmed', created_at: '2026-01-29T14:00:00Z', updated_at: '2026-01-29T14:00:00Z' },
+  { id: 'reg-17', user_id: 'user-3', activity_id: ACTIVITY_UUIDS[7], status: 'confirmed', created_at: '2026-01-29T15:00:00Z', updated_at: '2026-01-29T15:00:00Z' },
+
+  // === Gardening (ACTIVITY 8) — Feb 4 ===
+  { id: 'reg-18', user_id: 'user-2', activity_id: ACTIVITY_UUIDS[8], status: 'confirmed', created_at: '2026-01-30T08:00:00Z', updated_at: '2026-01-30T08:00:00Z' },
+  { id: 'reg-19', user_id: 'user-4', activity_id: ACTIVITY_UUIDS[8], status: 'confirmed', created_at: '2026-01-30T09:00:00Z', updated_at: '2026-01-30T09:00:00Z' },
+
+  // === Movie Afternoon (ACTIVITY 9) — Feb 4 ===
+  { id: 'reg-20', user_id: 'user-1', activity_id: ACTIVITY_UUIDS[9], status: 'confirmed', created_at: '2026-01-30T10:00:00Z', updated_at: '2026-01-30T10:00:00Z' },
+  { id: 'reg-21', user_id: 'user-5', activity_id: ACTIVITY_UUIDS[9], status: 'confirmed', created_at: '2026-01-30T10:30:00Z', updated_at: '2026-01-30T10:30:00Z' },
+
+  // === Painting Workshop (ACTIVITY 10) — Feb 5 ===
+  { id: 'reg-22', user_id: 'user-3', activity_id: ACTIVITY_UUIDS[10], status: 'confirmed', created_at: '2026-01-30T11:00:00Z', updated_at: '2026-01-30T11:00:00Z' },
+
+  // === Table Tennis (ACTIVITY 11) — Feb 5 ===
+  { id: 'reg-23', user_id: 'user-1', activity_id: ACTIVITY_UUIDS[11], status: 'confirmed', created_at: '2026-01-30T12:00:00Z', updated_at: '2026-01-30T12:00:00Z' },
+  { id: 'reg-24', user_id: 'user-5', activity_id: ACTIVITY_UUIDS[11], status: 'confirmed', created_at: '2026-01-30T12:30:00Z', updated_at: '2026-01-30T12:30:00Z' },
 ]
+// Participant user-1 (Alex Chen): regs 1, 7, 9, 11, 16, 20, 23 = 7 upcoming activities
+// Staff sees: 24 registrations across 11 activities from 5 users
 
 /**
  * Get all registrations for current user with activity details
@@ -211,24 +202,7 @@ export const getRegistrationsByActivity = (activityId) => {
  * Reset registrations (for testing)
  */
 export const resetRegistrations = () => {
-  mockRegistrations = [
-    {
-      id: 'reg-1',
-      user_id: 'user-1',
-      activity_id: ACTIVITY_UUIDS[1],
-      status: 'confirmed',
-      created_at: '2026-01-28T10:00:00Z',
-      updated_at: '2026-01-28T10:00:00Z'
-    },
-    {
-      id: 'reg-2',
-      user_id: 'user-2',
-      activity_id: ACTIVITY_UUIDS[1],
-      status: 'confirmed',
-      created_at: '2026-01-28T10:00:00Z',
-      updated_at: '2026-01-28T10:00:00Z'
-    }
-  ]
+  // Reset not needed for demo — data persists in memory until page refresh
 }
 
 export { mockUsers }
