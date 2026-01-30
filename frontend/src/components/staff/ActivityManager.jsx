@@ -27,7 +27,7 @@ export default function ActivityManager() {
     try {
       setLoading(true)
       const response = await activitiesApi.getAll()
-      setActivities(response.data.activities || [])
+      setActivities(response.data.activities || response.data || [])
     } catch (error) {
       console.error('Failed to fetch activities:', error)
       toast.error('Failed to load activities. Please try again.')
