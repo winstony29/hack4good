@@ -33,15 +33,14 @@ export default function Activities() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Load activities immediately (public endpoint, no auth needed)
+  // Load registrations when user is available; always mark page as ready
   useEffect(() => {
-    fetchAllActivities().finally(() => setLoading(false))
-  }, [])
-
-  // Load registrations separately when user is available (needs auth)
-  useEffect(() => {
+    setLoading(false)
     if (user) {
       fetchUserRegistrations()
+      fetchAllActivities()
+    } else {
+      fetchAllActivities()
     }
   }, [user])
 
@@ -249,28 +248,7 @@ export default function Activities() {
             </div>
 
             {/* Activity Views */}
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Spinner size="lg" />
-              </div>
-            ) : error ? (
-              <EmptyState
-                icon={Calendar}
-                title={t('activities.failedToLoad')}
-                description={error}
-                action={
-                  <Button onClick={loadData} variant="primary">
-                    {t('activities.tryAgain')}
-                  </Button>
-                }
-              />
-            ) : allActivities.length === 0 ? (
-              <EmptyState
-                icon={Calendar}
-                title={t('activities.noAvailable')}
-                description={t('activities.checkBackNew')}
-              />
-            ) : viewMode === 'list' ? (
+            {viewMode === 'list' ? (
               <ActivityCalendar
                 mode="view"
                 onActivityClick={handleActivityClick}

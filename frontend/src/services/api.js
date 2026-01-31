@@ -11,13 +11,24 @@ const api = axios.create({
   }
 })
 
+// Helper: getSession with timeout to prevent hanging
+const getSessionWithTimeout = (timeoutMs = 3000) => {
+  return Promise.race([
+    supabase.auth.getSession(),
+    new Promise((resolve) => setTimeout(() => resolve({ data: { session: null } }), timeoutMs))
+  ])
+}
+
 // Request interceptor to add auth token
 api.interceptors.request.use(
   async (config) => {
-    const { data: { session } } = await supabase.auth.getSession()
-    
-    if (session?.access_token) {
-      config.headers.Authorization = `Bearer ${session.access_token}`
+    try {
+      const { data: { session } } = await getSessionWithTimeout()
+      if (session?.access_token) {
+        config.headers.Authorization = `Bearer ${session.access_token}`
+      }
+    } catch {
+      // If session fetch fails, proceed without auth
     }
     
     return config
@@ -30,11 +41,21 @@ api.interceptors.request.use(
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      supabase.auth.signOut()
-      window.location.href = '/auth'
+      // Check if we actually have a session — only sign out if the session
+      // truly expired, not if the interceptor timed out waiting for it
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) {
+          // No session at all — redirect to login
+          window.location.href = '/auth'
+        }
+        // If session exists, the request just failed (e.g. timing issue)
+        // Don't sign out — let the caller handle the error
+      } catch {
+        // getSession failed — don't destroy anything
+      }
     }
     
     return Promise.reject(error)
