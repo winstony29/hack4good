@@ -10,11 +10,11 @@ See: .planning/MILESTONES.md (v1.0 shipped 2026-01-19)
 ## Current Position
 
 Phase: 11.1 (Demo Role Switcher) — urgent insertion for hackathon demo
-Plan: 11.1-01-PLAN.md ready to execute
-Status: Ready to execute
-Last activity: 2026-01-31 — Created 11.1-01-PLAN.md
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-31 — Completed 11.1-01-PLAN.md
 
-Progress: ██████░░░░ 57%
+Progress: ██████░░░░ 60%
 
 ## v1.0 Summary
 
@@ -24,7 +24,9 @@ Progress: ██████░░░░ 57%
 
 ## Accumulated Decisions
 
-_Cleared at milestone — see archive for v1.0 decisions_
+| Phase | Decision | Rationale |
+|-------|----------|-----------|
+| 11.1 | Used Tailwind design tokens instead of plan hex values | Consistency with existing design system |
 
 ## Deferred Issues
 
@@ -41,6 +43,6 @@ None
 
 ## Session Continuity
 
-Last session: 2026-01-20
-Stopped at: Completed 11-02-PLAN.md (Phase 11 complete)
+Last session: 2026-01-31
+Stopped at: Completed 11.1-01-PLAN.md (Phase 11.1 complete)
 Resume file: None

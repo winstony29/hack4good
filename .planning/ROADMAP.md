@@ -115,7 +115,7 @@ Plans:
 **Plans**: 1
 
 Plans:
-- [ ] 11.1-01: Role switcher component + AuthContext integration
+- [x] 11.1-01: Role switcher component + AuthContext integration
 
 #### Phase 12: Navigation Redesign
 
@@ -164,6 +164,7 @@ Plans:
 | 9. Visual Consistency | v1.1 | 0/? | Not started | - |
 | 10. Design Foundation | v2.0 | 2/2 | Complete | 2026-01-20 |
 | 11. Accessibility Enhancement | v2.0 | 2/2 | Complete | 2026-01-20 |
+| 11.1 Demo Role Switcher | v2.0 | 1/1 | Complete | 2026-01-31 |
 | 12. Navigation Redesign | v2.0 | 0/1 | Planned | - |
 | 13. Landing Page Redesign | v2.0 | 0/1 | Planned | - |
 | 14. Activity Cards Redesign | v2.0 | 0/1 | Planned | - |
