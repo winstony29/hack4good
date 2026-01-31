@@ -9,10 +9,10 @@ See: .planning/MILESTONES.md (v1.0 shipped 2026-01-19)
 
 ## Current Position
 
-Phase: 12 of 14 (Navigation Redesign)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-01-20 — Completed 11-02-PLAN.md (Phase 11 complete)
+Phase: 11.1 (Demo Role Switcher) — urgent insertion for hackathon demo
+Plan: 11.1-01-PLAN.md ready to execute
+Status: Ready to execute
+Last activity: 2026-01-31 — Created 11.1-01-PLAN.md
 
 Progress: ██████░░░░ 57%
 
@@ -37,6 +37,7 @@ None
 ## Roadmap Evolution
 
 - Milestone v1.1 created: UX Polish focus, 4 phases (Phases 6-9)
+- Phase 11.1 inserted: Demo Role Switcher (hackathon demo prep, between Phase 11 and 12)
 
 ## Session Continuity
 
