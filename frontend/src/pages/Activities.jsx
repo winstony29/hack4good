@@ -61,7 +61,8 @@ export default function Activities() {
       setUserRegistrations(response.data || [])
     } catch (err) {
       console.error('Failed to fetch registrations:', err)
-      throw err
+      // Don't re-throw — a registrations failure shouldn't block activities from loading
+      setUserRegistrations([])
     }
   }
 
