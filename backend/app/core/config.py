@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     # Google Cloud
     GOOGLE_APPLICATION_CREDENTIALS: Optional[str] = None
     GOOGLE_PROJECT_ID: Optional[str] = None
+    GOOGLE_TRANSLATE_API_KEY: Optional[str] = None
     
     # CORS
     FRONTEND_URL: str = "http://localhost:5173"

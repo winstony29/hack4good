@@ -72,7 +72,8 @@ export default function Activities() {
       setAllActivities(response.data || [])
     } catch (err) {
       console.error('Failed to fetch activities:', err)
-      throw err
+      // Don't re-throw — let the empty state handle it gracefully
+      setAllActivities([])
     }
   }
 

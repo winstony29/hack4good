@@ -1,8 +1,6 @@
 import { createCrudApi } from './api'
 import { mockActivities, getActivityById } from '../mocks/activities.mock'
-
-// Toggle to use mock data (set to false when backend is ready)
-const USE_MOCK_DATA = true
+import { USE_MOCK_DATA } from '../utils/env'
 
 const activitiesCrudApi = createCrudApi('activities')
 
