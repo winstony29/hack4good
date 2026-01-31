@@ -31,8 +31,10 @@ export default function ParticipantDashboard() {
   const [viewMode, setViewMode] = useState('list') // 'list' or 'calendar'
 
   useEffect(() => {
-    fetchRegistrations()
-  }, [])
+    if (user) {
+      fetchRegistrations()
+    }
+  }, [user])
 
   const fetchRegistrations = async () => {
     try {

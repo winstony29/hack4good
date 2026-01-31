@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Shield, Heart, User, X } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
-import { USE_MOCK_DATA } from '../../contexts/AuthContext'
+import { USE_MOCK_DATA } from '../../utils/env'
 
 const ROLES = [
   {

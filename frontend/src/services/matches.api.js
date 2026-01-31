@@ -6,8 +6,7 @@ import {
   cancelVolunteerMatch
 } from '../mocks/volunteerMatches.mock'
 
-// Toggle to use mock data (set to false when backend is ready)
-const USE_MOCK_DATA = true
+import { USE_MOCK_DATA } from '../utils/env'
 
 export const matchesApi = {
   // Get available activities for swiping (excludes already matched, past activities)

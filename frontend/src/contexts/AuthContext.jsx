@@ -2,9 +2,7 @@ import { createContext, useState, useEffect, useContext } from 'react'
 import { supabase } from '../services/supabase'
 import { getCurrentMockUser } from '../mocks/userSwitcher.mock'
 import { mockUser, mockStaffUser, mockVolunteerUser } from '../mocks/users.mock'
-
-// Toggle to use mock data (set to false when Supabase is configured)
-export const USE_MOCK_DATA = true;
+import { USE_MOCK_DATA } from '../utils/env'
 
 export const AuthContext = createContext()
 

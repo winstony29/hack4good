@@ -33,27 +33,17 @@ export default function Activities() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // Load activities immediately (public endpoint, no auth needed)
+  useEffect(() => {
+    fetchAllActivities().finally(() => setLoading(false))
+  }, [])
+
+  // Load registrations separately when user is available (needs auth)
   useEffect(() => {
     if (user) {
-      loadData()
+      fetchUserRegistrations()
     }
   }, [user])
-
-  const loadData = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      await Promise.all([
-        fetchUserRegistrations(),
-        fetchAllActivities()
-      ])
-    } catch (err) {
-      setError('Failed to load activities. Please try again.')
-      toast.error('Failed to load activities. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const fetchUserRegistrations = async () => {
     try {
@@ -72,7 +62,8 @@ export default function Activities() {
       setAllActivities(response.data || [])
     } catch (err) {
       console.error('Failed to fetch activities:', err)
-      throw err
+      // Don't re-throw — let the empty state handle it gracefully
+      setAllActivities([])
     }
   }
 
