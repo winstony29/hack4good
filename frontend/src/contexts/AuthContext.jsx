@@ -1,9 +1,8 @@
 import { createContext, useState, useEffect, useContext } from 'react'
 import { supabase } from '../services/supabase'
 import { getCurrentMockUser } from '../mocks/userSwitcher.mock'
-
-// Toggle to use mock data (set to false when Supabase is configured)
-const USE_MOCK_DATA = false;
+import { mockUser, mockStaffUser, mockVolunteerUser } from '../mocks/users.mock'
+import { USE_MOCK_DATA } from '../utils/env'
 
 export const AuthContext = createContext()
 
@@ -153,13 +152,36 @@ export function AuthProvider({ children }) {
     return data
   }
 
+  const switchRole = (role) => {
+    if (!USE_MOCK_DATA) {
+      console.warn('switchRole is only available in mock data mode')
+      return
+    }
+
+    const roleMap = {
+      participant: mockUser,
+      volunteer: mockVolunteerUser,
+      staff: mockStaffUser
+    }
+
+    const targetUser = roleMap[role]
+    if (!targetUser) {
+      console.warn(`Unknown role: ${role}. Available roles: participant, volunteer, staff`)
+      return
+    }
+
+    setUser(targetUser)
+    console.log(`🎭 Switched to ${role}: ${targetUser.user_metadata.full_name}`)
+  }
+
   const value = {
     user,
     loading,
     signup,
     login,
     logout,
-    updateUser
+    updateUser,
+    switchRole
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

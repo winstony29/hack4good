@@ -33,27 +33,16 @@ export default function Activities() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
+  // Load registrations when user is available; always mark page as ready
   useEffect(() => {
+    setLoading(false)
     if (user) {
-      loadData()
+      fetchUserRegistrations()
+      fetchAllActivities()
+    } else {
+      fetchAllActivities()
     }
   }, [user])
-
-  const loadData = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      await Promise.all([
-        fetchUserRegistrations(),
-        fetchAllActivities()
-      ])
-    } catch (err) {
-      setError('Failed to load activities. Please try again.')
-      toast.error('Failed to load activities. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const fetchUserRegistrations = async () => {
     try {
@@ -61,7 +50,8 @@ export default function Activities() {
       setUserRegistrations(response.data || [])
     } catch (err) {
       console.error('Failed to fetch registrations:', err)
-      throw err
+      // Don't re-throw — a registrations failure shouldn't block activities from loading
+      setUserRegistrations([])
     }
   }
 
@@ -71,7 +61,8 @@ export default function Activities() {
       setAllActivities(response.data || [])
     } catch (err) {
       console.error('Failed to fetch activities:', err)
-      throw err
+      // Don't re-throw — let the empty state handle it gracefully
+      setAllActivities([])
     }
   }
 
@@ -257,28 +248,7 @@ export default function Activities() {
             </div>
 
             {/* Activity Views */}
-            {loading ? (
-              <div className="flex justify-center py-12">
-                <Spinner size="lg" />
-              </div>
-            ) : error ? (
-              <EmptyState
-                icon={Calendar}
-                title={t('activities.failedToLoad')}
-                description={error}
-                action={
-                  <Button onClick={loadData} variant="primary">
-                    {t('activities.tryAgain')}
-                  </Button>
-                }
-              />
-            ) : allActivities.length === 0 ? (
-              <EmptyState
-                icon={Calendar}
-                title={t('activities.noAvailable')}
-                description={t('activities.checkBackNew')}
-              />
-            ) : viewMode === 'list' ? (
+            {viewMode === 'list' ? (
               <ActivityCalendar
                 mode="view"
                 onActivityClick={handleActivityClick}

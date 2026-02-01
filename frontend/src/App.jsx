@@ -7,6 +7,7 @@ import { AccessibilityProvider } from './contexts/AccessibilityContext'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import PageTransition from './components/layout/PageTransition'
 import AccessibilityToolbar from './components/accessibility/AccessibilityToolbar'
+import DemoRoleSwitcher from './components/demo/DemoRoleSwitcher'
 import { TOAST_COLORS } from './constants'
 
 // Pages
@@ -62,6 +63,7 @@ function App() {
             <AnimatedRoutes />
           </main>
           <AccessibilityToolbar />
+          <DemoRoleSwitcher />
           <Toaster
             position="top-center"
             gutter={8}
