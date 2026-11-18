@@ -107,6 +107,16 @@ Plans:
 - [x] 11-01: Floating accessibility toolbar
 - [x] 11-02: Skip link, focus states, OpenDyslexic font
 
+#### Phase 11.1: Demo Role Switcher (Urgent Insertion)
+
+**Goal**: Floating UI component (bottom-left) to instantly switch between Staff/Volunteer/Participant roles during live hackathon demo without logging out
+**Depends on**: Phase 11 (uses mock data mode and existing auth context)
+**Research**: No (Level 0 - established patterns)
+**Plans**: 1
+
+Plans:
+- [x] 11.1-01: Role switcher component + AuthContext integration
+
 #### Phase 12: Navigation Redesign
 
 **Goal**: Warm cream navbar, prominent coral CTAs, improved mobile hamburger menu with large touch targets
@@ -154,6 +164,7 @@ Plans:
 | 9. Visual Consistency | v1.1 | 0/? | Not started | - |
 | 10. Design Foundation | v2.0 | 2/2 | Complete | 2026-01-20 |
 | 11. Accessibility Enhancement | v2.0 | 2/2 | Complete | 2026-01-20 |
+| 11.1 Demo Role Switcher | v2.0 | 1/1 | Complete | 2026-01-31 |
 | 12. Navigation Redesign | v2.0 | 0/1 | Planned | - |
 | 13. Landing Page Redesign | v2.0 | 0/1 | Planned | - |
 | 14. Activity Cards Redesign | v2.0 | 0/1 | Planned | - |

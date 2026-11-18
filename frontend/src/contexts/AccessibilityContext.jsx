@@ -60,6 +60,32 @@ export function AccessibilityProvider({ children }) {
   }, [dyslexicFont])
 
   const speak = async (text) => {
+    // Use Web Speech API (browser-native TTS) — no backend/API key needed
+    // Falls back to backend ElevenLabs API if speechSynthesis unavailable
+    if ('speechSynthesis' in window) {
+      return new Promise((resolve, reject) => {
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel()
+
+        const utterance = new SpeechSynthesisUtterance(text)
+
+        // Map language codes to BCP-47 locale tags
+        const langMap = { en: 'en-US', zh: 'zh-CN', ms: 'ms-MY', ta: 'ta-IN' }
+        utterance.lang = langMap[language] || 'en-US'
+        utterance.rate = 0.9   // Slightly slower for accessibility
+        utterance.pitch = 1.0
+
+        utterance.onend = () => resolve()
+        utterance.onerror = (e) => {
+          console.warn('Web Speech API error, falling back to backend TTS:', e)
+          reject(e)
+        }
+
+        window.speechSynthesis.speak(utterance)
+      })
+    }
+
+    // Fallback: backend ElevenLabs API
     try {
       const response = await accessibilityApi.textToSpeech({ text, language })
       const audio = new Audio(response.data.audio_url)

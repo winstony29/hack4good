@@ -24,8 +24,10 @@ export default function VolunteerDashboard() {
   const [viewMode, setViewMode] = useState('calendar') // 'list' or 'calendar'
 
   useEffect(() => {
-    fetchMatches()
-  }, [])
+    if (user) {
+      fetchMatches()
+    }
+  }, [user])
 
   const fetchMatches = async () => {
     try {

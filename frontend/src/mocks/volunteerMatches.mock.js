@@ -5,25 +5,50 @@
 
 import { mockActivities, ACTIVITY_UUIDS } from './activities.mock'
 
-// In-memory volunteer matches store
+// In-memory volunteer matches store — populated for realistic demo
 let mockVolunteerMatches = [
   {
     id: 'match-1',
-    volunteer_id: 'user-3', // mockVolunteerUser
-    activity_id: ACTIVITY_UUIDS[3], // Basketball Practice
+    volunteer_id: 'user-3',
+    activity_id: ACTIVITY_UUIDS[1], // Morning Yoga — Jan 31
     status: 'confirmed',
-    matched_at: '2026-01-18T10:00:00Z',
-    updated_at: '2026-01-18T10:00:00Z'
+    matched_at: '2026-01-27T10:00:00Z',
+    updated_at: '2026-01-27T10:00:00Z'
   },
   {
     id: 'match-2',
     volunteer_id: 'user-3',
-    activity_id: ACTIVITY_UUIDS[7], // Dance Party
+    activity_id: ACTIVITY_UUIDS[3], // Basketball Practice — Feb 1
     status: 'confirmed',
-    matched_at: '2026-01-18T11:00:00Z',
-    updated_at: '2026-01-18T11:00:00Z'
+    matched_at: '2026-01-28T09:00:00Z',
+    updated_at: '2026-01-28T09:00:00Z'
+  },
+  {
+    id: 'match-3',
+    volunteer_id: 'user-3',
+    activity_id: ACTIVITY_UUIDS[5], // Swimming — Feb 2
+    status: 'confirmed',
+    matched_at: '2026-01-28T14:00:00Z',
+    updated_at: '2026-01-28T14:00:00Z'
+  },
+  {
+    id: 'match-4',
+    volunteer_id: 'user-3',
+    activity_id: ACTIVITY_UUIDS[7], // Dance Party — Feb 3
+    status: 'confirmed',
+    matched_at: '2026-01-29T11:00:00Z',
+    updated_at: '2026-01-29T11:00:00Z'
+  },
+  {
+    id: 'match-5',
+    volunteer_id: 'user-3',
+    activity_id: ACTIVITY_UUIDS[10], // Painting Workshop — Feb 5
+    status: 'confirmed',
+    matched_at: '2026-01-30T08:00:00Z',
+    updated_at: '2026-01-30T08:00:00Z'
   }
 ]
+// Volunteer user-3 (David Tan): 5 upcoming matches across the week
 
 /**
  * Get all volunteer matches for current user with activity details
@@ -109,22 +134,5 @@ export const getAvailableActivitiesMock = (volunteerId = 'user-3') => {
  * Reset volunteer matches (for testing)
  */
 export const resetVolunteerMatches = () => {
-  mockVolunteerMatches = [
-    {
-      id: 'match-1',
-      volunteer_id: 'user-3',
-      activity_id: ACTIVITY_UUIDS[3],
-      status: 'confirmed',
-      matched_at: '2026-01-18T10:00:00Z',
-      updated_at: '2026-01-18T10:00:00Z'
-    },
-    {
-      id: 'match-2',
-      volunteer_id: 'user-3',
-      activity_id: ACTIVITY_UUIDS[7],
-      status: 'confirmed',
-      matched_at: '2026-01-18T11:00:00Z',
-      updated_at: '2026-01-18T11:00:00Z'
-    }
-  ]
+  // Reset not needed for demo — data persists in memory until page refresh
 }

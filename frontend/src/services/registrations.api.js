@@ -1,12 +1,26 @@
 import api from './api'
 import { getRegistrations, createRegistration, cancelRegistration, getAllRegistrations } from '../mocks/registrations.mock'
-
-// Toggle to use mock data (set to false when backend is ready)
-const USE_MOCK_DATA = false
+import { mockActivities } from '../mocks/activities.mock'
+import { USE_MOCK_DATA } from '../utils/env'
 
 export const registrationsApi = {
   // Get available activities for participant swiping (excludes already registered, filters by wheelchair if needed)
   getAvailable: async () => {
+    if (USE_MOCK_DATA) {
+      await new Promise(resolve => setTimeout(resolve, 500))
+      const today = new Date().toISOString().split('T')[0]
+      // Get user's existing registrations
+      const userRegs = getRegistrations()
+      const registeredActivityIds = userRegs.map(r => r.activity_id)
+      // Return future activities not yet registered for
+      const available = mockActivities.filter(a =>
+        a.date >= today &&
+        !registeredActivityIds.includes(a.id) &&
+        a.current_participants < a.max_capacity
+      )
+      return { data: available }
+    }
+    
     const response = await api.get('/registrations/available')
     return { data: response.data }
   },
